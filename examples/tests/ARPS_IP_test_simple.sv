@@ -54,14 +54,30 @@ class ARPS_IP_test_simple extends ARPS_IP_test_base;
 
         // start all sequences
         fork
-	        `uvm_info(get_type_name(), "Simple test inside fork is working", UVM_MEDIUM)
+
+		begin
+	    
+            axil_seq.start(env.axil_agent.seqr); // axi nezavisan od brama
+		    `uvm_info(get_type_name(), "Simple test inside fork is working with AXI", UVM_MEDIUM)
 		
-            axil_seq.start(env.axil_agent.seqr);
+		end
+
+		begin
             bram_curr_seq.start(env.bram_curr_agent.seqr);
+	        `uvm_info(get_type_name(), "Simple test inside fork is working with BRAM CURRENT", UVM_MEDIUM)
+		end
+		
+		begin
             bram_ref_seq.start(env.bram_ref_agent.seqr);
-            bram_mv_seq.start(env.bram_mv_agent.seqr);
+	        `uvm_info(get_type_name(), "Simple test inside fork is working with BRAM REFERENT", UVM_MEDIUM)// 2 brama istovremeno rade
+		end
+
+		begin
+            bram_mv_seq.start(env.bram_mv_agent.seqr);// da li ce mi bram mv biti pasivni agent????????
+			`uvm_info(get_type_name(), "Simple test inside fork is working with BRAM motion", UVM_MEDIUM)
+		end
 //            slave_seq.start(env.slave.seqr); // runs forever
-        join_any
+        join
         // only way to get here is if master sequence finished
         `uvm_info(get_type_name(), "After fork in simple testr is working", UVM_MEDIUM)        
         phase.drop_objection(this); // test can end

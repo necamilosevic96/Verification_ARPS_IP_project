@@ -6,7 +6,7 @@ use work.utils_pkg.all;
 entity AXI_ARPS_IP_v1_0_S00_AXI is
 	generic (
 		-- Users to add parameters here
-         W_DATA:         integer:=8;
+        W_DATA:         integer:=8;
         W_ADDRESS:      integer:=16;
         ROW_SIZE:       integer:=256;
         COL_SIZE:       integer:=256;

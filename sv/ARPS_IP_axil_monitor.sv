@@ -28,9 +28,11 @@ class ARPS_IP_axil_monitor extends uvm_monitor;
     
     // keep track of number of transactions
     int unsigned num_transactions = 0;
+	
+	bit [3:0]	address;
     
     // current transaction
-    ARPS_IP_axil_transaction tr_collected;
+    ARPS_IP_axil_transaction tr_current;
 
     // start and stop helper events   KOMENTARI
 //    event start_e;
@@ -73,6 +75,8 @@ class ARPS_IP_axil_monitor extends uvm_monitor;
         super.new(name, parent);
         item_collected_port = new("item_collected_port", this);
        // cg_ARPS_IP_monitor = new(); ------------------------------------------------komentttt
+		//write_address = new();
+		//read_address = new();
     endfunction : new
     
     // UVM build_phase
@@ -111,30 +115,30 @@ endclass : ARPS_IP_axil_monitor
 
 // UVM run_phase
 task ARPS_IP_axil_monitor::run_phase(uvm_phase phase);    
-  //  forever begin
+    forever begin
 //START
+		tr_current = ARPS_IP_axil_transaction::type_id::create("tr_current", this);
+		@(posedge vif.clk)begin
+			if(vif.s_axi_awready )begin
+               `uvm_info(get_name(), $sformatf("write address: %d", vif.s_axi_awaddr), UVM_LOW)
+				address = vif.s_axi_awaddr;               
+//				write_address.sample();
+			end
+			if(vif.s_axi_arready)
+				address = vif.s_axi_araddr;
+			if(vif.s_axi_rvalid)begin
+//				read_address.sample();
+				tr_current.rdata = vif.s_axi_rdata;
+				tr_current.addr = address;
+				item_collected_port.write(tr_current);
 
-        `uvm_info(get_type_name(), "Monitor is working AXI LITE", UVM_MEDIUM)
-/*
-     
-`uvm_info(get_type_name(),$sformatf("Driver run phase started...\n%s",req.sprint()), UVM_HIGH)
-	 
-        @(negedge vif.rst); // reset dropped
-        `uvm_info(get_type_name(), "Reset dropped", UVM_MEDIUM)
-        
-        fork
-            @(posedge vif.rst); // reset is active high
-            start_condition(start_e);
-            stop_condition(stop_e);
-            collect_transactions();
-        join_any
-        disable fork;
-        // only way to get here is after reset
+               `uvm_info(get_name(), $sformatf("read address: %d \t read_data: %d", address, vif.s_axi_rdata), UVM_LOW)               
+			end
+		end
 
-*/
 //FINISH
-        
-  //  end
+ //         `uvm_info(get_type_name(), "Monitor is working AXI LITE", UVM_MEDIUM)      
+    end
 endtask : run_phase
 
 

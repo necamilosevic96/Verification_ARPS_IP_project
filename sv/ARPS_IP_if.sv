@@ -36,8 +36,8 @@ interface axil_if(input clk, input rst);
    logic [1 : 0]                      	  s_axi_rresp;
    logic                              	  s_axi_rvalid;
    logic                              	  s_axi_rready ;
-   logic                              	  start_axi_o ;
-   logic                              	  ready_axi_i ;
+//   logic                              	  start_axi_o ;
+ //  logic                              	  ready_axi_i ;
   
     // control
     bit has_checks = 1;
@@ -50,6 +50,7 @@ endinterface : axil_if
 
 interface bram_curr_if(input clk, input rst);
 
+	logic							interrupt_o;
 	logic 							clk_curr;
 	logic [ 31 : 0 ]				addr_curr;
 	logic [ 31 : 0 ]				data_curr;

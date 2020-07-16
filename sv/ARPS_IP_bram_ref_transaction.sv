@@ -20,6 +20,12 @@
 //parameter integer BRAM_IP_ADDR_WIDTH	= 16;
 
 class ARPS_IP_bram_ref_transaction extends uvm_sequence_item;
+
+	rand bit [31:0] address_ref;
+	rand bit [31:0] data_ref_frame;
+//	rand bit [31:0] img_32_ref;
+
+
 /*
 	rand bit		    start_i;
 	rand bit [8 : 0 ]	    mv_addr;
@@ -83,6 +89,9 @@ class ARPS_IP_bram_ref_transaction extends uvm_sequence_item;
 //        `uvm_field_int  (we_ref,      UVM_DEFAULT)
 //        `uvm_field_int  (data_ref,      UVM_DEFAULT)
 //        `uvm_field_int  (addr_ref,      UVM_DEFAULT)
+//		  `uvm_field_int  (img_32_ref,      UVM_DEFAULT)
+		  `uvm_field_int  (address_ref,      UVM_DEFAULT)
+		  `uvm_field_int  (data_ref_frame,      UVM_DEFAULT)
     `uvm_object_utils_end
  
     // new - constructor

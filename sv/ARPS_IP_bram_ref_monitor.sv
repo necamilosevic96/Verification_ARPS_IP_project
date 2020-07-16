@@ -114,7 +114,7 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
   //  forever begin
 //START
 
-        `uvm_info(get_type_name(), "Monitor is working BRAM REFERENT", UVM_MEDIUM)
+        //`uvm_info(get_type_name(), "Monitor is working BRAM REFERENT", UVM_MEDIUM)
 /*
      
 `uvm_info(get_type_name(),$sformatf("Driver run phase started...\n%s",req.sprint()), UVM_HIGH)

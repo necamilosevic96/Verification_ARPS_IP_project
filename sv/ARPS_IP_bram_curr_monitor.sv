@@ -111,34 +111,34 @@ endclass : ARPS_IP_bram_curr_monitor
 
 // UVM run_phase
 task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);    
-    forever begin
-//START
-	@(posedge vif.clk)begin
-        `uvm_info(get_type_name(), "Monitor is working BRAM CURRENT", UVM_MEDIUM)
+ //   forever begin
+//START/
+//	@(posedge vif.clk)begin
+        //`uvm_info(get_type_name(), "Monitor is working BRAM CURRENT", UVM_MEDIUM)
 
      
 //`uvm_info(get_type_name(),$sformatf("Driver run phase started...\n%s",req.sprint()), UVM_HIGH)
 	 
-        @(negedge vif.rst); // reset dropped
-        `uvm_info(get_type_name(), "Reset dropped", UVM_MEDIUM)
+ //       @(negedge vif.rst); // reset dropped
+ //       `uvm_info(get_type_name(), "Reset dropped", UVM_MEDIUM)
         
-        fork
-            @(posedge vif.rst); // reset is active high
+  //      fork
+ //           @(posedge vif.rst); // reset is active high
 //            start_condition(start_e);
 //            stop_condition(stop_e);
 //            collect_transactions();
 
-				tr_collected.data = vif.data_curr;
+//				tr_collected.data_curr_frame = vif.data_curr;
 
 
-        join_any
-        disable fork;
+  //      join_any
+  //      disable fork;
         // only way to get here is after reset
-	`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor:\n%s", tr_collected.sprint()), UVM_MEDIUM)
-	end 
+//	`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor:\n%s", tr_collected.sprint()), UVM_MEDIUM)
+//	end 
 //FINISH
         
-    end
+  //  end
 endtask : run_phase
 
 

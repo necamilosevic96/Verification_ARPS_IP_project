@@ -111,23 +111,25 @@ task ARPS_IP_bram_mv_driver::run_phase(uvm_phase phase);
 
 //START
 
-        `uvm_info(get_type_name(), "Driver is working BRAM MOTION", UVM_MEDIUM)
+//        `uvm_info(get_type_name(), "Driver is working BRAM MOTION", UVM_MEDIUM)
 
 //        fork
 //            @(posedge vif.rst); // reset is active high
-            forever begin
+  //          forever begin
 			
-			`uvm_info(get_type_name(),$sformatf("Driver run phase started...\n%s", req.sprint()), UVM_HIGH)
-			`uvm_info(get_type_name(), "Driver is working insade loop BRAM MOTION", UVM_MEDIUM)			
+//			`uvm_info(get_type_name(),$sformatf("Driver run phase started...\n%s", req.sprint()), UVM_HIGH)
+//			`uvm_info(get_type_name(), "Driver is working insade loop BRAM MOTION", UVM_MEDIUM)			
                 seq_item_port.get_next_item(req);
+
+        //`uvm_info(get_type_name(), "Driver is working BRAM MOTION", UVM_MEDIUM)
 
 	//	  vif.s_axi_awvalid = 1'b1;
 
  //               drive_start(req);
 //                drive_transaction(req);
 //                drive_stop(req);
-                seq_item_port.item_done();
-            end
+               seq_item_port.item_done();
+//            end
 //        join_any
 //        disable fork;
 //        reset();

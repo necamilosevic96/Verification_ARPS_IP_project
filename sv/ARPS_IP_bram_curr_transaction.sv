@@ -21,13 +21,14 @@
 
 class ARPS_IP_bram_curr_transaction extends uvm_sequence_item;
 
-	rand bit [31:0] address;
-	rand bit [31:0] data;
-	rand bit [3:0] wre;
+	rand bit [31:0] address_curr;
+	rand bit [31:0] data_curr_frame;
+	rand bit [31:0] img_32;
+//	rand bit [3:0] wre;
 	
-   constraint address_constraint {address <=  32'h00;}
-   constraint data_constraint {data <=  32'b0000000000000000000000000000001010;}
-   constraint wre_constraint {wre <=  4'b1111;}
+//   constraint address_constraint {address_curr <=  32'h00;}
+//   constraint data_constraint {data_curr <=  32'b0000000000000000000000000000001010;}
+//   constraint wre_constraint {wre <=  4'b1111;}
    
    
 /*
@@ -93,9 +94,9 @@ class ARPS_IP_bram_curr_transaction extends uvm_sequence_item;
 //        `uvm_field_int  (addr_curr, UVM_DEFAULT)
 //        `uvm_field_int  (we_ref,      UVM_DEFAULT)
 //        `uvm_field_int  (data_ref,      UVM_DEFAULT)
-//        `uvm_field_int  (addr_ref,      UVM_DEFAULT)
-		  `uvm_field_int  (address,      UVM_DEFAULT)
-		  `uvm_field_int  (data,      UVM_DEFAULT)
+		  `uvm_field_int  (img_32,      UVM_DEFAULT)
+		  `uvm_field_int  (address_curr,      UVM_DEFAULT)
+		  `uvm_field_int  (data_curr_frame,      UVM_DEFAULT)
     `uvm_object_utils_end
  
     // new - constructor

@@ -16,15 +16,16 @@
  * Class: ARPS_IP_axil_transaction
  */
 
-parameter integer IP_DATA_WIDTH	= 8;
-parameter integer IP_ADDR_WIDTH	= 16;
+parameter integer IP_DATA_WIDTH	= 32;
+parameter integer IP_ADDR_WIDTH	= 4;
 
 class ARPS_IP_axil_transaction extends uvm_sequence_item;
 
-	rand bit		    start_i;
-	rand bit [8 : 0 ]	    mv_addr;
-
-	rand bit		    we_curr;
+	rand bit		    wr_re;
+	rand bit [3 : 0 ]	    addr;
+	rand bit [31 : 0 ]		rdata;
+	rand bit [31 : 0 ]		wdata;
+/*	rand bit		    we_curr;
 	rand bit [IP_DATA_WIDTH -1 : 0 ]  data_curr;
 	rand bit [IP_ADDR_WIDTH -1 : 0 ]  addr_curr;
 
@@ -32,9 +33,9 @@ class ARPS_IP_axil_transaction extends uvm_sequence_item;
 	rand bit [IP_DATA_WIDTH -1 : 0 ]  data_ref;
 	rand bit [IP_ADDR_WIDTH -1 : 0 ]  addr_ref;
 	rand bit [(IP_DATA_WIDTH /2) -1 : 0 ] data_out;	
+*/
 
-
-   constraint address_constraint {addr_curr <=  16'h14;}
+//   constraint address_constraint {addr <=  4'b0000;}
 
 //START
 /*
@@ -71,18 +72,11 @@ class ARPS_IP_axil_transaction extends uvm_sequence_item;
 
 
     // UVM factory registration
-    `uvm_object_utils_begin (ARPS_IP_axil_transaction)
-//      `uvm_field_enum (ARPS_IP_direction_enum, dir,      UVM_DEFAULT)
-//    	`uvm_field_enum (ARPS_IP_ack_enum,       data_ack, UVM_DEFAULT)
-//     	`uvm_field_enum (ARPS_IP_ack_enum,       addr_ack, UVM_DEFAULT) 
-        `uvm_field_int  (start_i,       UVM_DEFAULT) 
-        `uvm_field_int  (mv_addr,       UVM_DEFAULT)
-        `uvm_field_int  (we_curr, UVM_DEFAULT)
-        `uvm_field_int  (data_curr, UVM_DEFAULT)
-        `uvm_field_int  (addr_curr, UVM_DEFAULT)
-        `uvm_field_int  (we_ref,      UVM_DEFAULT)
-        `uvm_field_int  (data_ref,      UVM_DEFAULT)
-        `uvm_field_int  (addr_ref,      UVM_DEFAULT)
+    `uvm_object_utils_begin (ARPS_IP_axil_transaction) 
+       `uvm_field_int  (wr_re,       UVM_DEFAULT) 
+        `uvm_field_int  (addr,       UVM_DEFAULT)
+        `uvm_field_int  (rdata, UVM_DEFAULT)
+        `uvm_field_int  (wdata, UVM_DEFAULT)
     `uvm_object_utils_end
  
     // new - constructor

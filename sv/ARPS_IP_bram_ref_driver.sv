@@ -19,6 +19,8 @@ class ARPS_IP_bram_ref_driver extends uvm_driver #(ARPS_IP_bram_ref_transaction)
     
     // ARPS_IP virtual interface
     virtual bram_ref_if vif;
+	
+	logic [31:0] address_ref;
     
     // configuration
     ARPS_IP_bram_ref_config bram_ref_cfg;
@@ -64,70 +66,55 @@ endclass : ARPS_IP_bram_ref_driver
 task ARPS_IP_bram_ref_driver::run_phase(uvm_phase phase);
 //    reset(); // init
 
- //   forever begin
-/* novaaaaaa
-	@(negedge vif.rst);       
-        forever begin
-         seq_item_port.get_next_item(req);
-         `uvm_info(get_type_name(),
-                   $sformatf("Driver sending...\n%s", req.sprint()),
-                   UVM_FULL)
-         // do actual driving here
-	      
-	      @(posedge vif.clk)begin//writing using AXIL
-	         if(req.we_ref)begin//read = 0, write = 1
-	            vif.s_axi_awaddr = req.addr_curr;
-	            vif.s_axi_awvalid = 1;
-	            vif.s_axi_wdata = req.data_curr;
-	            vif.s_axi_wvalid = 1;
-	            vif.s_axi_bready = 1'b1;	       
-	            wait(vif.s_axi_awready && vif.s_axi_wready);	       
-	            wait(vif.s_axi_bvalid);
-	            vif.s_axi_wdata = 0;
-	            vif.s_axi_awvalid = 0; 
-	            vif.s_axi_wvalid = 0;
-               wait(!vif.s_axi_bvalid);	   
-	            vif.s_axi_bready = 0;
-	         end // if (req.read_write)
-/*	         else begin
-	            vif.s_axi_araddr = req.mv_addr;
-               vif.s_axi_arvalid = 1;
-               vif.s_axi_rready = 1;
-	            wait(vif.s_axi_arready);
-               wait(vif.s_axi_rvalid);	           
-	            vif.s_axi_arvalid = 0;
-               vif.s_axi_araddr = 0;
-	            wait(!vif.s_axi_rvalid);
-               req.data_out = vif.s_axi_rdata;               
-	            vif.s_axi_rready = 0;	       
-	         end
-*/ //stari koment ali dotle dolazi novi	         
-//	      end // @ (posedge vif.s_axi_aclk)
-	      
-	      //end of driving
-//         seq_item_port.item_done();
-//      end
-
+   forever begin
 
 //START
+		@(posedge vif.clk)begin
+		
+		address_ref = vif.addr_ref;
+//        `uvm_info(get_type_name(), "Driver is working BRAM CURRENT", UVM_MEDIUM)		
+//			`uvm_info(get_type_name(),$sformatf("Driver run phase started...\n%s", req.sprint()), UVM_HIGH)
+//			`uvm_info(get_type_name(), "Driver is working insade loop BRAM CURRENT", UVM_MEDIUM)			
 
-        `uvm_info(get_type_name(), "Driver is working BRAM REFERENT", UVM_MEDIUM)
+                seq_item_port.get_next_item(req);
+				req.address_ref = address_ref;
+				seq_item_port.item_done();
+				//#200
+				//`uvm_info(get_type_name(), "Driver is working BRAM REFERENT", UVM_MEDIUM)
+
+
+				seq_item_port.get_next_item(req);
+				vif.data_ref = req.data_ref_frame;
+               seq_item_port.item_done();
+
+		end// posedge clk
+
+//FINISH
+
+    end
+	
+	
+//START
+
+//        `uvm_info(get_type_name(), "Driver is working BRAM REFERENT", UVM_MEDIUM)
 
 //        fork
 //            @(posedge vif.rst); // reset is active high
-            forever begin
+ //           forever begin
 			
-			`uvm_info(get_type_name(),$sformatf("Driver run phase started...\n%s", req.sprint()), UVM_HIGH)
-			`uvm_info(get_type_name(), "Driver is working insade loop BRAM REFERENT", UVM_MEDIUM)			
-                seq_item_port.get_next_item(req);
+//			`uvm_info(get_type_name(),$sformatf("Driver run phase started...\n%s", req.sprint()), UVM_HIGH)
+//			`uvm_info(get_type_name(), "Driver is working insade loop BRAM REFERENT", UVM_MEDIUM)			
+              // seq_item_port.get_next_item(req);
 
+        //`uvm_info(get_type_name(), "Driver is working BRAM REFERENT", UVM_MEDIUM)
+		
 	//	  vif.s_axi_awvalid = 1'b1;
 
  //               drive_start(req);
 //                drive_transaction(req);
 //                drive_stop(req);
-                seq_item_port.item_done();
-            end
+              // seq_item_port.item_done();
+ //           end
 //        join_any
 //        disable fork;
 //        reset();

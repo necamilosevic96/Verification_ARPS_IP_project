@@ -17,10 +17,6 @@
  */
 class ARPS_IP_axil_simple_seq extends ARPS_IP_axil_base_seq;
 
-    rand int unsigned num_of_tr;
-
-    // constraints
-    constraint num_of_tr_cst { num_of_tr inside {[5 : 10]};}
 
     // UVM factory registration
     `uvm_object_utils(ARPS_IP_axil_simple_seq)
@@ -32,10 +28,17 @@ class ARPS_IP_axil_simple_seq extends ARPS_IP_axil_base_seq;
 
     // sequence generation logic in body
     virtual task body();
-        repeat(num_of_tr) begin
-            `uvm_do_with(req, {req.we_curr == 1'b1; })
-        `uvm_info(get_type_name(), "Sequence is working AXI LITE", UVM_MEDIUM)
-        end
+
+
+        `uvm_do_with(req, {req.wr_re == 1'b0; req.addr == 4'b0100; req.wdata == 31'b1; } ) // jedna sekvenca dovoljna da upise
+
+		if(req.rdata == 32'b1) begin
+			`uvm_do_with(req, {req.wr_re == 1'b1; req.addr == 4'b0000; req.wdata == 31'b1; } )
+			`uvm_do_with(req, {req.wr_re == 1'b1; req.addr == 4'b0000; req.wdata == 31'b0; } )
+		end
+
+		`uvm_info(get_type_name(), "Sequence is working AXI LITE", UVM_MEDIUM)
+
     endtask : body
 
 endclass : ARPS_IP_axil_simple_seq

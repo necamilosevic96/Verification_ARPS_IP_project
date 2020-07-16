@@ -61,6 +61,7 @@ package ARPS_IP_pkg;
     `include "ARPS_IP_bram_curr_config.sv"
     `include "ARPS_IP_bram_curr_driver.sv"
     `include "ARPS_IP_bram_curr_agent.sv"
+//	`include "ARPS_IP_bram_curr_sequencer.sv"
     `include "sequences/ARPS_IP_bram_curr_seq_lib.sv"
     `include "ARPS_IP_bram_ref_config.sv"
     `include "ARPS_IP_bram_ref_driver.sv"

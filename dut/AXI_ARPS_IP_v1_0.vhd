@@ -26,29 +26,29 @@ entity AXI_ARPS_IP_v1_0 is
         --BRAM interface MV
         clk_mv_o: out std_logic;
         addrb_mv_o: out std_logic_vector(31 downto 0);
-	    dinb_mv_o: out std_logic_vector(31 downto 0);
-	    enb_mv_o: out std_logic;
-	    web_mv_o: out std_logic_vector(3 downto 0);
-	    rstb_mv_o: out std_logic;
+        dinb_mv_o: out std_logic_vector(31 downto 0);
+        enb_mv_o: out std_logic;
+        web_mv_o: out std_logic_vector(3 downto 0);
+        rstb_mv_o: out std_logic;
 	    --doutb_vect_i:in std_logic_vector(31 downto 0); --not used
         --BRAM interface Ref Img
         clk_ref_o: out std_logic;
         addrb_ref_o: out std_logic_vector(31 downto 0);
-	    doutb_ref_i: in std_logic_vector(31 downto 0);
-	    enb_ref_o: out std_logic;
-	    web_ref_o: out std_logic_vector(3 downto 0);
-	    rstb_ref_o: out std_logic;
-	    --din_ref_o: out std_logic_vector(31 downto 0);
-	    --BRAM interface Curr Img
-	    clk_curr_o: out std_logic;
-	    addrb_curr_o: out std_logic_vector(31 downto 0);
-	    doutb_curr_i: in std_logic_vector(31 downto 0);
-	    enb_curr_o: out std_logic;
-	    web_curr_o: out std_logic_vector(3 downto 0);
-		rstb_curr_o: out std_logic;
-	    --din_curr_o: out std_logic_vector(31 downto 0);
-		-- User ports ends
-		-- Do not modify the ports beyond this line
+        doutb_ref_i: in std_logic_vector(31 downto 0);
+        enb_ref_o: out std_logic;
+        web_ref_o: out std_logic_vector(3 downto 0);
+        rstb_ref_o: out std_logic;
+        --din_ref_o: out std_logic_vector(31 downto 0);
+        --BRAM interface Curr Img
+        clk_curr_o: out std_logic;
+        addrb_curr_o: out std_logic_vector(31 downto 0);
+        doutb_curr_i: in std_logic_vector(31 downto 0);
+        enb_curr_o: out std_logic;
+        web_curr_o: out std_logic_vector(3 downto 0);
+        rstb_curr_o: out std_logic;
+        --din_curr_o: out std_logic_vector(31 downto 0);
+        -- User ports ends
+        -- Do not modify the ports beyond this line
 
 
 		-- Ports of Axi Slave Bus Interface S00_AXI
@@ -96,32 +96,32 @@ constant W_ADDRESS: integer:= log2c(ROW_SIZE*COL_SIZE);
         interrupt: out std_logic; --ok
         --BRAM inteface MV
         addrb_mv_o: out std_logic_vector(31 downto 0);
-	    dinb_mv_o: out std_logic_vector(31 downto 0);
-	    enb_mv_o: out std_logic;
-	    web_mv_o: out std_logic_vector(3 downto 0);
-	    rstb_mv_o: out std_logic;
-	    --doutb_vect_i:in std_logic_vector(31 downto 0); --not used
+        dinb_mv_o: out std_logic_vector(31 downto 0);
+        enb_mv_o: out std_logic;
+        web_mv_o: out std_logic_vector(3 downto 0);
+        rstb_mv_o: out std_logic;
+        --doutb_vect_i:in std_logic_vector(31 downto 0); --not used
         --BRAM interface Ref Img
         addrb_ref_o: out std_logic_vector(31 downto 0);
-	    doutb_ref_i: in std_logic_vector(31 downto 0);
-	    enb_ref_o: out std_logic;
-	    web_ref_o: out std_logic_vector(3 downto 0);
-	    rstb_ref_o: out std_logic;
-	    --din_ref_o: out std_logic_vector(31 downto 0);
-	    --BRAM interface Curr Img
-	    addrb_curr_o: out std_logic_vector(31 downto 0);
-	    doutb_curr_i: in std_logic_vector(31 downto 0);
-	    enb_curr_o: out std_logic;
-	    web_curr_o: out std_logic_vector(3 downto 0);
-	    rstb_curr_o: out std_logic
-	    --din_curr_o: out std_logic_vector(31 downto 0)
+        doutb_ref_i: in std_logic_vector(31 downto 0);
+        enb_ref_o: out std_logic;
+        web_ref_o: out std_logic_vector(3 downto 0);
+        rstb_ref_o: out std_logic;
+        --din_ref_o: out std_logic_vector(31 downto 0);
+        --BRAM interface Curr Img
+        addrb_curr_o: out std_logic_vector(31 downto 0);
+        doutb_curr_i: in std_logic_vector(31 downto 0);
+        enb_curr_o: out std_logic;
+        web_curr_o: out std_logic_vector(3 downto 0);
+        rstb_curr_o: out std_logic
+        --din_curr_o: out std_logic_vector(31 downto 0)
         
         );
     end component;
 	-- component declaration
 	component AXI_ARPS_IP_v1_0_S00_AXI is
 		generic (
-		W_DATA:         integer:=8;
+        W_DATA:         integer:=8;
         --W_ADDRESS :     integer:=16;
         ROW_SIZE:       integer:=256;
         COL_SIZE:       integer:=256;
@@ -131,7 +131,7 @@ constant W_ADDRESS: integer:= log2c(ROW_SIZE*COL_SIZE);
 		C_S_AXI_ADDR_WIDTH	: integer	:= 4
 		);
 		port (
-		start_o_axi:  out std_logic;
+        start_o_axi:  out std_logic;
         ready_i_axi:  in std_logic;
 		S_AXI_ACLK	: in std_logic;
 		S_AXI_ARESETN	: in std_logic;
@@ -163,7 +163,7 @@ begin
 -- Instantiation of Axi Bus Interface S00_AXI
 AXI_ARPS_IP_v1_0_S00_AXI_inst : AXI_ARPS_IP_v1_0_S00_AXI
 	generic map (
-	    W_DATA=>W_DATA,
+        W_DATA=>W_DATA,
         --W_ADDRESS=>W_ADDRESS,
         ROW_SIZE=>ROW_SIZE,
         COL_SIZE=>COL_SIZE,
@@ -173,7 +173,7 @@ AXI_ARPS_IP_v1_0_S00_AXI_inst : AXI_ARPS_IP_v1_0_S00_AXI
 		C_S_AXI_ADDR_WIDTH	=> C_S00_AXI_ADDR_WIDTH
 	)
 	port map (
-	    start_o_axi=>start_o_axi_s,
+        start_o_axi=>start_o_axi_s,
         ready_i_axi=>ready_i_axi_s,
 		S_AXI_ACLK	=> s00_axi_aclk,
 		S_AXI_ARESETN	=> s00_axi_aresetn,
@@ -215,25 +215,25 @@ AXI_ARPS_IP_v1_0_S00_AXI_inst : AXI_ARPS_IP_v1_0_S00_AXI
         ready_o=>ready_i_axi_s,
         interrupt=>interrupt,
         addrb_mv_o=>addrb_mv_o,
-	    dinb_mv_o=>dinb_mv_o,
-	    enb_mv_o=>enb_mv_o,
-	    web_mv_o=>web_mv_o,
-	    rstb_mv_o=>rstb_mv_o,
-	    --doutb_vect_i=>doutb_vect_i,
+        dinb_mv_o=>dinb_mv_o,
+        enb_mv_o=>enb_mv_o,
+        web_mv_o=>web_mv_o,
+        rstb_mv_o=>rstb_mv_o,
+        --doutb_vect_i=>doutb_vect_i,
         --BRAM interface Ref Img
         addrb_ref_o=>addrb_ref_o,
-	    doutb_ref_i=>doutb_ref_i,
-	    enb_ref_o=>enb_ref_o,
-	    web_ref_o=>web_ref_o,
-	    rstb_ref_o=>rstb_ref_o,
-	    --din_ref_o=>din_ref_o,
-	    --BRAM interface Curr Img
-	    addrb_curr_o=>addrb_curr_o,
-	    doutb_curr_i=>doutb_curr_i,
-	    enb_curr_o=>enb_curr_o,
-	    web_curr_o=>web_curr_o,
-	    rstb_curr_o=>rstb_curr_o
-	    --din_curr_o=>din_curr_o
+        doutb_ref_i=>doutb_ref_i,
+        enb_ref_o=>enb_ref_o,
+        web_ref_o=>web_ref_o,
+        rstb_ref_o=>rstb_ref_o,
+        --din_ref_o=>din_ref_o,
+        --BRAM interface Curr Img
+        addrb_curr_o=>addrb_curr_o,
+        doutb_curr_i=>doutb_curr_i,
+        enb_curr_o=>enb_curr_o,
+        web_curr_o=>web_curr_o,
+        rstb_curr_o=>rstb_curr_o
+        --din_curr_o=>din_curr_o
         );
      clk_mv_o<=s00_axi_aclk;
      clk_ref_o<=s00_axi_aclk;

@@ -37,7 +37,7 @@ module ARPS_IP_test_top;
     bram_curr_if bram_curr_vif(clock, reset);
     bram_ref_if bram_ref_vif(clock, reset);
     bram_mv_if bram_mv_vif(clock, reset);
-    
+/*    
     // DUT
     AXI_ARPS_IP_v1_0_S00_AXI #(  .W_DATA(8),
             .W_ADDRESS(16),
@@ -71,16 +71,18 @@ module ARPS_IP_test_top;
 			.ready_i_axi(axil_vif.ready_axi_i)
 
         );   
-
+*/
 
 	AXI_ARPS_IP_v1_0 #(  .W_DATA(8),
-            .W_ADDRESS(16),
 	    .ROW_SIZE(256),
 	    .COL_SIZE(256),
 	    .MB_SIZE(16),
-	    .P_SIZE(7)
+	    .P_SIZE(7),
+		.C_S_AXI_DATA_WIDTH(32),
+		.C_S_AXI_ADDR_WIDTH(4)
 		) DUT_inst (
 			.clk_mv_o(bram_mv_vif.clk_mv),
+			.interrupt(bram_curr_vif.interrupt_o),
 			.addrb_mv_o(bram_mv_vif.addr_mv),
 			.dinb_mv_o(bram_mv_vif.data_mv),
 			.enb_mv_o(bram_mv_vif.en_mv),
@@ -97,7 +99,28 @@ module ARPS_IP_test_top;
 			.doutb_curr_i(bram_curr_vif.data_curr),
 			.enb_curr_o(bram_curr_vif.en_curr),
 			.web_curr_o(bram_curr_vif.we_curr),
-			.rstb_curr_o(bram_curr_vif.rst_curr)
+			.rstb_curr_o(bram_curr_vif.rst_curr),
+            .s00_axi_aclk    (clock),
+            .s00_axi_aresetn    (reset),
+			.s00_axi_awaddr(axil_vif.s_axi_awaddr),
+			.s00_axi_awprot(axil_vif.s_axi_awprot),
+			.s00_axi_awvalid(axil_vif.s_axi_awvalid),
+			.s00_axi_awready(axil_vif.s_axi_awready),
+			.s00_axi_wdata(axil_vif.s_axi_wdata),
+			.s00_axi_wstrb(axil_vif.s_axi_wstrb),
+			.s00_axi_wvalid(axil_vif.s_axi_wvalid),
+			.s00_axi_wready(axil_vif.s_axi_wready),
+			.s00_axi_bresp(axil_vif.s_axi_bresp),
+			.s00_axi_bvalid(axil_vif.s_axi_bvalid),
+			.s00_axi_bready(axil_vif.s_axi_bready),
+			.s00_axi_araddr(axil_vif.s_axi_araddr),
+			.s00_axi_arprot(axil_vif.s_axi_arprot),
+			.s00_axi_arvalid	(axil_vif.s_axi_arvalid),
+			.s00_axi_arready(axil_vif.s_axi_arready),
+			.s00_axi_rdata(axil_vif.s_axi_rdata),
+			.s00_axi_rresp(axil_vif.s_axi_rresp),
+			.s00_axi_rvalid(axil_vif.s_axi_rvalid),
+			.s00_axi_rready(axil_vif.s_axi_rready)
 		);
     // set interface in db; run UVM test
     initial begin
@@ -111,9 +134,9 @@ module ARPS_IP_test_top;
     // initialize clock and reset
     initial begin
         clock <= 1'b0;
-        reset <= 1'b0;
-        #100 reset <= 1'b1;
-		#4900 reset <= 1'b0;
+        reset <= 1'b1;
+        #10 reset <= 1'b0;
+		#110 reset <= 1'b1;
     end
 
     // generate clock
