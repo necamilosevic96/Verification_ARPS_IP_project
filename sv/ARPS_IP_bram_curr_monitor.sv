@@ -19,6 +19,11 @@ class ARPS_IP_bram_curr_monitor extends uvm_monitor;
     
     // ARPS_IP virtual interface
     virtual bram_curr_if vif;
+	
+	
+	logic [31:0]  address_r;
+	logic [31:0]  address_r2 = 32'h00000000;
+	logic [31:0]  data_r;
     
     // configuration
     ARPS_IP_config cfg;
@@ -111,34 +116,53 @@ endclass : ARPS_IP_bram_curr_monitor
 
 // UVM run_phase
 task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);    
- //   forever begin
-//START/
-//	@(posedge vif.clk)begin
+    
+	tr_collected = ARPS_IP_bram_curr_transaction::type_id::create("tr_collected", this);
+	
+	forever begin
+
+		@(posedge vif.clk)begin
         //`uvm_info(get_type_name(), "Monitor is working BRAM CURRENT", UVM_MEDIUM)
 
      
 //`uvm_info(get_type_name(),$sformatf("Driver run phase started...\n%s",req.sprint()), UVM_HIGH)
 	 
- //       @(negedge vif.rst); // reset dropped
- //       `uvm_info(get_type_name(), "Reset dropped", UVM_MEDIUM)
+			//@(negedge vif.rst); // reset dropped
+			//`uvm_info(get_type_name(), "Reset dropped", UVM_MEDIUM)
+			
+				address_r = vif.addr_curr;
+				//data_r = vif.data_curr;
+				//@(posedge vif.clk) begin
+					//address_r2 = vif.addr_curr;
+					
+					if(address_r!=address_r2 && address_r!=32'h00000000) begin
+						data_r = vif.data_curr;
+						address_r2 = address_r;
+						//`uvm_info(get_type_name(), "Monitor is working BRAM CURRENT 2", UVM_MEDIUM)
+						//`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor: \n%h \n%h", address_r2, data_r ), UVM_MEDIUM)
+		
+					//end
+				
+				//@(posedge vif.rst); // reset is active high
+
+				tr_collected.address_curr = address_r2;
+				tr_collected.data_curr_frame = data_r;
+				
+		
+				
+		//`uvm_info(get_type_name(), "Monitor is working BRAM CURRENT 3", UVM_MEDIUM)
+		`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor BRAM CURRENT:\n%s", tr_collected.sprint()), UVM_MEDIUM)
+		
+		end //if
+		
+		//`uvm_info(get_name(), $sformatf("read address: %d \t read_data: %d", address_r, data_r), UVM_HIGH)
+		
+			//end
+		end 
+
         
-  //      fork
- //           @(posedge vif.rst); // reset is active high
-//            start_condition(start_e);
-//            stop_condition(stop_e);
-//            collect_transactions();
-
-//				tr_collected.data_curr_frame = vif.data_curr;
-
-
-  //      join_any
-  //      disable fork;
-        // only way to get here is after reset
-//	`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor:\n%s", tr_collected.sprint()), UVM_MEDIUM)
-//	end 
-//FINISH
-        
-  //  end
+    end  // forever begin
+	
 endtask : run_phase
 
 

@@ -22,6 +22,9 @@ class ARPS_IP_env extends uvm_env;
 	ARPS_IP_bram_curr_agent bram_curr_agent;
 	ARPS_IP_bram_ref_agent bram_ref_agent;
 	ARPS_IP_bram_mv_agent bram_mv_agent;
+	ARPS_IP_interrupt_agent interrupt_agent;
+	ARPS_IP_scoreboard scbd;
+	
 
     ARPS_IP_config cfg; // uvc configuration
 
@@ -56,12 +59,15 @@ class ARPS_IP_env extends uvm_env;
             uvm_config_db#(ARPS_IP_config)::set(this, "bram_ref_agent.mon*", "ARPS_IP_config", cfg);
 			uvm_config_db#(ARPS_IP_bram_mv_config)::set(this, "bram_mv_agent*", "ARPS_IP_bram_mv_config", cfg.bram_mv_cfg);
             uvm_config_db#(ARPS_IP_config)::set(this, "bram_mv_agent.mon*", "ARPS_IP_config", cfg);
+			
         end
         // set the slave configuration
-//        if(cfg.has_slave) begin
-//            uvm_config_db#(ARPS_IP_slave_config)::set(this, "slave*", "ARPS_IP_slave_config", cfg.slave_cfg);
-//            uvm_config_db#(ARPS_IP_config)::set(this, "slave.mon*", "ARPS_IP_config", cfg);
-//        end
+        if(cfg.has_slave) begin
+           // uvm_config_db#(ARPS_IP_slave_config)::set(this, "slave*", "ARPS_IP_slave_config", cfg.slave_cfg);
+           // uvm_config_db#(ARPS_IP_config)::set(this, "slave.mon*", "ARPS_IP_config", cfg);
+			uvm_config_db#(ARPS_IP_interrupt_config)::set(this, "interrupt_agent*", "ARPS_IP_interrupt_config", cfg.interrupt_cfg);
+            uvm_config_db#(ARPS_IP_config)::set(this, "interrupt_agent.mon*", "ARPS_IP_config", cfg);
+        end
 
         // create agents
         if(cfg.has_master) begin
@@ -70,11 +76,26 @@ class ARPS_IP_env extends uvm_env;
 			bram_ref_agent = ARPS_IP_bram_ref_agent::type_id::create("bram_ref_agent", this);
 			bram_mv_agent = ARPS_IP_bram_mv_agent::type_id::create("bram_mv_agent", this);
         end
-//        if(cfg.has_slave) begin
-//            slave = ARPS_IP_slave_agent::type_id::create("slave", this);
-//        end
+        if(cfg.has_slave) begin
+            interrupt_agent = ARPS_IP_interrupt_agent::type_id::create("interrupt_agent", this);
+        end
+		
+		scbd = ARPS_IP_scoreboard::type_id::create("scbd", this);
 
     endfunction : build_phase  
+	
+
+   function void connect_phase(uvm_phase phase);
+      super.connect_phase(phase);
+		  axil_agent.mon.item_collected_port.connect(scbd.port_axil);
+	      bram_curr_agent.mon.item_collected_port.connect(scbd.port_bram_curr);
+		  bram_ref_agent.mon.item_collected_port.connect(scbd.port_bram_ref);
+		  bram_mv_agent.mon.item_collected_port.connect(scbd.port_bram_mv);
+	      interrupt_agent.interrupt_mon.item_collected_port.connect(bram_curr_agent.drv.port_interrupt_o);//this here is needed so that the driver knows when interrupt happened      
+          interrupt_agent.interrupt_mon.item_collected_port.connect(scbd.port_interrupt);
+      
+   endfunction : connect_phase
+
 
 endclass : ARPS_IP_env
 

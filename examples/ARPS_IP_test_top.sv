@@ -37,6 +37,7 @@ module ARPS_IP_test_top;
     bram_curr_if bram_curr_vif(clock, reset);
     bram_ref_if bram_ref_vif(clock, reset);
     bram_mv_if bram_mv_vif(clock, reset);
+    interrupt_if interrupt_vif(clock, reset);
 /*    
     // DUT
     AXI_ARPS_IP_v1_0_S00_AXI #(  .W_DATA(8),
@@ -82,7 +83,6 @@ module ARPS_IP_test_top;
 		.C_S_AXI_ADDR_WIDTH(4)
 		) DUT_inst (
 			.clk_mv_o(bram_mv_vif.clk_mv),
-			.interrupt(bram_curr_vif.interrupt_o),
 			.addrb_mv_o(bram_mv_vif.addr_mv),
 			.dinb_mv_o(bram_mv_vif.data_mv),
 			.enb_mv_o(bram_mv_vif.en_mv),
@@ -120,7 +120,8 @@ module ARPS_IP_test_top;
 			.s00_axi_rdata(axil_vif.s_axi_rdata),
 			.s00_axi_rresp(axil_vif.s_axi_rresp),
 			.s00_axi_rvalid(axil_vif.s_axi_rvalid),
-			.s00_axi_rready(axil_vif.s_axi_rready)
+			.s00_axi_rready(axil_vif.s_axi_rready),
+			.interrupt(interrupt_vif.interrupt_o)
 		);
     // set interface in db; run UVM test
     initial begin
@@ -128,6 +129,7 @@ module ARPS_IP_test_top;
         uvm_config_db#(virtual bram_curr_if)::set(null,"uvm_test_top.*","bram_curr_if", bram_curr_vif);
         uvm_config_db#(virtual bram_ref_if)::set(null,"uvm_test_top.*","bram_ref_if", bram_ref_vif);
         uvm_config_db#(virtual bram_mv_if)::set(null,"uvm_test_top.*","bram_mv_if", bram_mv_vif);
+        uvm_config_db#(virtual interrupt_if)::set(null,"uvm_test_top.*","interrupt_if", interrupt_vif);
         run_test();
     end
     

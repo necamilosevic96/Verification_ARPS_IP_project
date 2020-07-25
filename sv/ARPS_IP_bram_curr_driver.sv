@@ -15,12 +15,17 @@
 /*
  * Class: ARPS_IP_bram_curr_driver
  */
+`uvm_analysis_imp_decl(_interrupt_o)
 class ARPS_IP_bram_curr_driver extends uvm_driver #(ARPS_IP_bram_curr_transaction);
+
+	//`uvm_component_utils(ARPS_IP_bram_curr_driver)
+	uvm_analysis_imp_interrupt_o#(ARPS_IP_interrupt_transaction, ARPS_IP_bram_curr_driver) port_interrupt_o;
     
     // ARPS_IP virtual interface
     virtual bram_curr_if vif;
     
    logic [31:0] address;	
+   int     		interrupt_o = 0;
 	
     // configuration
     ARPS_IP_bram_curr_config bram_curr_cfg;
@@ -33,6 +38,7 @@ class ARPS_IP_bram_curr_driver extends uvm_driver #(ARPS_IP_bram_curr_transactio
     // new - constructor
     function new(string name = "ARPS_IP_bram_curr_driver", uvm_component parent = null);
         super.new(name, parent);
+		port_interrupt_o = new("port_interrupt_o", this);
     endfunction : new
     
     // UVM build_phase
@@ -54,7 +60,7 @@ class ARPS_IP_bram_curr_driver extends uvm_driver #(ARPS_IP_bram_curr_transactio
   
     // additional class methods
    extern virtual task run_phase(uvm_phase phase); 
-
+   extern function write_interrupt_o(ARPS_IP_interrupt_transaction tr);
 
 endclass : ARPS_IP_bram_curr_driver
 
@@ -66,6 +72,12 @@ task ARPS_IP_bram_curr_driver::run_phase(uvm_phase phase);
 
 //START
 		@(posedge vif.clk)begin
+		
+		if(interrupt_o == 1)begin
+		         interrupt_o = 0;	       
+		         req.interrupt = 1;       
+		         continue;
+	    end
 		
 		address = vif.addr_curr;
 //        `uvm_info(get_type_name(), "Driver is working BRAM CURRENT", UVM_MEDIUM)		
@@ -90,6 +102,14 @@ task ARPS_IP_bram_curr_driver::run_phase(uvm_phase phase);
     end
       
 endtask : run_phase
+
+function ARPS_IP_bram_curr_driver::write_interrupt_o (ARPS_IP_interrupt_transaction tr);
+      `uvm_info(get_type_name(),
+			       $sformatf("INTERRUPT HAPPENED"),
+			       UVM_FULL)
+      interrupt_o = 1;
+      
+endfunction : write_interrupt_o
 
 
 `endif

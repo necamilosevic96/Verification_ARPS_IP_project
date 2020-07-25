@@ -19,7 +19,7 @@ class ARPS_IP_config extends uvm_object;
     
     // master/slave agents
     bit has_master;
-//    bit has_slave;
+    bit has_slave;
 
     // configurations for every agent
 //    ARPS_IP_slave_config  slave_cfg;
@@ -27,7 +27,7 @@ class ARPS_IP_config extends uvm_object;
     ARPS_IP_bram_curr_config bram_curr_cfg;
     ARPS_IP_bram_ref_config bram_ref_cfg;
     ARPS_IP_bram_mv_config bram_mv_cfg;
-
+    ARPS_IP_interrupt_config interrupt_cfg;
 
     // control
     bit has_checks = 1;
@@ -36,8 +36,8 @@ class ARPS_IP_config extends uvm_object;
     // UVM factory registration
     `uvm_object_utils_begin(ARPS_IP_config)
         `uvm_field_int(has_master, UVM_DEFAULT)
-//        `uvm_field_int(has_slave, UVM_DEFAULT)
-//        `uvm_field_object(slave_cfg, UVM_DEFAULT)
+        `uvm_field_int(has_slave, UVM_DEFAULT)
+        `uvm_field_object(interrupt_cfg, UVM_DEFAULT)
         `uvm_field_object(axil_cfg, UVM_DEFAULT)
         `uvm_field_object(bram_curr_cfg, UVM_DEFAULT)
         `uvm_field_object(bram_ref_cfg, UVM_DEFAULT)
@@ -57,6 +57,7 @@ class ARPS_IP_config extends uvm_object;
     extern function void add_bram_curr(uvm_active_passive_enum is_active = UVM_ACTIVE);
     extern function void add_bram_ref(uvm_active_passive_enum is_active = UVM_ACTIVE);
     extern function void add_bram_mv(uvm_active_passive_enum is_active = UVM_ACTIVE);
+    extern function void add_interrupt(uvm_active_passive_enum is_active = UVM_ACTIVE);
 
 endclass : ARPS_IP_config
 
@@ -109,6 +110,15 @@ function void ARPS_IP_config::add_bram_mv(uvm_active_passive_enum is_active = UV
     bram_mv_cfg.has_coverage = has_coverage;
 endfunction : add_bram_mv
 
+
+function void ARPS_IP_config::add_interrupt(uvm_active_passive_enum is_active = UVM_ACTIVE);
+    interrupt_cfg = ARPS_IP_interrupt_config::type_id::create("interrupt_cfg");
+    has_slave = 1;
+    interrupt_cfg.is_active = is_active;
+    interrupt_cfg.has_checks = has_checks;
+    interrupt_cfg.has_coverage = has_coverage;
+endfunction : add_interrupt
+
 /**
  * Class: default_ARPS_IP_config
  * 
@@ -124,7 +134,7 @@ class default_ARPS_IP_config extends ARPS_IP_config;
         add_bram_curr(UVM_ACTIVE);
         add_bram_ref(UVM_ACTIVE);
         add_bram_mv(UVM_ACTIVE);
-//        add_slave(UVM_ACTIVE); // TODO : remove after debug
+        add_interrupt(UVM_ACTIVE); // TODO : remove after debug
     endfunction : new
 
 endclass : default_ARPS_IP_config

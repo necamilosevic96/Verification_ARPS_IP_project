@@ -50,7 +50,6 @@ endinterface : axil_if
 
 interface bram_curr_if(input clk, input rst);
 
-	logic							interrupt_o;
 	logic 							clk_curr;
 	logic [ 31 : 0 ]				addr_curr;
 	logic [ 31 : 0 ]				data_curr;
@@ -83,6 +82,13 @@ interface bram_mv_if(input clk, input rst);
 	logic 							rst_mv;
 
 endinterface : bram_mv_if
+
+
+interface interrupt_if(input clk, input rst);
+
+	logic						interrupt_o;
+
+endinterface : interrupt_if
 
 
 `endif

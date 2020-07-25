@@ -23,7 +23,8 @@ class ARPS_IP_bram_curr_transaction extends uvm_sequence_item;
 
 	rand bit [31:0] address_curr;
 	rand bit [31:0] data_curr_frame;
-	rand bit [31:0] img_32;
+	bit             interrupt = 0;
+//	rand bit [31:0] img_32;
 //	rand bit [3:0] wre;
 	
 //   constraint address_constraint {address_curr <=  32'h00;}
@@ -94,7 +95,7 @@ class ARPS_IP_bram_curr_transaction extends uvm_sequence_item;
 //        `uvm_field_int  (addr_curr, UVM_DEFAULT)
 //        `uvm_field_int  (we_ref,      UVM_DEFAULT)
 //        `uvm_field_int  (data_ref,      UVM_DEFAULT)
-		  `uvm_field_int  (img_32,      UVM_DEFAULT)
+		  `uvm_field_int  (interrupt,      UVM_DEFAULT)
 		  `uvm_field_int  (address_curr,      UVM_DEFAULT)
 		  `uvm_field_int  (data_curr_frame,      UVM_DEFAULT)
     `uvm_object_utils_end
