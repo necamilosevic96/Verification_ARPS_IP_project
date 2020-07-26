@@ -18,25 +18,21 @@
 `uvm_analysis_imp_decl(_interrupt)
 
 
+`define MB_SIZE 16
+`define ROW 256
+`define COL 256
+`define P_SIZE 7
+`define MAX2(x, y) (((x) > (y)) ? (x) : (y))
+typedef int queue_of_int[$];
 
 class ARPS_IP_scoreboard extends uvm_scoreboard;
    
-//   localparam bit[9:0] sv_array[0:9] = {10'd361, 10'd267, 10'd581, 10'd632, 10'd480, 10'd513, 10'd376, 10'd432, 10'd751, 10'd683};
-//   localparam bit[9:0] IMG_LEN = 10'd784; 
+
    // control fileds
    bit checks_enable = 1;
    bit coverage_enable = 1;
-/*   bit res_ready = 0;
-   bit[3:0] result =0;
-   int img=0;
-   int core=0;
-   int sv=0;
-   int l=0;
-   logic[15 : 0] yQ[$];
-   logic[15 : 0] bQ[10];
-   logic[15 : 0] ltQ[10][$];
-   logic[15 : 0] svQ[10][$];
-*/
+
+
    int           num_of_assertions = 0;   
    // This TLM port is used to connect the scoreboard to the monitor
    uvm_analysis_imp_axil#(ARPS_IP_axil_transaction, ARPS_IP_scoreboard) port_axil;
@@ -62,7 +58,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
    endfunction : new
    
    function void report_phase(uvm_phase phase);
-      `uvm_info(get_type_name(), $sformatf("Svm_dskw scoreboard examined: %0d transactions", num_of_tr), UVM_LOW);
+      `uvm_info(get_type_name(), $sformatf("ARPS_IP scoreboard examined: %0d transactions", num_of_tr), UVM_LOW);
       `uvm_info(get_type_name(), $sformatf("Number of mismatch assertions for DUT is: %0d ", num_of_assertions), UVM_NONE);
       
    endfunction : report_phase
@@ -121,10 +117,238 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
          // ++num_of_tr;
       end
    endfunction : write_interrupt
+ 
+ extern function automatic int costSAD (const ref int , 
+                        const ref int ,
+                            input int , 
+                            input int ,
+                            input int , 
+                            input int );
+ 
+ extern function int abs (input int x);
+ 
+ extern function automatic queue_of_int motionARPS (const ref int , 
+                                    const ref int );
    
-
+ extern function arps_ip();
 
 endclass : ARPS_IP_scoreboard
+
+
+function ARPS_IP_scoreboard::arps_ip();
+//-----------------------------------------------------------------
+ 
+//-----------------------------------------------------------------
+
+//-----------------------------------------------------------------
+
+  
+//initial begin
+    
+    int curr_img [$];
+    int ref_img [$];
+    //int mv_q [$];//queue for motion vectors
+  	int f_curr;//file descriptors
+    int f_ref;
+    int curr_data;
+    int ref_data;
+    queue_of_int mv;
+    
+    f_curr = $fopen ("C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample51.txt", "r");
+    if (f_curr) $display("File was opened successfully : %0d", f_curr);
+    else        $display("File was NOT opened successfully : %0d", f_curr);
+    
+    f_ref = $fopen ("C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample50.txt", "r");
+    if (f_ref)  $display("File was opened successfully : %0d", f_ref);
+    else        $display("File was NOT opened successfully : %0d", f_ref);
+    //init queue-s
+    for(int i=0;i<65536;i++) begin
+        curr_img.push_back(0);
+        ref_img.push_back(0);
+    end 
+    
+    for(int i=0;i<16384;i++) begin
+        $fscanf (f_curr, "0x%x\n",curr_data);
+        curr_img[4*i]=(curr_data>>24) & 32'h000000ff;
+        curr_img[4*i+1]=(curr_data>>16) & 32'h000000ff;
+        curr_img[4*i+2]=(curr_data>>8) & 32'h000000ff;
+        curr_img[4*i+3]=(curr_data>>0) & 32'h000000ff;
+      
+        $fscanf (f_ref, "0x%x\n",ref_data);
+        ref_img[4*i]=(ref_data>>24) & 32'h000000ff;
+        ref_img[4*i+1]=(ref_data>>16) & 32'h000000ff;
+        ref_img[4*i+2]=(ref_data>>8) & 32'h000000ff;
+        ref_img[4*i+3]=(ref_data>>0) & 32'h000000ff;
+    end
+    
+    $fclose(f_curr);  
+    $fclose(f_ref);
+    
+    $display ("Starting");
+    
+    mv=motionARPS(curr_img,ref_img);
+  	for(int i=0;i<512;i++) begin
+        $display("mv[%d]=%d",i,mv[i]);
+    end
+    
+//end // initial
+//endmodule
+endfunction
+
+ function automatic int ARPS_IP_scoreboard::costSAD (const ref int curr_img[$], 
+                        const ref int ref_img[$],
+                            input int i_curr_in, 
+                            input int j_curr_in,
+                            input int i_ref_in, 
+                            input int j_ref_in);
+    int err=0;
+    int ref_addr;
+    int curr_addr;
+    for(int i=0;i<`MB_SIZE;i++) begin
+      for(int j=0;j<`MB_SIZE;j++) begin
+        curr_addr=256*(i+i_curr_in)+(j+j_curr_in);
+        ref_addr=256*(i+i_ref_in)+(j+j_ref_in);
+        err = err + abs(curr_img[curr_addr] - ref_img[ref_addr]);
+      end
+    end
+    return err;
+  endfunction
+
+  function int ARPS_IP_scoreboard::abs (input int x);
+    int x_abs;
+    if(x<0) begin
+      x_abs=-(x);
+      //$display ("x=%d x_abs=%d",x,x_abs);
+    end
+    else begin
+      x_abs=x;
+    end
+    return x_abs;
+  endfunction
+
+  function automatic queue_of_int ARPS_IP_scoreboard::motionARPS (const ref int curr_img[$], 
+                                    const ref int ref_img[$]);  
+    queue_of_int mv_q;
+    int mbCount=0;
+    int point;
+    int x,y;  
+    int ref_bl_jx,ref_bl_iy;
+
+    int stepSize;
+    int maxIndex;
+    bit doneFlag;
+    int vect_iy,vect_jx;
+    
+    int cost;
+  	int costs = 65535;
+    static int SDSP_jx[5]={0,-1,0,1,0};
+    static int SDSP_iy[5]={-1,0,0,0,1};
+    int LDSP_jx[$];//={0,0,0,0,0,0};
+    int LDSP_iy[$];//={0,0,0,0,0,0};
+    //init
+    for(int i=0;i<6;i++)begin
+        LDSP_jx.push_back(0);
+        LDSP_iy.push_back(0);
+    end
+    
+    for(int i=0;i<`ROW-`MB_SIZE+1;i+=`MB_SIZE) begin
+        for(int j=0;j<`COL-`MB_SIZE+1;j+=`MB_SIZE) begin
+            //costs = 65535;
+            x=j;
+            y=i;
+            costs = costSAD(curr_img,ref_img,i,j,i,j);
+            if(j==0) begin 
+                stepSize=2;
+                maxIndex=5;
+                vect_iy=0;
+                vect_jx=0;
+            end
+            else begin
+                stepSize=`MAX2(abs(vect_iy),abs(vect_jx));
+                if(((abs(vect_iy)==stepSize) && (abs(vect_jx)==0)) || (abs(vect_jx)==stepSize) && (abs(vect_iy)==0)) begin
+                    maxIndex=5;
+                end
+                else begin 
+                    maxIndex=6;
+                    LDSP_jx[5]=vect_jx;
+                    LDSP_iy[5]=vect_iy;	
+                end
+            end
+            //LARGE DIAMOND SEARCH PATTERN
+            LDSP_jx[0]=0;         LDSP_iy[0]=-stepSize;
+            LDSP_jx[1]=-stepSize; LDSP_iy[1]=0;
+            LDSP_jx[2]=0;         LDSP_iy[2]=0;
+            LDSP_jx[3]=stepSize;  LDSP_iy[3]=0;
+            LDSP_jx[4]=0;         LDSP_iy[4]=stepSize;
+        
+            //$display ("LDSP_jx=%p",LDSP_jx);
+            cost=costs;
+            point=2;
+        
+            for(int k=0;k<maxIndex;k++) begin 
+                ref_bl_iy=y+LDSP_iy[k];//ROW
+                ref_bl_jx=x+LDSP_jx[k];//COL
+                if( (ref_bl_iy<0) || 
+                   ((ref_bl_iy+`MB_SIZE)>=`ROW) || 
+                    (ref_bl_jx<0) || 
+                   ((ref_bl_jx+`MB_SIZE)>=`COL)) begin 
+                    continue;
+                end
+                if((k==2) || (stepSize==0)) begin
+                    continue;
+                end
+                costs = costSAD (curr_img, ref_img, i, j, ref_bl_iy, ref_bl_jx);
+                if(costs<cost)begin
+                    cost=costs;
+                    point=k;
+                end 
+            end//for
+            x=x+LDSP_jx[point];
+            y=y+LDSP_iy[point];
+      
+            costs=cost;
+            doneFlag=1'b0;
+            while(doneFlag==1'b1) begin
+                point = 2;
+                for(int k=0;k<5;k++) begin
+                    ref_bl_iy = y + SDSP_iy[k];//ROW
+                    ref_bl_jx = x + SDSP_jx[k];//COL
+                    if( (ref_bl_iy<0) || 
+                       ((ref_bl_iy+`MB_SIZE)>=`ROW) || 
+                        (ref_bl_jx<0) || 
+                       ((ref_bl_jx+`MB_SIZE)>=`COL)|| k==2) begin
+                        continue;
+                    end
+                    else if((ref_bl_jx < (j-`P_SIZE))||
+                                (ref_bl_jx>(j+`P_SIZE)) || 
+                                (ref_bl_iy<(i-`P_SIZE)) || 
+                                (ref_bl_iy>(i+`P_SIZE)))begin
+                        continue;
+                    end
+                    costs= costSAD(curr_img,ref_img,i,j,ref_bl_iy,ref_bl_jx);
+                    if(costs<cost)begin
+                        cost=costs;
+                        point=k;
+                    end
+                end //for
+                doneFlag = 1'b1;
+                if(point!=2) begin
+                    doneFlag = 1'b0;
+                    y=y+SDSP_iy[point];
+                    x=x+SDSP_jx[point];	
+                    costs=cost;
+                end
+            end//while
+            vect_jx = x-j;
+            vect_iy = y-i;
+            mv_q.push_back(x-j);
+            mv_q.push_back(y-i);
+            //mbCount=mbCount+2;
+        end//for j
+    end//for i
+   
+    return mv_q;
+endfunction
 
 `endif
 
