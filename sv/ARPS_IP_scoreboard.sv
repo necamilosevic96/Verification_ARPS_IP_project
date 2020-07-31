@@ -9,6 +9,14 @@
 
  *******************************************************************************/
 
+/*******************************************************************************
+ +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
+ |F|u|n|c|t|i|o|n|a|l| |V|e|r|i|f|i|c|a|t|i|o|n| |o|f| |H|a|r|d|w|a|r|e|
+ +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
+ FILE            ARPS_IP_scoreboard.sv
+ DESCRIPTION     
+ *******************************************************************************/
+
 `ifndef ARPS_IP_SCOREBOARD_SV
  `define ARPS_IP_SCOREBOARD_SV
 `uvm_analysis_imp_decl(_axil)
@@ -31,6 +39,10 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
    // control fileds
    bit checks_enable = 1;
    bit coverage_enable = 1;
+   
+   logic [31:0] curr_queue[$];
+   logic [31:0] ref_queue[$];
+//   logic [31:0] curr_queue_1[$];
 
 
    int           num_of_assertions = 0;   
@@ -75,10 +87,26 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
    endfunction : write_axil
    
 
-   function write_bram_curr (ARPS_IP_bram_curr_transaction tr);
+   function write_bram_curr (ARPS_IP_bram_curr_transaction tr);  
       ARPS_IP_bram_curr_transaction tr_clone;
       $cast(tr_clone, tr.clone()); 
+	  
       if(checks_enable) begin
+	  
+		//`uvm_info(get_type_name(),$sformatf("SCOREBOARD QUEUE 1"),UVM_HIGH)
+		
+		
+		curr_queue.push_back(tr_clone.data_curr_frame);
+		
+		
+		//curr_queue_1.push_back(tr.data_curr_frame);
+		//if (curr_queue[10]==curr_queue_1[10])begin
+		//`uvm_error(get_type_name(), $sformatf("INVALID CAST"))
+		//end
+		//`uvm_info(get_type_name(), $sformatf("SCOREBOARD QUEUE 2"),UVM_HIGH)
+		//for (int i=0; i<)
+		//`uvm_info(get_type_name(), $sformatf("SCOREBOARD QUEUE 3    %p\n", curr_queue),UVM_HIGH)
+		//`uvm_info(get_type_name(),$sformatf("SCOREBOARD QUEUE \n"),UVM_HIGH)
          // do actual checking here
          // ...
          // ++num_of_tr;
@@ -89,6 +117,8 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
       ARPS_IP_bram_ref_transaction tr_clone;
       $cast(tr_clone, tr.clone()); 
       if(checks_enable) begin
+	  
+		ref_queue.push_back(tr_clone.data_ref_frame);
          // do actual checking here
          // ...
          // ++num_of_tr;
@@ -99,12 +129,14 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
    function write_bram_mv (ARPS_IP_bram_mv_transaction tr);
       ARPS_IP_bram_mv_transaction tr_clone;
       $cast(tr_clone, tr.clone()); 
+      arps_ip();
       if(checks_enable) begin
          // do actual checking here
          // ...
          // ++num_of_tr;
       end
    endfunction : write_bram_mv 
+
 
 
    //write_interrupt function is not needed 
@@ -117,33 +149,9 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
          // ++num_of_tr;
       end
    endfunction : write_interrupt
- 
- extern function automatic int costSAD (const ref int , 
-                        const ref int ,
-                            input int , 
-                            input int ,
-                            input int , 
-                            input int );
- 
- extern function int abs (input int x);
- 
- extern function automatic queue_of_int motionARPS (const ref int , 
-                                    const ref int );
    
- extern function arps_ip();
+ function void arps_ip();
 
-endclass : ARPS_IP_scoreboard
-
-
-function ARPS_IP_scoreboard::arps_ip();
-//-----------------------------------------------------------------
- 
-//-----------------------------------------------------------------
-
-//-----------------------------------------------------------------
-
-  
-//initial begin
     
     int curr_img [$];
     int ref_img [$];
@@ -153,7 +161,14 @@ function ARPS_IP_scoreboard::arps_ip();
     int curr_data;
     int ref_data;
     queue_of_int mv;
-    
+	
+	for(int i=0; i< curr_queue.size(); i++)begin
+		curr_img[i] = curr_queue[i];
+		ref_img[i] = ref_queue[i];
+	end
+	
+	
+/*    
     f_curr = $fopen ("C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample51.txt", "r");
     if (f_curr) $display("File was opened successfully : %0d", f_curr);
     else        $display("File was NOT opened successfully : %0d", f_curr);
@@ -183,7 +198,7 @@ function ARPS_IP_scoreboard::arps_ip();
     
     $fclose(f_curr);  
     $fclose(f_ref);
-    
+*/    
     $display ("Starting");
     
     mv=motionARPS(curr_img,ref_img);
@@ -195,7 +210,7 @@ function ARPS_IP_scoreboard::arps_ip();
 //endmodule
 endfunction
 
- function automatic int ARPS_IP_scoreboard::costSAD (const ref int curr_img[$], 
+ function automatic int costSAD (const ref int curr_img[$], 
                         const ref int ref_img[$],
                             input int i_curr_in, 
                             input int j_curr_in,
@@ -214,7 +229,7 @@ endfunction
     return err;
   endfunction
 
-  function int ARPS_IP_scoreboard::abs (input int x);
+  function int abs (input int x);
     int x_abs;
     if(x<0) begin
       x_abs=-(x);
@@ -226,7 +241,7 @@ endfunction
     return x_abs;
   endfunction
 
-  function automatic queue_of_int ARPS_IP_scoreboard::motionARPS (const ref int curr_img[$], 
+  function automatic queue_of_int motionARPS (const ref int curr_img[$], 
                                     const ref int ref_img[$]);  
     queue_of_int mv_q;
     int mbCount=0;
@@ -308,7 +323,7 @@ endfunction
       
             costs=cost;
             doneFlag=1'b0;
-            while(doneFlag==1'b1) begin
+            while(doneFlag==1'b0) begin
                 point = 2;
                 for(int k=0;k<5;k++) begin
                     ref_bl_iy = y + SDSP_iy[k];//ROW
@@ -350,5 +365,7 @@ endfunction
     return mv_q;
 endfunction
 
-`endif
+endclass : ARPS_IP_scoreboard
 
+
+`endif
