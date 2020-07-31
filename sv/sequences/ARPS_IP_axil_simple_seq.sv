@@ -30,7 +30,7 @@ class ARPS_IP_axil_simple_seq extends ARPS_IP_axil_base_seq;
     virtual task body();
 
 
-        `uvm_do_with(req, {req.wr_re == 1'b0; req.addr == 4'b0100; req.wdata == 31'b1; } ) // jedna sekvenca dovoljna da upise
+        `uvm_do_with(req, {req.wr_re == 1'b0; req.addr == 4'b0100; req.wdata == 31'b1; } ) 
 
 		if(req.rdata == 32'b1) begin
 			`uvm_do_with(req, {req.wr_re == 1'b1; req.addr == 4'b0000; req.wdata == 31'b1; } )

@@ -26,10 +26,10 @@ class ARPS_IP_interrupt_monitor extends uvm_monitor;
    `uvm_component_utils_end
 
    // The virtual interface used to drive and view HDL signals.
-   virtual interface interrupt_if vif;//only use sugnals for bram communication!!!!
+   virtual interface interrupt_if vif;
 
    // current transaction
-   ARPS_IP_interrupt_transaction current_frame;//here you will need dskw_frame insteade of svm_dskw_frame
+   ARPS_IP_interrupt_transaction current_frame;
 
 /*   // coverage can go here
    covergroup interrupt_cg;

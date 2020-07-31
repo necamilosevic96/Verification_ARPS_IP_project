@@ -36,8 +36,7 @@ interface axil_if(input clk, input rst);
    logic [1 : 0]                      	  s_axi_rresp;
    logic                              	  s_axi_rvalid;
    logic                              	  s_axi_rready ;
-//   logic                              	  start_axi_o ;
- //  logic                              	  ready_axi_i ;
+
   
     // control
     bit has_checks = 1;

@@ -27,7 +27,6 @@ module ARPS_IP_test_top;
     
     `include "ARPS_IP_test_lib.sv"
     
-//    `include "../dut/utils_pkg.vhd"
     
     logic clock;
     logic reset;
@@ -38,41 +37,7 @@ module ARPS_IP_test_top;
     bram_ref_if bram_ref_vif(clock, reset);
     bram_mv_if bram_mv_vif(clock, reset);
     interrupt_if interrupt_vif(clock, reset);
-/*    
-    // DUT
-    AXI_ARPS_IP_v1_0_S00_AXI #(  .W_DATA(8),
-            .W_ADDRESS(16),
-	    .ROW_SIZE(256),
-	    .COL_SIZE(256),
-	    .MB_SIZE(16),
-	    .P_SIZE(7)
-        ) AXI_ARPS_IP_v1_0_S00_AXI_inst (
-            .S_AXI_ACLK    (clock),
-            .S_AXI_ARESETN    (reset),
-			.S_AXI_AWADDR(axil_vif.s_axi_awaddr),
-			.S_AXI_AWPROT(axil_vif.s_axi_awprot),
-			.S_AXI_AWVALID(axil_vif.s_axi_awvalid),
-			.S_AXI_AWREADY(axil_vif.s_axi_awready),
-			.S_AXI_WDATA(axil_vif.s_axi_wdata),
-			.S_AXI_WSTRB(axil_vif.s_axi_wstrb),
-			.S_AXI_WVALID(axil_vif.s_axi_wvalid),
-			.S_AXI_WREADY(axil_vif.s_axi_wready),
-			.S_AXI_BRESP(axil_vif.s_axi_bresp),
-			.S_AXI_BVALID(axil_vif.s_axi_bvalid),
-			.S_AXI_BREADY(axil_vif.s_axi_bready),
-			.S_AXI_ARADDR(axil_vif.s_axi_araddr),
-			.S_AXI_ARPROT(axil_vif.s_axi_arprot),
-			.S_AXI_ARVALID(axil_vif.s_axi_arvalid),
-			.S_AXI_ARREADY(axil_vif.s_axi_arready),
-			.S_AXI_RDATA(axil_vif.s_axi_rdata),
-			.S_AXI_RRESP(axil_vif.s_axi_rresp),
-			.S_AXI_RVALID(axil_vif.s_axi_rvalid),
-			.S_AXI_RREADY(axil_vif.s_axi_rready),
-			.start_o_axi(axil_vif.start_axi_o),
-			.ready_i_axi(axil_vif.ready_axi_i)
 
-        );   
-*/
 
 	AXI_ARPS_IP_v1_0 #(  .W_DATA(8),
 	    .ROW_SIZE(256),

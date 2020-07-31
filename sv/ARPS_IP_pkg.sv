@@ -24,9 +24,6 @@ package ARPS_IP_pkg;
     typedef class ARPS_IP_axil_config;
     typedef class ARPS_IP_axil_driver;
     typedef class ARPS_IP_axil_agent;
-//    typedef class ARPS_IP_slave_config;
-//    typedef class ARPS_IP_slave_driver;
-//    typedef class ARPS_IP_slave_agent;
     typedef class ARPS_IP_config;
     typedef class ARPS_IP_axil_monitor;
     typedef class ARPS_IP_env;
@@ -59,7 +56,6 @@ package ARPS_IP_pkg;
     
     `include "ARPS_IP_types.sv"
     
-    // master
     `include "ARPS_IP_axil_config.sv"
     `include "ARPS_IP_axil_driver.sv"
     `include "ARPS_IP_axil_agent.sv"
@@ -67,7 +63,6 @@ package ARPS_IP_pkg;
     `include "ARPS_IP_bram_curr_config.sv"
     `include "ARPS_IP_bram_curr_driver.sv"
     `include "ARPS_IP_bram_curr_agent.sv"
-//	`include "ARPS_IP_bram_curr_sequencer.sv"
     `include "sequences/ARPS_IP_bram_curr_seq_lib.sv"
     `include "ARPS_IP_bram_ref_config.sv"
     `include "ARPS_IP_bram_ref_driver.sv"
@@ -81,12 +76,7 @@ package ARPS_IP_pkg;
 	`include "ARPS_IP_interrupt_agent.sv"
 	`include "ARPS_IP_scoreboard.sv"
     
-    // slave
-//    `include "slave/ARPS_IP_slave_config.sv"
-//    `include "slave/ARPS_IP_slave_driver.sv"
-//    `include "slave/ARPS_IP_slave_agent.sv"
-//    `include "slave/sequences/ARPS_IP_slave_seq_lib.sv"
-    
+
     // top
     `include "ARPS_IP_axil_transaction.sv"
 	`include "ARPS_IP_bram_curr_transaction.sv"
@@ -99,7 +89,6 @@ package ARPS_IP_pkg;
     `include "ARPS_IP_bram_ref_monitor.sv"
     `include "ARPS_IP_bram_mv_monitor.sv"
 	`include "ARPS_IP_interrupt_monitor.sv"
-	//`include "ARPS_IP_scoreboard.sv"
     `include "ARPS_IP_env.sv"
 
 endpackage: ARPS_IP_pkg

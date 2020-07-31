@@ -21,8 +21,6 @@ class ARPS_IP_config extends uvm_object;
     bit has_master;
     bit has_slave;
 
-    // configurations for every agent
-//    ARPS_IP_slave_config  slave_cfg;
     ARPS_IP_axil_config axil_cfg;
     ARPS_IP_bram_curr_config bram_curr_cfg;
     ARPS_IP_bram_ref_config bram_ref_cfg;
@@ -52,7 +50,6 @@ class ARPS_IP_config extends uvm_object;
     endfunction : new
 
     // additional class methods
-//    extern function void add_slave(uvm_active_passive_enum is_active = UVM_ACTIVE);
     extern function void add_axil(uvm_active_passive_enum is_active = UVM_ACTIVE);
     extern function void add_bram_curr(uvm_active_passive_enum is_active = UVM_ACTIVE);
     extern function void add_bram_ref(uvm_active_passive_enum is_active = UVM_ACTIVE);
@@ -61,18 +58,6 @@ class ARPS_IP_config extends uvm_object;
 
 endclass : ARPS_IP_config
 
-/*
-
-// creates and configures a slave agent config and adds to a queue
-function void ARPS_IP_config::add_slave(uvm_active_passive_enum is_active = UVM_ACTIVE);
-    slave_cfg = ARPS_IP_slave_config::type_id::create("slave_cfg");
-    has_slave = 1;
-    slave_cfg.is_active = is_active;
-    slave_cfg.has_checks = has_checks;
-    slave_cfg.has_coverage = has_coverage;
-endfunction : add_slave
-
-*/
 
 // creates and configures a master agent configuration
 function void ARPS_IP_config::add_axil(uvm_active_passive_enum is_active = UVM_ACTIVE);
@@ -122,7 +107,7 @@ endfunction : add_interrupt
 /**
  * Class: default_ARPS_IP_config
  * 
- * Description: default configuration - one master, no slaves
+ * Description: default configuration
  */
 class default_ARPS_IP_config extends ARPS_IP_config;
 
@@ -134,7 +119,7 @@ class default_ARPS_IP_config extends ARPS_IP_config;
         add_bram_curr(UVM_ACTIVE);
         add_bram_ref(UVM_ACTIVE);
         add_bram_mv(UVM_ACTIVE);
-        add_interrupt(UVM_ACTIVE); // TODO : remove after debug
+        add_interrupt(UVM_ACTIVE); 
     endfunction : new
 
 endclass : default_ARPS_IP_config

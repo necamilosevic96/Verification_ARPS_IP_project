@@ -25,7 +25,6 @@ class ARPS_IP_test_simple extends ARPS_IP_test_base;
 	ARPS_IP_bram_curr_simple_seq bram_curr_seq;
 	ARPS_IP_bram_ref_simple_seq bram_ref_seq;
 	ARPS_IP_bram_mv_simple_seq bram_mv_seq;
-//    ARPS_IP_slave_simple_seq slave_seq;
 
     // new - constructor
     function new(string name = "ARPS_IP_test_simple", uvm_component parent = null);
@@ -40,12 +39,11 @@ class ARPS_IP_test_simple extends ARPS_IP_test_base;
         bram_curr_seq = ARPS_IP_bram_curr_simple_seq::type_id::create("bram_curr_seq");
         bram_ref_seq = ARPS_IP_bram_ref_simple_seq::type_id::create("bram_ref_seq");
         bram_mv_seq = ARPS_IP_bram_mv_simple_seq::type_id::create("bram_mv_seq");
-//        slave_seq = ARPS_IP_slave_simple_seq::type_id::create("slave_seq");
     endfunction : build_phase
     
     // UVM run_phase
     task run_phase(uvm_phase phase);
-        assert(axil_seq.randomize()); // random fields in master seq.
+        assert(axil_seq.randomize()); 
         assert(bram_curr_seq.randomize());
         assert(bram_ref_seq.randomize());
         assert(bram_mv_seq.randomize());
@@ -57,7 +55,7 @@ class ARPS_IP_test_simple extends ARPS_IP_test_base;
 
 		begin
 	    
-            axil_seq.start(env.axil_agent.seqr); // axi nezavisan od brama
+            axil_seq.start(env.axil_agent.seqr);
 		    `uvm_info(get_type_name(), "Simple test inside fork is working with AXI", UVM_MEDIUM)
 		
 		end
@@ -69,16 +67,16 @@ class ARPS_IP_test_simple extends ARPS_IP_test_base;
 		
 		begin
             bram_ref_seq.start(env.bram_ref_agent.seqr);
-	        `uvm_info(get_type_name(), "Simple test inside fork is working with BRAM REFERENT", UVM_MEDIUM)// 2 brama istovremeno rade
+	        `uvm_info(get_type_name(), "Simple test inside fork is working with BRAM REFERENT", UVM_MEDIUM)
 		end
 
 		begin
-            bram_mv_seq.start(env.bram_mv_agent.seqr);// da li ce mi bram mv biti pasivni agent????????
+            bram_mv_seq.start(env.bram_mv_agent.seqr);
 			`uvm_info(get_type_name(), "Simple test inside fork is working with BRAM motion", UVM_MEDIUM)
 		end
-//            slave_seq.start(env.slave.seqr); // runs forever
+
         join
-        // only way to get here is if master sequence finished
+
         `uvm_info(get_type_name(), "After fork in simple testr is working", UVM_MEDIUM)        
         phase.drop_objection(this); // test can end
     endtask : run_phase

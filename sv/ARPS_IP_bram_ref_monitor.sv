@@ -36,10 +36,6 @@ class ARPS_IP_bram_ref_monitor extends uvm_monitor;
     // current transaction
     ARPS_IP_bram_ref_transaction tr_collected_ref;
 
-    // start and stop helper events   KOMENTARI
-//    event start_e;
-//    event stop_e;
-    
     // UVM factory registration
     `uvm_component_utils_begin(ARPS_IP_bram_ref_monitor)
         `uvm_field_object(cfg, UVM_DEFAULT | UVM_REFERENCE)
@@ -96,20 +92,7 @@ class ARPS_IP_bram_ref_monitor extends uvm_monitor;
     endfunction : connect_phase
 
 
-    extern virtual task run_phase(uvm_phase phase); // dodato nakaknadno, vec dole postoji
-
-//START
-/*
-
-    // additional class methods
-    extern virtual task start_condition(ref event start_e);
-    extern virtual task stop_condition(ref event stop_e);
-//    extern virtual task run_phase(uvm_phase phase);
-    extern virtual task collect_transactions();
-    extern virtual function void report_phase(uvm_phase phase);
-
-*/
-//FINISH
+    extern virtual task run_phase(uvm_phase phase);
 
 endclass : ARPS_IP_bram_ref_monitor
 
@@ -122,151 +105,28 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
 	forever begin
 
 		@(posedge vif.clk)begin
-        //`uvm_info(get_type_name(), "Monitor is working BRAM CURRENT", UVM_MEDIUM)
+  
+			address_r = vif.addr_ref;
 
-     
-//`uvm_info(get_type_name(),$sformatf("Driver run phase started...\n%s",req.sprint()), UVM_HIGH)
-	 
-			//@(negedge vif.rst); // reset dropped
-			//`uvm_info(get_type_name(), "Reset dropped", UVM_MEDIUM)
-			
-				address_r = vif.addr_ref;
-				//data_r = vif.data_curr;
-				//@(posedge vif.clk) begin
-					//address_r2 = vif.addr_curr;
-					
-					if(address_r!=address_r2 && address_r!=32'h00000000) begin
-						data_r = vif.data_ref;
-						address_r2 = address_r;
-						//`uvm_info(get_type_name(), "Monitor is working BRAM CURRENT 2", UVM_MEDIUM)
-						//`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor: \n%h \n%h", address_r2, data_r ), UVM_MEDIUM)
-		
-					//end
-				
-				//@(posedge vif.rst); // reset is active high
+			if(address_r!=address_r2 && address_r!=32'h00000000) begin
+
+				data_r = vif.data_ref;
+				address_r2 = address_r;
 
 				tr_collected_ref.address_ref = address_r2;
 				tr_collected_ref.data_ref_frame = data_r;
 				
-		
-				
-		//`uvm_info(get_type_name(), "Monitor is working BRAM CURRENT 3", UVM_MEDIUM)
-		`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor BRAM REFERENT:\n%s", tr_collected_ref.sprint()), UVM_MEDIUM)
-		
-		end // if
-		
-		//`uvm_info(get_name(), $sformatf("read address: %d \t read_data: %d", address_r, data_r), UVM_HIGH)
-		
-			//end
+				item_collected_port.write(tr_collected_ref);
+
+				`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor BRAM REFERENT:\n%s", tr_collected_ref.sprint()), UVM_MEDIUM)
+	
+			end // if
+
 		end 
 
         
     end  // forever begin
 endtask : run_phase
-
-
-//START
-/*
-
-
-
-// trigger event when start
-task ARPS_IP_monitor::start_condition(ref event start_e);
-    forever begin
-        wait(vif.sda_wire !== 1'bx); // don't trigger from an X to 0 transition
-        @(negedge vif.sda_wire);
-        if(vif.scl_wire === 1'b1) begin
-            ->start_e;
-        end
-    end
-endtask : start_condition
-
-// trigger event when stop
-task ARPS_IP_monitor::stop_condition(ref event stop_e);
-    forever begin
-        wait(vif.sda_wire !== 1'bx); // don't trigger from an X to 1 transition
-        @(posedge vif.sda_wire);
-        if(vif.scl_wire === 1'b1) begin
-            ->stop_e;
-        end
-    end
-endtask : stop_condition    
-
-// monitor ARPS_IP interface and collect transactions
-task ARPS_IP_monitor::collect_transactions();
-    forever begin
-        wait(start_e.triggered);
-        tr_collected = ARPS_IP_bram_transaction::type_id::create("tr_collected", this);
-              
-        // address
-        tr_collected.addr = 0;
-        repeat(ADDR_WIDTH) begin
-            @(posedge vif.scl_wire);
-            #1;
-            tr_collected.addr = {tr_collected.addr[ADDR_WIDTH - 2 : 0], vif.sda_wire};
-        end 
-     
-        // read / write bit
-        @(posedge vif.scl_wire);
-        #1;
-        tr_collected.dir = ARPS_IP_direction_enum'(vif.sda_wire);
-    
-        // ack bit
-        @(posedge vif.scl_wire);
-        #1;
-        if(vif.sda_wire === 1'b0) tr_collected.addr_ack = ARPS_IP_ACK;
-        else tr_collected.addr_ack = ARPS_IP_NACK;
-        if(cfg.has_checks) begin // check for NACK
-	        asrt_addr_nack : assert (tr_collected.addr_ack == ARPS_IP_ACK)
-	        else
-	            `uvm_error(get_type_name(), $sformatf("Observed address NACK during %s", tr_collected.dir.name))    
-        end
-        // only if ack
-        if(tr_collected.addr_ack == ARPS_IP_ACK) begin
-            // data
-            repeat(DATA_WIDTH) begin
-                @(posedge vif.scl_wire);
-                #1;
-                tr_collected.data = {tr_collected.data[DATA_WIDTH - 2 : 0], vif.sda_wire};
-            end
-    
-            // ack bit
-            @(posedge vif.scl_wire);
-            #1;
-            if(vif.sda_wire === 1'b0) tr_collected.data_ack = ARPS_IP_ACK;
-            else tr_collected.data_ack = ARPS_IP_NACK;
-            if(cfg.has_checks) begin // check for NACK
-	            asrt_data_nack : assert (tr_collected.data_ack == ARPS_IP_ACK)
-	            else
-	                `uvm_error(get_type_name(), $sformatf("Observed data NACK during %s", tr_collected.dir.name))
-            end
-        end
-        
-        wait(stop_e.triggered);
-        
-        item_collected_port.write(tr_collected); // TLM
-        // collect coverage if enabled
-        if(cfg.has_coverage == 1) begin
-            cg_ARPS_IP_monitor.sample();
-        end
-        `uvm_info(get_type_name(), $sformatf("Tr collected :\n%s", tr_collected.sprint()), UVM_MEDIUM)
-        num_transactions++;           
-    end
-endtask : collect_transactions
-
-
-// UVM report_phase
-function void ARPS_IP_monitor::report_phase(uvm_phase phase);
-    // final report
-    `uvm_info( get_type_name(),
-               $sformatf("Report: ARPS_IP monitor collected: %0d transactions", num_transactions),
-               UVM_LOW);
-endfunction : report_phase
-
-*/
-//FINISH
-
-
 
 `endif
 

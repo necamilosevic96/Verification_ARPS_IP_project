@@ -14,12 +14,7 @@
 
 class ARPS_IP_interrupt_agent extends uvm_agent;
 
-   // components
-   //bram agent components
-
    ARPS_IP_interrupt_monitor interrupt_mon;
-
-
 
    `uvm_component_utils_begin (ARPS_IP_interrupt_agent)
    `uvm_component_utils_end

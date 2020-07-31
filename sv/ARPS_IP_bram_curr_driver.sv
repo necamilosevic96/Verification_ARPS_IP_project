@@ -73,31 +73,23 @@ task ARPS_IP_bram_curr_driver::run_phase(uvm_phase phase);
 //START
 		@(posedge vif.clk)begin
 		
-		if(interrupt_o == 1)begin
+			if(interrupt_o == 1)begin
 		         interrupt_o = 0;	       
 		         req.interrupt = 1;       
 		         continue;
-	    end
+			end
 		
-		address = vif.addr_curr;
-//        `uvm_info(get_type_name(), "Driver is working BRAM CURRENT", UVM_MEDIUM)		
-//			`uvm_info(get_type_name(),$sformatf("Driver run phase started...\n%s", req.sprint()), UVM_HIGH)
-//			`uvm_info(get_type_name(), "Driver is working insade loop BRAM CURRENT", UVM_MEDIUM)			
+			address = vif.addr_curr;
 
-                seq_item_port.get_next_item(req);
-				req.address_curr = address;
-				seq_item_port.item_done();
-				//#200
-				//`uvm_info(get_type_name(), "Driver is working BRAM CURRENT", UVM_MEDIUM)
+			seq_item_port.get_next_item(req);
+			req.address_curr = address;
+			seq_item_port.item_done();
 
-
-				seq_item_port.get_next_item(req);
-				vif.data_curr = req.data_curr_frame;
-               seq_item_port.item_done();
+			seq_item_port.get_next_item(req);
+			vif.data_curr = req.data_curr_frame;
+            seq_item_port.item_done();
 
 		end// posedge clk
-
-//FINISH
 
     end
       

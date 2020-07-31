@@ -17,8 +17,7 @@
  */
 class ARPS_IP_env extends uvm_env;
 
-//    ARPS_IP_slave_agent  slave;  // one slave
-    ARPS_IP_axil_agent axil_agent; // one master
+    ARPS_IP_axil_agent axil_agent; 
 	ARPS_IP_bram_curr_agent bram_curr_agent;
 	ARPS_IP_bram_ref_agent bram_ref_agent;
 	ARPS_IP_bram_mv_agent bram_mv_agent;
@@ -63,8 +62,6 @@ class ARPS_IP_env extends uvm_env;
         end
         // set the slave configuration
         if(cfg.has_slave) begin
-           // uvm_config_db#(ARPS_IP_slave_config)::set(this, "slave*", "ARPS_IP_slave_config", cfg.slave_cfg);
-           // uvm_config_db#(ARPS_IP_config)::set(this, "slave.mon*", "ARPS_IP_config", cfg);
 			uvm_config_db#(ARPS_IP_interrupt_config)::set(this, "interrupt_agent*", "ARPS_IP_interrupt_config", cfg.interrupt_cfg);
             uvm_config_db#(ARPS_IP_config)::set(this, "interrupt_agent.mon*", "ARPS_IP_config", cfg);
         end
