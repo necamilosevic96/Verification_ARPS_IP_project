@@ -40,5 +40,6 @@ add wave sim:/ARPS_IP_test_top/axil_vif/*
 add wave sim:/ARPS_IP_test_top/bram_curr_vif/*
 add wave sim:/ARPS_IP_test_top/bram_ref_vif/*
 add wave sim:/ARPS_IP_test_top/bram_mv_vif/*
+add wave sim:/ARPS_IP_test_top/interrupt_vif/*
     
 #run -all
