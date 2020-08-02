@@ -167,30 +167,43 @@ begin
                 if(i_reg=BLOCK_SIZE) then
                     state_next<=idle;
                 else
-				   i_next<=i_reg+1;
+                    i_next<=i_reg+1;
+                    addr_curr_next <=std_logic_vector((shift_left(to_unsigned(to_integer(i_next+unsigned(i_curr_in)),W_ADDRESS),log2c(ROW_SIZE)))+(j_next+unsigned(j_curr_in)));
+                    addr_ref_next <=std_logic_vector((shift_left(to_unsigned(to_integer(i_next+unsigned(i_ref_in)),W_ADDRESS),log2c(ROW_SIZE)))+(j_next+unsigned(j_ref_in)));
+
+            
+                    --(((addr_curr_next)>>2)<<2)
+                    tmp_curr_next <= std_logic_vector(shift_left(shift_right(unsigned(addr_curr_next),2),2));
+                    tmp_ref_next  <= std_logic_vector(shift_left(shift_right(unsigned(addr_ref_next) ,2),2));
+            
+                    --sel_curr<=(addr_curr_next-tmp_curr_next)
+                    sel_curr_next<=to_unsigned(to_integer((unsigned(addr_curr_next) - unsigned(tmp_curr_next))),2);
+                    sel_ref_next<= to_unsigned(to_integer((unsigned(addr_ref_next)  - unsigned(tmp_ref_next))) ,2);
+                    --tmp_ref
+                    bcurr_address_out<=tmp_curr_next;
+                    bref_address_out<=tmp_ref_next;
+                   
 	               state_next<=s1;
-	           end if;
+	            end if;
             else
                 j_next<=j_reg+1;
+                addr_curr_next <=std_logic_vector((shift_left(to_unsigned(to_integer(i_next+unsigned(i_curr_in)),W_ADDRESS),log2c(ROW_SIZE)))+(j_next+unsigned(j_curr_in)));
+                addr_ref_next <=std_logic_vector((shift_left(to_unsigned(to_integer(i_next+unsigned(i_ref_in)),W_ADDRESS),log2c(ROW_SIZE)))+(j_next+unsigned(j_ref_in)));
+
+                --(((addr_curr_next)>>2)<<2)
+                tmp_curr_next <= std_logic_vector(shift_left(shift_right(unsigned(addr_curr_next),2),2));
+                tmp_ref_next  <= std_logic_vector(shift_left(shift_right(unsigned(addr_ref_next) ,2),2));
+            
+                --sel_curr<=(addr_curr_next-tmp_curr_next)
+                el_curr_next<=to_unsigned(to_integer((unsigned(addr_curr_next) - unsigned(tmp_curr_next))),2);
+                sel_ref_next<= to_unsigned(to_integer((unsigned(addr_ref_next)  - unsigned(tmp_ref_next))) ,2);
+                --tmp_ref
+                bcurr_address_out<=tmp_curr_next;
+                bref_address_out<=tmp_ref_next;
+                
                 state_next<=s2;
             end if;
             
-            addr_curr_next <=std_logic_vector((shift_left(to_unsigned(to_integer(i_next+unsigned(i_curr_in)),W_ADDRESS),log2c(ROW_SIZE)))+(j_next+unsigned(j_curr_in)));
-            addr_ref_next <=std_logic_vector((shift_left(to_unsigned(to_integer(i_next+unsigned(i_ref_in)),W_ADDRESS),log2c(ROW_SIZE)))+(j_next+unsigned(j_ref_in)));
-            
-            --addr_curr_next<=std_logic_vector(to_unsigned(to_integer((ROW_SIZE*(i_reg+unsigned(i_curr_in)))+(j_reg+unsigned(j_curr_in))),W_ADDRESS));
-            --addr_ref_next<=std_logic_vector(to_unsigned(to_integer(((ROW_SIZE*(i_reg+unsigned(i_ref_in)))+(j_reg+unsigned(j_ref_in)))),W_ADDRESS));
-            
-            --(((addr_curr_next)>>2)<<2)
-            tmp_curr_next <= std_logic_vector(shift_left(shift_right(unsigned(addr_curr_next),2),2));
-            tmp_ref_next  <= std_logic_vector(shift_left(shift_right(unsigned(addr_ref_next) ,2),2));
-            
-            --sel_curr<=(addr_curr_next-tmp_curr_next)
-            sel_curr_next<=to_unsigned(to_integer((unsigned(addr_curr_next) - unsigned(tmp_curr_next))),2);
-            sel_ref_next<= to_unsigned(to_integer((unsigned(addr_ref_next)  - unsigned(tmp_ref_next))) ,2);
-            --tmp_ref
-            bcurr_address_out<=tmp_curr_next;
-            bref_address_out<=tmp_ref_next;
             
         end case;
     end process;
