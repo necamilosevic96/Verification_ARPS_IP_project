@@ -119,7 +119,7 @@ task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);
 				data_r = vif.data_curr;
 				//address_r2 = address_r;
 				
-				addr_cnt = addr_cnt+4;
+				addr_cnt = addr_cnt + 32'h00000004;
 
 				//$fdisplay(fd ,"0x%h\n" ,data_r);
 				

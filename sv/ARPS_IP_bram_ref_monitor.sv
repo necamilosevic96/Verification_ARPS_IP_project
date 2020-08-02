@@ -111,6 +111,8 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
 
 			//if(address_r!=address_r2 && address_r!=32'h00000000) begin
 			if(address_r==addr_cnt) begin
+			
+				addr_cnt = addr_cnt + 32'h00000004;
 
 				data_r = vif.data_ref;
 				//address_r2 = address_r;
