@@ -140,9 +140,9 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
             /*END [SS] DEBUG: Wrtie in txt file*/
             
 			//if(address_r!=address_r2 && address_r!=32'h00000000) begin
-			if(address_r==addr_cnt) begin
-			
-				addr_cnt = addr_cnt + 32'h00000004;
+//			if(address_r==addr_cnt) begin
+				@(vif.addr_ref)begin
+//				addr_cnt = addr_cnt + 32'h00000004;
 
 				data_r = vif.data_ref;
 				//address_r2 = address_r;
@@ -162,8 +162,9 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
             
             /*[SS] DEBUG: Wrtie in txt file*/
             if(flag_f_close==1'b1) begin
-                fd=$fopen("ref_monitor.txt","w");
-                flag_f_open=1'b0;
+                //fd=$fopen("ref_monitor.txt","w"); // NM close file umjesto fopen
+                $fclose(fd);  //-----------------------NM
+				flag_f_open=1'b0;
             end
             /*END [SS] DEBUG: Wrtie in txt file*/
 		end 

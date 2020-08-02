@@ -107,12 +107,14 @@ task ARPS_IP_bram_mv_monitor::run_phase(uvm_phase phase);
 
 			address_r = vif.addr_mv;
 					
-			if(address_r!=address_r2 && address_r!=32'h00000000) begin
-			
-				data_r = vif.data_mv;
-				address_r2 = address_r;
+//			if(address_r!=address_r2 && address_r!=32'h00000000) begin
 
-				tr_collected_mv.address_mv = address_r2;
+			@(vif.addr_mv)begin // NM
+	
+				data_r = vif.data_mv;
+//				address_r2 = address_r;
+
+				tr_collected_mv.address_mv = address_r;
 				tr_collected_mv.data_mv_frame = data_r;
 				
 				item_collected_port.write(tr_collected_mv);
