@@ -25,6 +25,15 @@ class ARPS_IP_bram_ref_monitor extends uvm_monitor;
 	logic [31:0]  data_r;
 	bit   [31:0]  addr_cnt = 32'h00000000;
     
+    /*DEBUG*/
+    bit flag_f_open = 1'b1;
+    bit flag_f_close = 1'b0;
+    bit flag_f_write =1'b0;
+    int cnt=0;
+    int fd; //file descriptor
+    
+    /*END DEBUG*/
+    
     // configuration
     ARPS_IP_config cfg;
     
@@ -106,9 +115,30 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
 	forever begin
 
 		@(posedge vif.clk)begin
-  
+            /*[SS] DEBUG: Wrtie in txt file*/
+            if(flag_f_open==1'b1) begin
+                fd=$fopen("ref_monitor.txt","w");
+                if(fd) $display("File was opened");
+                else $display("ERROR: File was not opened");
+                flag_f_open=1'b0;
+                flag_f_write=1'b1;
+            end
+            /*END [SS] DEBUG: Wrtie in txt file*/
+            
 			address_r = vif.addr_ref;
-
+            
+            /*[SS] DEBUG: Wrtie in txt file*/
+            if(flag_f_write==1'b1) begin
+                data_r = vif.data_ref;
+                $fdisplay(fd,"addr[%d]=%x data[%d]=%x",cnt,address_r,cnt,data_r);
+                cnt++;
+                if(address_r==32'h0000FFFF) begin
+                    flag_f_write=1'b0;
+                    flag_f_close=1'b1;
+                end
+            end
+            /*END [SS] DEBUG: Wrtie in txt file*/
+            
 			//if(address_r!=address_r2 && address_r!=32'h00000000) begin
 			if(address_r==addr_cnt) begin
 			
@@ -129,7 +159,13 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
 //			if(addr_cnt>32'h0000FFFF) begin
 //                addr_cnt = 32'h00000000;
 //            end
-
+            
+            /*[SS] DEBUG: Wrtie in txt file*/
+            if(flag_f_close==1'b1) begin
+                fd=$fopen("ref_monitor.txt","w");
+                flag_f_open=1'b0;
+            end
+            /*END [SS] DEBUG: Wrtie in txt file*/
 		end 
 
         
