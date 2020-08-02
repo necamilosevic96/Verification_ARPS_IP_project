@@ -140,18 +140,18 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
 //		if(tr_clone.address_ref <= 32'h0000FFFF) begin
             if(ref_queue.size() < 65536) begin
              done_write_frames = 1'b0;
-             ref_queue.push_back((tr_clone.data_ref_frame >> 24) & 32'h000000FF);
+             ref_queue.push_back((tr_clone.data_ref_frame >> 24) & 32'h000000FF); 
              ref_queue.push_back((tr_clone.data_ref_frame >> 16) & 32'h000000FF);
              ref_queue.push_back((tr_clone.data_ref_frame >>  8) & 32'h000000FF);
              ref_queue.push_back((tr_clone.data_ref_frame >>  0) & 32'h000000FF);
-			 $display("currp[%d]=%x", cnt_r, ref_queue[cnt_r]);
-			 cnt_c++;
-			 $display("currp[%d]=%x", cnt_r, ref_queue[cnt_r]);
-			 cnt_c++;
-			 $display("currp[%d]=%x", cnt_r, ref_queue[cnt_r]);
-			 cnt_c++;
-			 $display("currp[%d]=%x", cnt_r, ref_queue[cnt_r]);
-			 cnt_c++;
+			 $display("refp[%d]=%x", cnt_r, ref_queue[cnt_r]);/*[SS] BUG: changed refp name and cnt_r name*/
+			 cnt_r++;
+			 $display("refp[%d]=%x", cnt_r, ref_queue[cnt_r]);
+			 cnt_r++;
+			 $display("refp[%d]=%x", cnt_r, ref_queue[cnt_r]);
+			 cnt_r++;
+			 $display("refp[%d]=%x", cnt_r, ref_queue[cnt_r]);
+			 cnt_r++;
 			end
             
 //		end
