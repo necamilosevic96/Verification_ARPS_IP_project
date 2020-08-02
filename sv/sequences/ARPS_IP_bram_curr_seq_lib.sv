@@ -14,5 +14,7 @@
 
 `include "sequences/ARPS_IP_bram_curr_base_seq.sv"
 `include "sequences/ARPS_IP_bram_curr_simple_seq.sv"
+`include "sequences/ARPS_IP_bram_curr_base_seq_2.sv"
+`include "sequences/ARPS_IP_bram_curr_simple_seq_2.sv"
 
 `endif

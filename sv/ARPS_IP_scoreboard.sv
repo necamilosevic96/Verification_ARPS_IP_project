@@ -9,13 +9,6 @@
 
  *******************************************************************************/
 
-/*******************************************************************************
- +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
- |F|u|n|c|t|i|o|n|a|l| |V|e|r|i|f|i|c|a|t|i|o|n| |o|f| |H|a|r|d|w|a|r|e|
- +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
- FILE            ARPS_IP_scoreboard.sv
- DESCRIPTION     
- *******************************************************************************/
 
 `ifndef ARPS_IP_SCOREBOARD_SV
  `define ARPS_IP_SCOREBOARD_SV
@@ -40,10 +33,17 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
    bit checks_enable = 1;
    bit coverage_enable = 1;
    
-   logic [31:0] curr_queue[$];
-   logic [31:0] ref_queue[$];
-//   logic [31:0] curr_queue_1[$];
-
+   queue_of_int curr_queue;
+   queue_of_int ref_queue;
+   queue_of_int mv_ref;
+   
+   int cnt_c = 0;
+   int cnt_r = 0;
+   
+   bit done_write_frames = 1'b0;
+   bit done_mv_flag = 1'b0;
+   
+   int num_of_mv = 0;
 
    int           num_of_assertions = 0;   
    // This TLM port is used to connect the scoreboard to the monitor
@@ -54,7 +54,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
    uvm_analysis_imp_interrupt#(ARPS_IP_interrupt_transaction, ARPS_IP_scoreboard) port_interrupt;
 
    int num_of_tr;
-//   logic [31:0] reference_model_image [784];   
+
    `uvm_component_utils_begin(ARPS_IP_scoreboard)
       `uvm_field_int(checks_enable, UVM_DEFAULT)
       `uvm_field_int(coverage_enable, UVM_DEFAULT)
@@ -80,6 +80,10 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
       ARPS_IP_axil_transaction tr_clone;
       $cast(tr_clone, tr.clone()); 
       if(checks_enable) begin
+	    if(tr_clone.addr==0 && tr_clone.wdata==1) begin
+            //start ref model
+//            mv_ref = motionARPS(curr_queue,ref_queue);// MV by ref model 
+        end
          // do actual checking here
          // ...
          // ++num_of_tr;
@@ -96,7 +100,22 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
 		//`uvm_info(get_type_name(),$sformatf("SCOREBOARD QUEUE 1"),UVM_HIGH)
 		
 		
-		curr_queue.push_back(tr_clone.data_curr_frame);
+//		if(tr_clone.address_curr <= 32'h0000FFFF) begin
+            if(curr_queue.size() < 65536) begin
+             curr_queue.push_back((tr_clone.data_curr_frame >> 24) & 32'h000000FF);
+             curr_queue.push_back((tr_clone.data_curr_frame >> 16) & 32'h000000FF);
+             curr_queue.push_back((tr_clone.data_curr_frame >>  8) & 32'h000000FF);
+             curr_queue.push_back((tr_clone.data_curr_frame >>  0) & 32'h000000FF);
+			 $display("currp[%d]=%x", cnt_c, curr_queue[cnt_c]);
+			 cnt_c++;
+			 $display("currp[%d]=%x", cnt_c, curr_queue[cnt_c]);
+			 cnt_c++;
+			 $display("currp[%d]=%x", cnt_c, curr_queue[cnt_c]);
+			 cnt_c++;
+			 $display("currp[%d]=%x", cnt_c, curr_queue[cnt_c]);
+			 cnt_c++;
+            end
+//		end
 		
 		
 		//curr_queue_1.push_back(tr.data_curr_frame);
@@ -118,7 +137,29 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
       $cast(tr_clone, tr.clone()); 
       if(checks_enable) begin
 	  
-		ref_queue.push_back(tr_clone.data_ref_frame);
+//		if(tr_clone.address_ref <= 32'h0000FFFF) begin
+            if(ref_queue.size() < 65536) begin
+             done_write_frames = 1'b0;
+             ref_queue.push_back((tr_clone.data_ref_frame >> 24) & 32'h000000FF);
+             ref_queue.push_back((tr_clone.data_ref_frame >> 16) & 32'h000000FF);
+             ref_queue.push_back((tr_clone.data_ref_frame >>  8) & 32'h000000FF);
+             ref_queue.push_back((tr_clone.data_ref_frame >>  0) & 32'h000000FF);
+			 $display("currp[%d]=%x", cnt_r, ref_queue[cnt_r]);
+			 cnt_c++;
+			 $display("currp[%d]=%x", cnt_r, ref_queue[cnt_r]);
+			 cnt_c++;
+			 $display("currp[%d]=%x", cnt_r, ref_queue[cnt_r]);
+			 cnt_c++;
+			 $display("currp[%d]=%x", cnt_r, ref_queue[cnt_r]);
+			 cnt_c++;
+			end
+            
+//		end
+		
+		if(ref_queue.size() == 65536 && curr_queue.size() == 65536) begin
+			mv_ref = motionARPS(curr_queue,ref_queue);// MV by ref model
+		end
+		
          // do actual checking here
          // ...
          // ++num_of_tr;
@@ -129,8 +170,13 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
    function write_bram_mv (ARPS_IP_bram_mv_transaction tr);
       ARPS_IP_bram_mv_transaction tr_clone;
       $cast(tr_clone, tr.clone()); 
-      arps_ip();
+     // arps_ip();
       if(checks_enable) begin
+	    assert(tr_clone.data_mv_frame == mv_ref[num_of_mv++])
+        else begin
+            `uvm_error(get_type_name(), $sformatf("pixel mismatch reference modele[%d]: %h \t deskew[%d]: %h",
+                  num_of_mv, tr_clone.data_mv_frame, num_of_mv,mv_ref[num_of_mv] ));
+        end
          // do actual checking here
          // ...
          // ++num_of_tr;
@@ -149,7 +195,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
          // ++num_of_tr;
       end
    endfunction : write_interrupt
-   
+/*   
  function void arps_ip();
 
     
@@ -199,7 +245,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
     $fclose(f_curr);  
     $fclose(f_ref);
 */    
-    $display ("Starting");
+/*    $display ("Starting");
     
     mv=motionARPS(curr_img,ref_img);
   	for(int i=0;i<512;i++) begin
@@ -208,7 +254,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
     
 //end // initial
 //endmodule
-endfunction
+endfunction */
 
  function automatic int costSAD (const ref int curr_img[$], 
                         const ref int ref_img[$],

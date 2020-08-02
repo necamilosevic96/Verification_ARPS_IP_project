@@ -3,33 +3,32 @@
     |F|u|n|c|t|i|o|n|a|l| |V|e|r|i|f|i|c|a|t|i|o|n| |o|f| |H|a|r|d|w|a|r|e|
     +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
 
-    FILE            ARPS_IP_master_base_seq.sv
+    FILE            ARPS_IP_master_base_seq_2.sv
 
     DESCRIPTION     base sequence to be extended by other sequences
 
  ****************************************************************************/
 
-`ifndef ARPS_IP_BRAM_REF_BASE_SEQ_SV
-`define ARPS_IP_BRAM_REF_BASE_SEQ_SV
+`ifndef ARPS_IP_BRAM_REF_BASE_SEQ_2_SV
+`define ARPS_IP_BRAM_REF_BASE_SEQ_2_SV
 
 /*
- * Class: ARPS_IP_bram_ref_base_seq
+ * Class: ARPS_IP_bram_ref_base_seq_2
  */
-class ARPS_IP_bram_ref_base_seq extends uvm_sequence #(ARPS_IP_bram_ref_transaction);
+class ARPS_IP_bram_ref_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_ref_transaction);
 
     // UVM factory registration
-    `uvm_object_utils(ARPS_IP_bram_ref_base_seq)
+    `uvm_object_utils(ARPS_IP_bram_ref_base_seq_2)
 	
 	logic [31:0] pixel_queue[$];
     string   img_hex_1;
 
 	int 		fd_1;
-	//string 	file_path = "C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample51.txt";
-	string   file_path = "..//images_for_arps/sample51.txt";
+	string 	file_path = "C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample51.txt";
 	int 		i = 0;  
 
     // new - constructor
-    function new(string name = "ARPS_IP_bram_ref_base_seq");
+    function new(string name = "ARPS_IP_bram_ref_base_seq_2");
         super.new(name);
     endfunction: new
 
@@ -77,7 +76,7 @@ class ARPS_IP_bram_ref_base_seq extends uvm_sequence #(ARPS_IP_bram_ref_transact
 	
    endfunction
 
-endclass: ARPS_IP_bram_ref_base_seq
+endclass: ARPS_IP_bram_ref_base_seq_2
 
 `endif
 

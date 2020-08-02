@@ -21,8 +21,9 @@ class ARPS_IP_bram_ref_monitor extends uvm_monitor;
     virtual bram_ref_if vif;
 	
 	logic [31:0]  address_r;
-	logic [31:0]  address_r2 = 32'h00000000;
+	//logic [31:0]  address_r2 = 32'h00000000;
 	logic [31:0]  data_r;
+	bit   [31:0]  addr_cnt = 32'h00000000;
     
     // configuration
     ARPS_IP_config cfg;
@@ -108,12 +109,13 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
   
 			address_r = vif.addr_ref;
 
-			if(address_r!=address_r2 && address_r!=32'h00000000) begin
+			//if(address_r!=address_r2 && address_r!=32'h00000000) begin
+			if(address_r==addr_cnt) begin
 
 				data_r = vif.data_ref;
-				address_r2 = address_r;
+				//address_r2 = address_r;
 
-				tr_collected_ref.address_ref = address_r2;
+				tr_collected_ref.address_ref = address_r;
 				tr_collected_ref.data_ref_frame = data_r;
 				
 				item_collected_port.write(tr_collected_ref);
@@ -121,6 +123,10 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
 				`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor BRAM REFERENT:\n%s", tr_collected_ref.sprint()), UVM_MEDIUM)
 	
 			end // if
+			
+//			if(addr_cnt>32'h0000FFFF) begin
+//                addr_cnt = 32'h00000000;
+//            end
 
 		end 
 

@@ -3,39 +3,38 @@
     |F|u|n|c|t|i|o|n|a|l| |V|e|r|i|f|i|c|a|t|i|o|n| |o|f| |H|a|r|d|w|a|r|e|
     +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
 
-    FILE            ARPS_IP_master_base_seq.sv
+    FILE            ARPS_IP_master_base_seq_2.sv
 
     DESCRIPTION     base sequence to be extended by other sequences
 
  ****************************************************************************/
 
-`ifndef ARPS_IP_BRAM_CURR_BASE_SEQ_SV
-`define ARPS_IP_BRAM_CURR_BASE_SEQ_SV
+`ifndef ARPS_IP_BRAM_CURR_BASE_SEQ_2_SV
+`define ARPS_IP_BRAM_CURR_BASE_SEQ_2_SV
 
 /*
- * Class: ARPS_IP_bram_curr_base_seq
+ * Class: ARPS_IP_bram_curr_base_seq_2
  */
-class ARPS_IP_bram_curr_base_seq extends uvm_sequence #(ARPS_IP_bram_curr_transaction);
+class ARPS_IP_bram_curr_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_curr_transaction);
 
     // UVM factory registration
     `uvm_object_utils(ARPS_IP_bram_curr_base_seq)
 	`uvm_declare_p_sequencer(ARPS_IP_bram_curr_sequencer)
    
-   logic [31:0] image_queue[$];
-   string   img_hex;
+ //  logic [31:0] image_queue[$];
+/*   string   img_hex;
 
    int 		fd;
-   //string 	file_path = "C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample50.txt";
-   string   file_path = "..//images_for_arps/sample50.txt";
+   string 	file_path = "C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample50.txt";
    int 		i = 0;  
-
+*/
 
     // new - constructor
-    function new(string name = "ARPS_IP_bram_curr_base_seq");
+    function new(string name = "ARPS_IP_bram_curr_base_seq_2");
         super.new(name);
     endfunction: new
 
-
+/*
    function void read_images();
 		
 			`uvm_info(get_type_name(), "Opening file BRAM CURRENT", UVM_MEDIUM)
@@ -80,8 +79,9 @@ class ARPS_IP_bram_curr_base_seq extends uvm_sequence #(ARPS_IP_bram_curr_transa
 		`uvm_info(get_type_name(), "After file is closed BRAM CURRENT", UVM_MEDIUM)
 	
    endfunction
+*/
 
-endclass: ARPS_IP_bram_curr_base_seq
+endclass: ARPS_IP_bram_curr_base_seq_2
 
 `endif
 

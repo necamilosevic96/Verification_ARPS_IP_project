@@ -14,5 +14,6 @@
 
 `include "ARPS_IP_test_base.sv"
 `include "ARPS_IP_test_simple.sv"
+`include "ARPS_IP_test_simple_2.sv"
     
 `endif

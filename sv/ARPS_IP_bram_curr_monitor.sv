@@ -22,8 +22,10 @@ class ARPS_IP_bram_curr_monitor extends uvm_monitor;
 	
 	
 	logic [31:0]  address_r;
-	logic [31:0]  address_r2 = 32'h00000000;
+	//logic [31:0]  address_r2 = 32'h00000000;
 	logic [31:0]  data_r;
+	//int fd;
+	bit   [31:0]  addr_cnt = 32'h00000000;
     
     // configuration
     ARPS_IP_config cfg;
@@ -103,6 +105,8 @@ task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);
     
 	tr_collected = ARPS_IP_bram_curr_transaction::type_id::create("tr_collected", this);
 	
+	//fd = ($fopen("C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/sv/proba.txt"));
+	
 	forever begin
 
 		@(posedge vif.clk)begin
@@ -110,11 +114,19 @@ task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);
 			address_r = vif.addr_curr;
 
 					
-			if(address_r!=address_r2 && address_r!=32'h00000000) begin
+			//if(address_r!=address_r2 && address_r!=32'h00000000) begin
+			if(address_r==addr_cnt) begin	
 				data_r = vif.data_curr;
-				address_r2 = address_r;
+				//address_r2 = address_r;
+				
+				addr_cnt = addr_cnt+4;
 
-				tr_collected.address_curr = address_r2;
+				//$fdisplay(fd ,"0x%h\n" ,data_r);
+				
+				//if(address_r2==32'h0000ffff)begin
+					//$fclose(fd);
+				//end
+				tr_collected.address_curr = address_r;
 				tr_collected.data_curr_frame = data_r;
 		
 				item_collected_port.write(tr_collected);
@@ -122,6 +134,10 @@ task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);
 				`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor BRAM CURRENT:\n%s", tr_collected.sprint()), UVM_MEDIUM)
 		
 			end //if
+			
+//			if (addr_cnt>32'h0000FFFF) begin
+//                addr_cnt = 32'h00000000;
+//            end
 		
 		end 
 

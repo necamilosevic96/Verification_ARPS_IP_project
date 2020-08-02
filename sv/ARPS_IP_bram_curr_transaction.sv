@@ -21,6 +21,7 @@ class ARPS_IP_bram_curr_transaction extends uvm_sequence_item;
 	rand bit [31:0] address_curr;
 	rand bit [31:0] data_curr_frame;
 	bit             interrupt = 0;
+	rand bit [31:0] img_32;
 
 
     // UVM factory registration
@@ -28,6 +29,7 @@ class ARPS_IP_bram_curr_transaction extends uvm_sequence_item;
 		  `uvm_field_int  (interrupt,      UVM_DEFAULT)
 		  `uvm_field_int  (address_curr,      UVM_DEFAULT)
 		  `uvm_field_int  (data_curr_frame,      UVM_DEFAULT)
+		  `uvm_field_int  (img_32,      UVM_DEFAULT)
     `uvm_object_utils_end
  
     // new - constructor
