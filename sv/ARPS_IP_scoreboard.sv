@@ -24,18 +24,21 @@
 `define COL 256
 `define P_SIZE 7
 `define MAX2(x, y) (((x) > (y)) ? (x) : (y))
-typedef int queue_of_int[$];
-
+typedef int queue_of_int[2][$]; //0 position is data, 1 position is flag(write)
+typedef int queue_of_int_m[$];
 class ARPS_IP_scoreboard extends uvm_scoreboard;
    
 
    // control fileds
    bit checks_enable = 1;
    bit coverage_enable = 1;
+   bit init_flag = 1'b1;
+   bit finish_flag_curr = 1'b0;
+   bit finish_flag_ref = 1'b0;
    
-   queue_of_int curr_queue;
-   queue_of_int ref_queue;
-   queue_of_int mv_ref;
+   queue_of_int curr_queue;//2d
+   queue_of_int ref_queue;//2d
+   queue_of_int_m mv_ref;//one dimension
    
    int cnt_c = 0;
    int cnt_r = 0;
@@ -74,7 +77,8 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
       `uvm_info(get_type_name(), $sformatf("Number of mismatch assertions for DUT is: %0d ", num_of_assertions), UVM_NONE);
       
    endfunction : report_phase
-
+    
+    
  
    function write_axil (ARPS_IP_axil_transaction tr);
       ARPS_IP_axil_transaction tr_clone;
@@ -92,29 +96,50 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
    
 
    function write_bram_curr (ARPS_IP_bram_curr_transaction tr);  
-      ARPS_IP_bram_curr_transaction tr_clone;
-      $cast(tr_clone, tr.clone()); 
-	  
-      if(checks_enable) begin
+        ARPS_IP_bram_curr_transaction tr_clone;
+        $cast(tr_clone, tr.clone());
+        
+        if(init_flag == 1'b1) begin
+            init_flag = 1'b0;
+            init_queues(65536, 512, 1);
+        end
+        
+        if(checks_enable) begin
 	  
 		//`uvm_info(get_type_name(),$sformatf("SCOREBOARD QUEUE 1"),UVM_HIGH)
-		
-		
-//		if(tr_clone.address_curr <= 32'h0000FFFF) begin
-            if(curr_queue.size() < 65536) begin
-             curr_queue.push_back((tr_clone.data_curr_frame >> 24) & 32'h000000FF);
-             curr_queue.push_back((tr_clone.data_curr_frame >> 16) & 32'h000000FF);
-             curr_queue.push_back((tr_clone.data_curr_frame >>  8) & 32'h000000FF);
-             curr_queue.push_back((tr_clone.data_curr_frame >>  0) & 32'h000000FF);
-			 $display("currp[%d]=%x", cnt_c, curr_queue[cnt_c]);
-			 cnt_c++;
-			 $display("currp[%d]=%x", cnt_c, curr_queue[cnt_c]);
-			 cnt_c++;
-			 $display("currp[%d]=%x", cnt_c, curr_queue[cnt_c]);
-			 cnt_c++;
-			 $display("currp[%d]=%x", cnt_c, curr_queue[cnt_c]);
-			 cnt_c++;
+		//		if(tr_clone.address_curr <= 32'h0000FFFF) begin
+            
+            if(curr_queue[1][tr_clone.address_curr] == 0) begin //chech if flag is 0
+                $display("curr_address=%x  curr_data=%x",tr_clone.address_curr,tr_clone.data_curr_frame);
+                
+                //DATA
+                curr_queue[0].insert(tr_clone.address_curr + 0, ((tr_clone.data_curr_frame >> 24) & 32'h000000FF));
+                curr_queue[0].insert(tr_clone.address_curr + 1, ((tr_clone.data_curr_frame >> 16) & 32'h000000FF));
+                curr_queue[0].insert(tr_clone.address_curr + 2, ((tr_clone.data_curr_frame >>  8) & 32'h000000FF));
+                curr_queue[0].insert(tr_clone.address_curr + 3, ((tr_clone.data_curr_frame >>  0) & 32'h000000FF));
+                
+                //FLAGS
+                curr_queue[1].insert(tr_clone.address_curr + 0, 1);
+                curr_queue[1].insert(tr_clone.address_curr + 1, 1);
+                curr_queue[1].insert(tr_clone.address_curr + 2, 1);
+                curr_queue[1].insert(tr_clone.address_curr + 3, 1);
+                
+                $display("currp[%d]=%x", tr_clone.address_curr + 0, curr_queue[0][tr_clone.address_curr + 0]);
+                $display("currp[%d]=%x", tr_clone.address_curr + 1, curr_queue[0][tr_clone.address_curr + 1]);
+                $display("currp[%d]=%x", tr_clone.address_curr + 2, curr_queue[0][tr_clone.address_curr + 2]);
+                $display("currp[%d]=%x", tr_clone.address_curr + 3, curr_queue[0][tr_clone.address_curr + 3]);
+                $display("*******************************");
             end
+            if(tr_clone.address_curr == 32'h0000FFFE) begin
+                finish_flag_curr = 1'b1;
+                for(int i=0;i<655356;i++) begin
+                    if(curr_queue[1][i] == 0) begin
+                        finish_flag_curr = 1'b0;
+                        break;
+                    end
+                end
+            end
+            
 //		end
 		
 		
@@ -133,32 +158,49 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
    endfunction : write_bram_curr 
    
    function write_bram_ref (ARPS_IP_bram_ref_transaction tr);
-      ARPS_IP_bram_ref_transaction tr_clone;
-      $cast(tr_clone, tr.clone()); 
-      if(checks_enable) begin
-	  
-//		if(tr_clone.address_ref <= 32'h0000FFFF) begin
-            if(ref_queue.size() < 65536) begin
-             done_write_frames = 1'b0;
-             ref_queue.push_back((tr_clone.data_ref_frame >> 24) & 32'h000000FF); 
-             ref_queue.push_back((tr_clone.data_ref_frame >> 16) & 32'h000000FF);
-             ref_queue.push_back((tr_clone.data_ref_frame >>  8) & 32'h000000FF);
-             ref_queue.push_back((tr_clone.data_ref_frame >>  0) & 32'h000000FF);
-			 $display("refp[%d]=%x", cnt_r, ref_queue[cnt_r]);/*[SS] BUG: changed refp name and cnt_r name*/
-			 cnt_r++;
-			 $display("refp[%d]=%x", cnt_r, ref_queue[cnt_r]);
-			 cnt_r++;
-			 $display("refp[%d]=%x", cnt_r, ref_queue[cnt_r]);
-			 cnt_r++;
-			 $display("refp[%d]=%x", cnt_r, ref_queue[cnt_r]);
-			 cnt_r++;
-			end
+        ARPS_IP_bram_ref_transaction tr_clone;
+        $cast(tr_clone, tr.clone()); 
+        if(init_flag == 1'b1) begin
+            init_flag = 1'b0;
+            init_queues(65536, 512, 1);
             
-//		end
+        end
+        
+        if(checks_enable) begin
+	  
+            if(ref_queue[1][tr_clone.address_ref] == 0) begin //chech if flag is 0
+                $display("ref_address=%x  ref_data=%x",tr_clone.address_ref,tr_clone.data_ref_frame);
+                //DATA
+                ref_queue[0].insert(tr_clone.address_ref + 0,((tr_clone.data_ref_frame >> 24) & 32'h000000FF));
+                ref_queue[0].insert(tr_clone.address_ref + 1,((tr_clone.data_ref_frame >> 16) & 32'h000000FF));
+                ref_queue[0].insert(tr_clone.address_ref + 2,((tr_clone.data_ref_frame >>  8) & 32'h000000FF));
+                ref_queue[0].insert(tr_clone.address_ref + 3,((tr_clone.data_ref_frame >>  0) & 32'h000000FF));
+                
+                //FLAGS
+                ref_queue[1].insert(tr_clone.address_ref + 0, 1);
+                ref_queue[1].insert(tr_clone.address_ref + 1, 1);
+                ref_queue[1].insert(tr_clone.address_ref + 2, 1);
+                ref_queue[1].insert(tr_clone.address_ref + 3, 1);
+                
+                $display("refp[%d]=%x", tr_clone.address_ref + 0, ref_queue[0][tr_clone.address_ref + 0]);
+                $display("refp[%d]=%x", tr_clone.address_ref + 1, ref_queue[0][tr_clone.address_ref + 1]);
+                $display("refp[%d]=%x", tr_clone.address_ref + 2, ref_queue[0][tr_clone.address_ref + 2]);
+                $display("refp[%d]=%x", tr_clone.address_ref + 3, ref_queue[0][tr_clone.address_ref + 3]);
+                $display("*******************************");
+            end
+            if(tr_clone.address_ref == 32'h0000FFFE) begin
+                finish_flag_ref = 1'b1;
+                for(int i=0;i<655356;i++) begin
+                    if(ref_queue[1][i] == 0) begin
+                        finish_flag_ref = 1'b0;
+                        break;
+                    end
+                end
+            end
 		
-		if(ref_queue.size() == 65536 && curr_queue.size() == 65536) begin
-			mv_ref = motionARPS(curr_queue,ref_queue);// MV by ref model
-		end
+            if(finish_flag_curr == 1'b1 && finish_flag_ref == 1'b1) begin
+                mv_ref = motionARPS(curr_queue,ref_queue);
+            end
 		
          // do actual checking here
          // ...
@@ -195,69 +237,23 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
          // ++num_of_tr;
       end
    endfunction : write_interrupt
-/*   
- function void arps_ip();
 
-    
-    int curr_img [$];
-    int ref_img [$];
-    //int mv_q [$];//queue for motion vectors
-  	int f_curr;//file descriptors
-    int f_ref;
-    int curr_data;
-    int ref_data;
-    queue_of_int mv;
-	
-	for(int i=0; i< curr_queue.size(); i++)begin
-		curr_img[i] = curr_queue[i];
-		ref_img[i] = ref_queue[i];
-	end
-	
-	
-/*    
-    f_curr = $fopen ("C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample51.txt", "r");
-    if (f_curr) $display("File was opened successfully : %0d", f_curr);
-    else        $display("File was NOT opened successfully : %0d", f_curr);
-    
-    f_ref = $fopen ("C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample50.txt", "r");
-    if (f_ref)  $display("File was opened successfully : %0d", f_ref);
-    else        $display("File was NOT opened successfully : %0d", f_ref);
-    //init queue-s
-    for(int i=0;i<65536;i++) begin
-        curr_img.push_back(0);
-        ref_img.push_back(0);
-    end 
-    
-    for(int i=0;i<16384;i++) begin
-        $fscanf (f_curr, "0x%x\n",curr_data);
-        curr_img[4*i]=(curr_data>>24) & 32'h000000ff;
-        curr_img[4*i+1]=(curr_data>>16) & 32'h000000ff;
-        curr_img[4*i+2]=(curr_data>>8) & 32'h000000ff;
-        curr_img[4*i+3]=(curr_data>>0) & 32'h000000ff;
-      
-        $fscanf (f_ref, "0x%x\n",ref_data);
-        ref_img[4*i]=(ref_data>>24) & 32'h000000ff;
-        ref_img[4*i+1]=(ref_data>>16) & 32'h000000ff;
-        ref_img[4*i+2]=(ref_data>>8) & 32'h000000ff;
-        ref_img[4*i+3]=(ref_data>>0) & 32'h000000ff;
+//*****************INIT_QUEUES**************************************
+function void init_queues(int size_p, int size_mv, int en_mv);
+    for(int i=0;i<size_p;i++) begin
+        curr_queue[0].insert(i,0);
+        ref_queue[0].insert(i,0);
+        
+        curr_queue[1].insert(i,0);
+        ref_queue[1].insert(i,0);
+        if(i<size_mv && en_mv==1) begin
+            mv_ref.insert(i,0); //1d
+        end
     end
-    
-    $fclose(f_curr);  
-    $fclose(f_ref);
-*/    
-/*    $display ("Starting");
-    
-    mv=motionARPS(curr_img,ref_img);
-  	for(int i=0;i<512;i++) begin
-        $display("mv[%d]=%d",i,mv[i]);
-    end
-    
-//end // initial
-//endmodule
-endfunction */
-
- function automatic int costSAD (const ref int curr_img[$], 
-                        const ref int ref_img[$],
+endfunction
+ 
+ function automatic int costSAD (const ref int curr_img[2][$], 
+                        const ref int ref_img[2][$],
                             input int i_curr_in, 
                             input int j_curr_in,
                             input int i_ref_in, 
@@ -269,7 +265,7 @@ endfunction */
       for(int j=0;j<`MB_SIZE;j++) begin
         curr_addr=256*(i+i_curr_in)+(j+j_curr_in);
         ref_addr=256*(i+i_ref_in)+(j+j_ref_in);
-        err = err + abs(curr_img[curr_addr] - ref_img[ref_addr]);
+        err = err + abs(curr_img[0][curr_addr] - ref_img[0][ref_addr]);
       end
     end
     return err;
@@ -287,9 +283,9 @@ endfunction */
     return x_abs;
   endfunction
 
-  function automatic queue_of_int motionARPS (const ref int curr_img[$], 
-                                    const ref int ref_img[$]);  
-    queue_of_int mv_q;
+  function automatic queue_of_int_m motionARPS (const ref int curr_img[2][$], 
+                                    const ref int ref_img[2][$]);  
+    queue_of_int_m mv_q;
     int mbCount=0;
     int point;
     int x,y;  

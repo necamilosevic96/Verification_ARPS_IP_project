@@ -21,7 +21,6 @@ class ARPS_IP_bram_mv_monitor extends uvm_monitor;
     virtual bram_mv_if vif;
 	
 	logic [31:0]  address_r;
-	logic [31:0]  address_r2 = 32'h00000000;
 	logic [31:0]  data_r;
     
     // configuration
@@ -103,28 +102,20 @@ task ARPS_IP_bram_mv_monitor::run_phase(uvm_phase phase);
 
 	forever begin
 
-		@(posedge vif.clk)begin
+		@(posedge vif.clk)begin	
+            @(vif.addr_mv) begin
+                address_r = vif.addr_mv;
+                data_r = vif.data_mv;
 
-			address_r = vif.addr_mv;
-					
-//			if(address_r!=address_r2 && address_r!=32'h00000000) begin
-
-			@(vif.addr_mv)begin // NM
-	
-				data_r = vif.data_mv;
-//				address_r2 = address_r;
-
-				tr_collected_mv.address_mv = address_r;
-				tr_collected_mv.data_mv_frame = data_r;
+                tr_collected_mv.address_mv = address_r;
+                tr_collected_mv.data_mv_frame = data_r;
 				
-				item_collected_port.write(tr_collected_mv);
+                item_collected_port.write(tr_collected_mv);
 				
-				`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor MOTION VECTOR:\n%s", tr_collected_mv.sprint()), UVM_MEDIUM)
-		
-			end //if
-
-		end // clk
-        
+                `uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor MOTION VECTOR:\n%s", tr_collected_mv.sprint()), UVM_MEDIUM)
+            end 
+		end 
+		        
     end
 	
 endtask : run_phase
