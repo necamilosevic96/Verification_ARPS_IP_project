@@ -30,7 +30,12 @@ class ARPS_IP_bram_curr_simple_seq_2 extends ARPS_IP_bram_curr_base_seq;
 
 		//read_images();
       
-		req = ARPS_IP_bram_curr_transaction::type_id::create("req");                    
+		req = ARPS_IP_bram_curr_transaction::type_id::create("req");
+
+		for(int i=0; i<16385; i++)begin
+			req.randomize();
+			image_queue.push_back(req.img_32);
+		end		
 
 		forever begin
 
@@ -45,8 +50,10 @@ class ARPS_IP_bram_curr_simple_seq_2 extends ARPS_IP_bram_curr_base_seq;
 		end
 		*/
 		
-		assert(req.randomize());
-		image_queue.push_back(req.img_32);
+//		assert(req.randomize());
+//		image_queue.push_back(req.img_32); 
+		//random_queue();
+	
 		`uvm_do(req)
 		address_write = req.address_curr;
 		//foreach (image_queue[i])begin

@@ -28,6 +28,8 @@ class ARPS_IP_bram_curr_base_seq extends uvm_sequence #(ARPS_IP_bram_curr_transa
    //string 	file_path = "C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample50.txt";
    string   file_path = "..//images_for_arps/sample50.txt";
    int 		i = 0;  
+   
+   int fd2; // NM new file descriptor
 
 
     // new - constructor
@@ -78,6 +80,20 @@ class ARPS_IP_bram_curr_base_seq extends uvm_sequence #(ARPS_IP_bram_curr_transa
 		`uvm_info(get_type_name(), "Import image finished BRAM CURRENT", UVM_MEDIUM)
 		$fclose(fd);
 		`uvm_info(get_type_name(), "After file is closed BRAM CURRENT", UVM_MEDIUM)
+
+// NM ispis u novi fajl -------START		
+		
+		fd2 = ($fopen("..//images_for_arps/probanje.txt", "w"));
+		
+		if(fd2)begin
+			for(int i=0; i<image_queue.size(); i++)begin
+				$fdisplay(fd2 ,"0x%h" ,image_queue[i]);
+			end
+		end
+		
+		$fclose(fd2);
+		
+// NM ------------------------ END
 	
    endfunction
 

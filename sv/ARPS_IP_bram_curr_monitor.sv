@@ -115,7 +115,10 @@ task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);
 
 					
 			//if(address_r!=address_r2 && address_r!=32'h00000000) begin
-			if(address_r==addr_cnt) begin	
+			if(address_r==addr_cnt) begin
+
+				@(posedge vif.clk)begin // NM clk wait
+
 				data_r = vif.data_curr;
 				//address_r2 = address_r;
 				
@@ -132,7 +135,9 @@ task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);
 				item_collected_port.write(tr_collected);
 				
 				`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor BRAM CURRENT:\n%s", tr_collected.sprint()), UVM_MEDIUM)
-		
+				
+				end // clk wait
+			
 			end //if
 			
 //			if (addr_cnt>32'h0000FFFF) begin
