@@ -20,9 +20,11 @@ entity sad_block is
     ----------------BRAM_referent-------------------------------
         bref_data_in: in std_logic_vector(31 downto 0);
         bref_address_out:out std_logic_vector(W_ADDRESS-1 downto 0);
+        en_ref_out: out std_logic;
     ---------------BRAM_current--------------------------------
         bcurr_data_in: in std_logic_vector(31 downto 0);
         bcurr_address_out:out std_logic_vector(W_ADDRESS-1 downto 0);
+        en_curr_out: out std_logic;
     ------------------------------------------------------------
         start   : in  std_logic;
         clk     : in  std_logic;
@@ -109,7 +111,9 @@ begin
         bcurr_address_out<=(others=>'0');
         bref_address_out<=(others=>'0');
         err_out<=(others=>'0');
-        
+        en_ref_out<='0';
+        en_curr_out<='0';
+          
         state_next<=state_reg;
         i_next<= i_reg;
         j_next<= j_reg;
@@ -140,6 +144,8 @@ begin
                 state_next<=idle;
             end if;
         when s1=>
+            en_ref_out<='1';
+            en_curr_out<='1';
             j_next<=(others=>'0');
             --256*(i_reg+i_curr_in)+(j_reg+j_curr_in)
             addr_curr_next <=std_logic_vector((shift_left(to_unsigned(to_integer(i_reg+unsigned(i_curr_in)),W_ADDRESS),log2c(ROW_SIZE)))+(j_next+unsigned(j_curr_in)));
@@ -161,6 +167,8 @@ begin
             
             state_next<=s2;
         when s2=> 
+            en_ref_out<='1';
+            en_curr_out<='1';
              err_next<=err_reg+to_unsigned(to_integer(abs(to_signed(to_integer(unsigned(bcurr_data)),W_DATA+1)- to_signed(to_integer(unsigned(bref_data)),W_DATA+1))),log2c(MAX_ERR_VAL));
 			--err=err+abs(curr_pix-ref_pix);
             if(j_reg=BLOCK_SIZE) then

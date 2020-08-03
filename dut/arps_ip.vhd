@@ -52,8 +52,10 @@ architecture Behavioral of arps_ip is
     --SAD and BRAM_IF
     signal addr_ref_s:  std_logic_vector(W_ADDRESS-1 downto 0);
     signal data_ref_s:  std_logic_vector(31 downto 0); 
+    signal en_ref_s: std_logic;
     signal addr_curr_s: std_logic_vector(W_ADDRESS-1 downto 0);
     signal data_curr_s: std_logic_vector(31 downto 0);
+    signal en_curr_s: std_logic;
    
     --SAD and Contorl Block signals
     signal i_curr_s: std_logic_vector(W_DATA-1 downto 0);
@@ -91,8 +93,10 @@ sad_block_ins:
         j_ref_in=>j_ref_s,
         bref_data_in=>data_ref_s,
         bref_address_out=>addr_ref_s,
+        en_ref_out=>en_ref_s,
         bcurr_data_in=>data_curr_s,
         bcurr_address_out=>addr_curr_s,
+        en_curr_out=>en_curr_s,
         err_out=>err_sad_s,
         ready=>ready_sad_s 
     );
@@ -137,8 +141,10 @@ bram_if_ins:
         --SAD interface
 	    addr_ref_i=>addr_ref_s,
         data_ref_o=>data_ref_s,
+        en_ref_i=>en_ref_s,
         addr_curr_i=>addr_curr_s,
         data_curr_o=>data_curr_s,
+        en_curr_i=>en_curr_s,
         -------------------------
         --Interface BRAM curr
         data_curr_i=>doutb_curr_i,

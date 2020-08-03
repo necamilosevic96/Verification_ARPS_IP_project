@@ -102,7 +102,7 @@ task ARPS_IP_bram_mv_monitor::run_phase(uvm_phase phase);
 	forever begin
 
 		@(posedge vif.clk)begin	
-            @(vif.we_mv) begin
+            if(vif.we_mv == 4'b1111) begin
                 address_r = vif.addr_mv;
                 data_r = vif.data_mv;
 

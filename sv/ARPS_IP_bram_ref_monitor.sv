@@ -100,11 +100,10 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
 
  
   tr_collected_ref = ARPS_IP_bram_ref_transaction::type_id::create("tr_collected_ref", this);
-	#10ns;
 	forever begin
         
 		@(posedge vif.clk)begin
-            //@(vif.addr_ref) begin
+            @(vif.en_ref) begin
                 address_r = vif.addr_ref;
                 data_r = vif.data_ref;
 
@@ -115,7 +114,7 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
                 item_collected_port.write(tr_collected_ref);
 
 			//`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor BRAM REFERENT:\n%s", tr_collected_ref.sprint()), UVM_MEDIUM)
-            //end
+            end
 		end 
 
         

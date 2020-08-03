@@ -16,9 +16,11 @@ entity bram_if is
            --Interface SAD_BLOCK ref and curr 
            addr_ref_i: in std_logic_vector(W_ADDRESS-1 downto 0);
            data_ref_o: out std_logic_vector(31 downto 0);
+           en_ref_i: in std_logic;
            
            addr_curr_i: in std_logic_vector(W_ADDRESS-1 downto 0);
            data_curr_o: out std_logic_vector(31 downto 0);
+           en_curr_i: in std_logic;
            -----------------------------------------------------------------
            --Interface BRAM curr
            data_curr_i: in std_logic_vector(31 downto 0);
@@ -57,11 +59,11 @@ begin
     ----------------------------------
     --BRAM curr
     we_curr_o<=(others=>'0');
-    en_curr_o<='1';
+    en_curr_o<=en_curr_i;
     rst_curr_o<='0';
     --BRAM ref
     we_ref_o<=(others=>'0');
-    en_ref_o<='1';
+    en_ref_o<=en_ref_i;
     rst_ref_o<='0';
     
     --BRAM mv

@@ -106,12 +106,12 @@ task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);
 	tr_collected = ARPS_IP_bram_curr_transaction::type_id::create("tr_collected", this);
 	
 	//fd = ($fopen("C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/sv/proba.txt"));
-	#10ns;
+
 	forever begin
 
 		@(posedge vif.clk)begin
             
-            //@(vif.addr_curr) begin
+            @(vif.en_curr) begin
 
                 address_r = vif.addr_curr;
 				data_r = vif.data_curr;
@@ -125,7 +125,7 @@ task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);
 				//`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor BRAM CURRENT:\n%s", tr_collected.sprint()), UVM_MEDIUM)
 				
 
-			//end 
+			end 
         end
 		
 

@@ -25,8 +25,8 @@ class ARPS_IP_bram_curr_base_seq extends uvm_sequence #(ARPS_IP_bram_curr_transa
    string   img_hex;
 
    int 		fd;
-   //string 	file_path = "C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample50.txt";
-   string   file_path = "..//images_for_arps/sample50.txt";
+   //string 	file_path = "C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample51.txt";
+   string   file_path = "..//images_for_arps/sample51.txt";
    int 		i = 0;  
    
    int fd2; // NM new file descriptor
