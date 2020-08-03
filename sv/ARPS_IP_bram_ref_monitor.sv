@@ -103,8 +103,10 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
 	forever begin
         
 		@(posedge vif.clk)begin
-            @(vif.en_ref) begin
-                address_r = vif.addr_ref;
+        address_r = vif.addr_ref;
+        @(posedge vif.clk)begin
+            if(vif.en_ref == 1'b1) begin
+                
                 data_r = vif.data_ref;
 
 
@@ -116,7 +118,7 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
 			//`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor BRAM REFERENT:\n%s", tr_collected_ref.sprint()), UVM_MEDIUM)
             end
 		end 
-
+        end
         
     end  // forever begin
 endtask : run_phase

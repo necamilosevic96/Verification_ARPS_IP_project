@@ -110,10 +110,11 @@ task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);
 	forever begin
 
 		@(posedge vif.clk)begin
-            
-            @(vif.en_curr) begin
+        address_r = vif.addr_curr;
+        @(posedge vif.clk)begin   
+            if(vif.en_curr==1'b1) begin
 
-                address_r = vif.addr_curr;
+                
 				data_r = vif.data_curr;
 
 
@@ -127,7 +128,7 @@ task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);
 
 			end 
         end
-		
+		end
 
         
     end  // forever begin

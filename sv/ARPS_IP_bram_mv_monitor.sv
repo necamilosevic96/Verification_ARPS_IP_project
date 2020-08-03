@@ -111,7 +111,7 @@ task ARPS_IP_bram_mv_monitor::run_phase(uvm_phase phase);
 				
                 item_collected_port.write(tr_collected_mv);
 				
-                `uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor MOTION VECTOR:\n%s", tr_collected_mv.sprint()), UVM_MEDIUM)
+                //`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor MOTION VECTOR:\n%s", tr_collected_mv.sprint()), UVM_MEDIUM)
             end 
 		end 
 		        
