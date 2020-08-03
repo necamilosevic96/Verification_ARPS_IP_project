@@ -24,8 +24,11 @@
 `define COL 256
 `define P_SIZE 7
 `define MAX2(x, y) (((x) > (y)) ? (x) : (y))
+//`define DISPLAY_DATA 1
+
 typedef int queue_of_int[2][$]; //0 position is data, 1 position is flag(write)
 typedef int queue_of_int_m[$];
+
 class ARPS_IP_scoreboard extends uvm_scoreboard;
    
 
@@ -35,19 +38,22 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
    bit init_flag = 1'b1;
    bit finish_flag_curr = 1'b0;
    bit finish_flag_ref = 1'b0;
+   bit start_flag = 1'b0;
    
    queue_of_int curr_queue;//2d
    queue_of_int ref_queue;//2d
    queue_of_int_m mv_ref;//one dimension
+   logic [31:0] mv_bram_q [$];
    
    int cnt_c = 0;
    int cnt_r = 0;
+   logic[31:0] cnt_bram_addr = 32'h00000000;
    
    bit done_write_frames = 1'b0;
    bit done_mv_flag = 1'b0;
    
    int num_of_mv = 0;
-
+   int num_of_mv_bram =0;
    int           num_of_assertions = 0;   
    // This TLM port is used to connect the scoreboard to the monitor
    uvm_analysis_imp_axil#(ARPS_IP_axil_transaction, ARPS_IP_scoreboard) port_axil;
@@ -86,6 +92,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
       if(checks_enable) begin
 	    if(tr_clone.addr==0 && tr_clone.wdata==1) begin
             //start ref model
+            start_flag=1'b1;
 //            mv_ref = motionARPS(curr_queue,ref_queue);// MV by ref model 
         end
          // do actual checking here
@@ -110,7 +117,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
 		//		if(tr_clone.address_curr <= 32'h0000FFFF) begin
             
             if(curr_queue[1][tr_clone.address_curr] == 0) begin //chech if flag is 0
-                $display("curr_address=%x  curr_data=%x",tr_clone.address_curr,tr_clone.data_curr_frame);
+                
                 
                 //DATA
                 curr_queue[0].insert(tr_clone.address_curr + 0, ((tr_clone.data_curr_frame >> 24) & 32'h000000FF));
@@ -124,11 +131,14 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                 curr_queue[1].insert(tr_clone.address_curr + 2, 1);
                 curr_queue[1].insert(tr_clone.address_curr + 3, 1);
                 
-                $display("currp[%d]=%x", tr_clone.address_curr + 0, curr_queue[0][tr_clone.address_curr + 0]);
-                $display("currp[%d]=%x", tr_clone.address_curr + 1, curr_queue[0][tr_clone.address_curr + 1]);
-                $display("currp[%d]=%x", tr_clone.address_curr + 2, curr_queue[0][tr_clone.address_curr + 2]);
-                $display("currp[%d]=%x", tr_clone.address_curr + 3, curr_queue[0][tr_clone.address_curr + 3]);
-                $display("*******************************");
+                `ifdef DISPLAY_DATA
+                    $display("curr_address=%x  curr_data=%x",tr_clone.address_curr,tr_clone.data_curr_frame);
+                    $display("currp[%d]=%x", tr_clone.address_curr + 0, curr_queue[0][tr_clone.address_curr + 0]);
+                    $display("currp[%d]=%x", tr_clone.address_curr + 1, curr_queue[0][tr_clone.address_curr + 1]);
+                    $display("currp[%d]=%x", tr_clone.address_curr + 2, curr_queue[0][tr_clone.address_curr + 2]);
+                    $display("currp[%d]=%x", tr_clone.address_curr + 3, curr_queue[0][tr_clone.address_curr + 3]);
+                    $display("*******************************");
+                `endif
             end
             if(tr_clone.address_curr == 32'h0000FFFE) begin
                 finish_flag_curr = 1'b1;
@@ -169,7 +179,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
         if(checks_enable) begin
 	  
             if(ref_queue[1][tr_clone.address_ref] == 0) begin //chech if flag is 0
-                $display("ref_address=%x  ref_data=%x",tr_clone.address_ref,tr_clone.data_ref_frame);
+                
                 //DATA
                 ref_queue[0].insert(tr_clone.address_ref + 0,((tr_clone.data_ref_frame >> 24) & 32'h000000FF));
                 ref_queue[0].insert(tr_clone.address_ref + 1,((tr_clone.data_ref_frame >> 16) & 32'h000000FF));
@@ -182,11 +192,14 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                 ref_queue[1].insert(tr_clone.address_ref + 2, 1);
                 ref_queue[1].insert(tr_clone.address_ref + 3, 1);
                 
-                $display("refp[%d]=%x", tr_clone.address_ref + 0, ref_queue[0][tr_clone.address_ref + 0]);
-                $display("refp[%d]=%x", tr_clone.address_ref + 1, ref_queue[0][tr_clone.address_ref + 1]);
-                $display("refp[%d]=%x", tr_clone.address_ref + 2, ref_queue[0][tr_clone.address_ref + 2]);
-                $display("refp[%d]=%x", tr_clone.address_ref + 3, ref_queue[0][tr_clone.address_ref + 3]);
-                $display("*******************************");
+                `ifdef DISPLAY_DATA
+                    $display("ref_address=%x  ref_data=%x",tr_clone.address_ref,tr_clone.data_ref_frame);
+                    $display("refp[%d]=%x", tr_clone.address_ref + 0, ref_queue[0][tr_clone.address_ref + 0]);
+                    $display("refp[%d]=%x", tr_clone.address_ref + 1, ref_queue[0][tr_clone.address_ref + 1]);
+                    $display("refp[%d]=%x", tr_clone.address_ref + 2, ref_queue[0][tr_clone.address_ref + 2]);
+                    $display("refp[%d]=%x", tr_clone.address_ref + 3, ref_queue[0][tr_clone.address_ref + 3]);
+                    $display("*******************************");
+                `endif
             end
             if(tr_clone.address_ref == 32'h0000FFFE) begin
                 finish_flag_ref = 1'b1;
@@ -210,19 +223,31 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
    
    
    function write_bram_mv (ARPS_IP_bram_mv_transaction tr);
-      ARPS_IP_bram_mv_transaction tr_clone;
-      $cast(tr_clone, tr.clone()); 
-     // arps_ip();
-      if(checks_enable) begin
-	    assert(tr_clone.data_mv_frame == mv_ref[num_of_mv++])
-        else begin
-            `uvm_error(get_type_name(), $sformatf("pixel mismatch reference modele[%d]: %h \t deskew[%d]: %h",
-                  num_of_mv, tr_clone.data_mv_frame, num_of_mv,mv_ref[num_of_mv] ));
+        ARPS_IP_bram_mv_transaction tr_clone;
+        $cast(tr_clone, tr.clone()); 
+        if(checks_enable) begin
+            //if(cnt_bram_addr==tr_clone.address_mv && start_flag==1'b1) begin
+              //  cnt_bram_addr=cnt_bram_addr+32'h00000004;
+                mv_bram_q.push_back(tr_clone.data_mv_frame);
+                $display("MV: addr=%d data=%x num_of_mv_bram=%d",tr_clone.address_mv,tr_clone.data_mv_frame,num_of_mv_bram);
+                num_of_mv_bram++;
+            //end
+            if(num_of_mv_bram == 512) begin
+                for(int i=0;i<512;i++) begin
+                    assert(mv_bram_q[i] == mv_ref[i])
+                    else begin
+                    `uvm_fatal(get_type_name(), $sformatf("MISMATCH MV: BRAM_MV[%d]= %h \t REF_MV[%d]= %h",
+                        i, mv_bram_q[i], i,mv_ref[i] ));
+            end
+                end
+            end
+            
+            
+            
+            // do actual checking here
+            // ...
+            // ++num_of_tr;
         end
-         // do actual checking here
-         // ...
-         // ++num_of_tr;
-      end
    endfunction : write_bram_mv 
 
 

@@ -99,11 +99,10 @@ endclass : ARPS_IP_bram_mv_monitor
 task ARPS_IP_bram_mv_monitor::run_phase(uvm_phase phase);    
 
   tr_collected_mv = ARPS_IP_bram_mv_transaction::type_id::create("tr_collected_mv", this);
-
 	forever begin
 
 		@(posedge vif.clk)begin	
-            @(vif.addr_mv) begin
+            @(vif.we_mv) begin
                 address_r = vif.addr_mv;
                 data_r = vif.data_mv;
 
