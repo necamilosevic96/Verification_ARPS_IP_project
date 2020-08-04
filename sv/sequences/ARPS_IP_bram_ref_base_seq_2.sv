@@ -21,18 +21,27 @@ class ARPS_IP_bram_ref_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_ref_transa
     `uvm_object_utils(ARPS_IP_bram_ref_base_seq_2)
 	
 	logic [31:0] pixel_queue[$];
-    string   img_hex_1;
+	int 		i = 0;
+/*    string   img_hex_1;
 
 	int 		fd_1;
 	string 	file_path = "C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample50.txt";
 	int 		i = 0;  
-
+*/
     // new - constructor
     function new(string name = "ARPS_IP_bram_ref_base_seq_2");
         super.new(name);
     endfunction: new
 
-   function void read_pixels();
+    function void read_pixels();
+        while(i !=16385) begin
+            pixel_queue.push_back($urandom_range(0, 32'hFFFFFFFF));
+            i++;
+        end
+    endfunction
+  
+
+/*   function void read_pixels();
 		
 			`uvm_info(get_type_name(), "Opening file BRAM REFERENT", UVM_MEDIUM)
 		
@@ -75,7 +84,7 @@ class ARPS_IP_bram_ref_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_ref_transa
 		`uvm_info(get_type_name(), "After file is closed BRAM REFERENT", UVM_MEDIUM)
 	
    endfunction
-
+*/
 endclass: ARPS_IP_bram_ref_base_seq_2
 
 `endif

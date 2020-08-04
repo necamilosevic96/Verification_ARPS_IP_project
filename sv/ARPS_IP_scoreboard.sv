@@ -135,7 +135,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                 curr_queue[1][tr_clone.address_curr + 2] = 1;
                 curr_queue[1][tr_clone.address_curr + 3] = 1;
                 
-                `ifdef DISPLAY_DATA
+/*                `ifdef DISPLAY_DATA
                     $display("curr_address=%x  curr_data=%x",tr_clone.address_curr,tr_clone.data_curr_frame);
                     $display("currp[%d]=%x", tr_clone.address_curr + 0, curr_queue[0][tr_clone.address_curr + 0]);
                     $display("currp[%d]=%x", tr_clone.address_curr + 1, curr_queue[0][tr_clone.address_curr + 1]);
@@ -143,7 +143,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                     $display("currp[%d]=%x", tr_clone.address_curr + 3, curr_queue[0][tr_clone.address_curr + 3]);
                     $display("*******************************");
                 `endif
-                if(tr_clone.address_curr == 32'h0000FFFC) begin
+ */               if(tr_clone.address_curr == 32'h0000FFFC) begin
                 $display("FLAG_CURR=1");
                 finish_flag_curr = 1'b1;
                     /*for(int i=0;i<655356;i++) begin
@@ -210,7 +210,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                 ref_queue[1][tr_clone.address_ref + 2] = 1;
                 ref_queue[1][tr_clone.address_ref + 3] = 1;
                 
-                `ifdef DISPLAY_DATA
+/*                `ifdef DISPLAY_DATA
                     $display("ref_address=%x  ref_data=%x",tr_clone.address_ref,tr_clone.data_ref_frame);
                     $display("refp[%d]=%x", tr_clone.address_ref + 0, ref_queue[0][tr_clone.address_ref + 0]);
                     $display("refp[%d]=%x", tr_clone.address_ref + 1, ref_queue[0][tr_clone.address_ref + 1]);
@@ -218,7 +218,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                     $display("refp[%d]=%x", tr_clone.address_ref + 3, ref_queue[0][tr_clone.address_ref + 3]);
                     $display("*******************************");
                 `endif
-                if(tr_clone.address_ref == 32'h0000FFFC) begin
+ */               if(tr_clone.address_ref == 32'h0000FFFC) begin
                     finish_flag_ref = 1'b1;
                     $display("FLAG_REF=1");
                     /*for(int i=0;i<655356;i++) begin
@@ -262,7 +262,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
             
                 if(num_of_mv_bram<512) begin
                     mv_bram_q.push_back(tr_clone.data_mv_frame);
-                    $display("MV: addr=%d data=%x num_of_mv_bram=%d",tr_clone.address_mv,tr_clone.data_mv_frame,num_of_mv_bram);
+ //                   $display("MV: addr=%d data=%x num_of_mv_bram=%d",tr_clone.address_mv,tr_clone.data_mv_frame,num_of_mv_bram);
                     num_of_mv_bram++;
                 end
                 
@@ -308,6 +308,10 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
       ARPS_IP_interrupt_transaction tr_clone;
       $cast(tr_clone, tr.clone()); 
       if(checks_enable) begin
+	  
+		if(tr_clone.interrupt_flag)begin
+			`uvm_info(get_type_name(), "INTERRUPT HAPPENED - SCOREBOARD", UVM_MEDIUM)
+		end
          // do actual checking here
          // ...
          // ++num_of_tr;

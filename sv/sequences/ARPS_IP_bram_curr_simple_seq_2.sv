@@ -18,7 +18,8 @@ class ARPS_IP_bram_curr_simple_seq_2 extends ARPS_IP_bram_curr_base_seq;
     `uvm_object_utils(ARPS_IP_bram_curr_simple_seq_2)
 	
 	bit [31:0] address_write;
-	logic [31:0] image_queue[$];
+	int i = 0;
+//	logic [31:0] image_queue[$];
 
     // new - constructor
     function new(string name = "ARPS_IP_bram_curr_simple_seq_2");
@@ -28,14 +29,18 @@ class ARPS_IP_bram_curr_simple_seq_2 extends ARPS_IP_bram_curr_base_seq;
     // sequence generation logic in body   
     virtual task body();
 
-		//read_images();
+
+		read_images();
       
 		req = ARPS_IP_bram_curr_transaction::type_id::create("req");
 
-		for(int i=0; i<16385; i++)begin
+/*		for(int i=0; i<16385; i++)begin
 			req.randomize();
 			image_queue.push_back(req.img_32);
 		end		
+*/
+
+	while( i != image_queue.size() )begin
 
 		forever begin
 
@@ -58,13 +63,16 @@ class ARPS_IP_bram_curr_simple_seq_2 extends ARPS_IP_bram_curr_base_seq;
 		address_write = req.address_curr;
 		//foreach (image_queue[i])begin
 			`uvm_do_with(req, {req.data_curr_frame == image_queue[address_write/4]; } )
+		i++;
 		//end
 		
-		`uvm_info(get_type_name(), "Sequence is working BRAM CURRENT forever", UVM_MEDIUM)		
+	//	`uvm_info(get_type_name(), "Sequence is working BRAM CURRENT forever", UVM_MEDIUM)		
 		
 		end // forever begin	
 		
-		`uvm_info(get_type_name(), "Sequence after forever begin is working BRAM CURRENT forever", UVM_MEDIUM)
+	end // while
+		
+//		`uvm_info(get_type_name(), "Sequence after forever begin is working BRAM CURRENT forever", UVM_MEDIUM)
 
     endtask : body
 

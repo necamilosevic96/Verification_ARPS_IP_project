@@ -21,7 +21,8 @@ class ARPS_IP_bram_curr_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_curr_tran
     `uvm_object_utils(ARPS_IP_bram_curr_base_seq)
 	`uvm_declare_p_sequencer(ARPS_IP_bram_curr_sequencer)
    
-//   logic [31:0] image_queue[$];
+   logic [31:0] image_queue[$];
+   int 		i = 0;
 //   rand bit [31:0] val;
 /*   string   img_hex;
 
@@ -45,6 +46,15 @@ class ARPS_IP_bram_curr_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_curr_tran
 	
 	endfunction 
 */
+
+
+    function void read_images();
+        while(i !=16385) begin
+            image_queue.push_back($urandom_range(0, 32'hFFFFFFFF));
+            i++;
+        end
+    endfunction
+
 
 
 /*

@@ -23,6 +23,7 @@ class ARPS_IP_bram_ref_simple_seq_2 extends ARPS_IP_bram_ref_base_seq_2;
     `uvm_object_utils(ARPS_IP_bram_ref_simple_seq_2)
 
 	bit [31:0] address_write_1;
+	int i = 0;
 
     // new - constructor
     function new(string name = "ARPS_IP_bram_ref_simple_seq_2");
@@ -36,13 +37,18 @@ class ARPS_IP_bram_ref_simple_seq_2 extends ARPS_IP_bram_ref_base_seq_2;
 
 		read_pixels();
 
+	while( i != pixel_queue.size() )begin
+
 		forever begin
          
 			`uvm_do(req)
 			address_write_1 = req.address_ref;
 			`uvm_do_with(req, {req.data_ref_frame == pixel_queue[address_write_1/4]; } )
+			i++;
 
-		end // forever begin	
+		end // forever begin	 
+		
+	end // while
 		
     endtask : body
 

@@ -59,6 +59,9 @@ class ARPS_IP_interrupt_monitor extends uvm_monitor;
 	 // collect transactions
 	 // ...
 	 @(posedge vif.clk)begin
+		
+		current_frame.interrupt_flag=vif.interrupt_o;
+	 
 	    if(vif.interrupt_o)begin
 	       `uvm_info(get_type_name(),
 			 $sformatf("INTERRUPT HAPPENED"),

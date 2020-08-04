@@ -13,7 +13,11 @@
 `define ARPS_IP_INTERRUPT_TRANSACTION_SV
 
 class ARPS_IP_interrupt_transaction extends uvm_sequence_item;
-    `uvm_object_utils_begin(ARPS_IP_interrupt_transaction)   
+
+	bit interrupt_flag;
+
+    `uvm_object_utils_begin(ARPS_IP_interrupt_transaction)
+		`uvm_field_int  (interrupt_flag,      UVM_DEFAULT)
     `uvm_object_utils_end
     
     function new(string name = "ARPS_IP_interrupt_transaction");
