@@ -15,12 +15,18 @@
 /*
  * Class: ARPS_IP_bram_ref_driver
  */
+ 
+`uvm_analysis_imp_decl(_interrupt_r)
 class ARPS_IP_bram_ref_driver extends uvm_driver #(ARPS_IP_bram_ref_transaction);
     
+	uvm_analysis_imp_interrupt_r#(ARPS_IP_interrupt_transaction, ARPS_IP_bram_ref_driver) port_interrupt_r;
+	
     // ARPS_IP virtual interface
     virtual bram_ref_if vif;
 	
 	logic [31:0] address_ref;
+	int			 i = 0;
+	int     		interrupt_o = 0;
     
     // configuration
     ARPS_IP_bram_ref_config bram_ref_cfg;
@@ -33,6 +39,7 @@ class ARPS_IP_bram_ref_driver extends uvm_driver #(ARPS_IP_bram_ref_transaction)
     // new - constructor
     function new(string name = "ARPS_IP_bram_ref_driver", uvm_component parent = null);
         super.new(name, parent);
+		port_interrupt_r = new("port_interrupt_o", this);
     endfunction : new
     
     // UVM build_phase
@@ -52,7 +59,8 @@ class ARPS_IP_bram_ref_driver extends uvm_driver #(ARPS_IP_bram_ref_transaction)
     endfunction : connect_phase
     
     // additional class methods
-    extern virtual task run_phase(uvm_phase phase); 
+    extern virtual task run_phase(uvm_phase phase);
+    extern function write_interrupt_r(ARPS_IP_interrupt_transaction tr);	
 
 endclass : ARPS_IP_bram_ref_driver
 
@@ -60,9 +68,15 @@ endclass : ARPS_IP_bram_ref_driver
 task ARPS_IP_bram_ref_driver::run_phase(uvm_phase phase);
 
 
-   forever begin
+	forever begin
 
 		@(posedge vif.clk)begin
+		
+			if(interrupt_o == 1)begin
+		         interrupt_o = 0;	       
+		         req.interrupt = 1;       
+		         continue;
+			end
 		
 			address_ref = vif.addr_ref;		
 
@@ -73,13 +87,21 @@ task ARPS_IP_bram_ref_driver::run_phase(uvm_phase phase);
 			seq_item_port.get_next_item(req);
 			vif.data_ref = req.data_ref_frame;
             seq_item_port.item_done();
+			
+			i++;
 
 		end// posedge clk
 
-    end
+	end
       
 endtask : run_phase
 
+
+function ARPS_IP_bram_ref_driver::write_interrupt_r (ARPS_IP_interrupt_transaction tr);
+      `uvm_info(get_type_name(), "INTERRUPT HAPPENED", UVM_FULL)
+      interrupt_o = 1;
+      
+endfunction : write_interrupt_r
 
 `endif
 

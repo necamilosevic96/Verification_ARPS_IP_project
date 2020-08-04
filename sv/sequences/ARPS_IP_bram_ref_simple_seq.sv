@@ -40,7 +40,12 @@ class ARPS_IP_bram_ref_simple_seq extends ARPS_IP_bram_ref_base_seq;
          
 			`uvm_do(req)
 			address_write_1 = req.address_ref;
+		if(req.interrupt)begin
+			`uvm_do_with(req, {req.interrupt == 0; } )
+		end	
+		else begin
 			`uvm_do_with(req, {req.data_ref_frame == pixel_queue[address_write_1/4]; } )
+		end
 
 		end // forever begin	
 		

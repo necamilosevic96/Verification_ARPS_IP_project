@@ -28,7 +28,16 @@ class ARPS_IP_axil_simple_seq extends ARPS_IP_axil_base_seq;
 
     // sequence generation logic in body
     virtual task body();
+	
+	req = ARPS_IP_axil_transaction::type_id::create("req");
 
+//	forever begin
+
+		if(req.interrupt)begin
+			`uvm_do_with(req, {req.interrupt == 0; } )
+		end
+
+//	end
 
         `uvm_do_with(req, {req.wr_re == 1'b0; req.addr == 4'b0100; req.wdata == 31'b1; } ) 
 

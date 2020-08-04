@@ -15,10 +15,16 @@
 /*
  * Class: ARPS_IP_axil_driver
  */
+ 
+`uvm_analysis_imp_decl(_interrupt_a)
 class ARPS_IP_axil_driver extends uvm_driver #(ARPS_IP_axil_transaction);
     
+	uvm_analysis_imp_interrupt_a#(ARPS_IP_interrupt_transaction, ARPS_IP_axil_driver) port_interrupt_a;
+	
     // ARPS_IP virtual interface
     virtual axil_if vif;
+	
+	int    interrupt_o = 0;
     
     // configuration
     ARPS_IP_axil_config axil_cfg;
@@ -31,6 +37,7 @@ class ARPS_IP_axil_driver extends uvm_driver #(ARPS_IP_axil_transaction);
     // new - constructor
     function new(string name = "ARPS_IP_axil_driver", uvm_component parent = null);
         super.new(name, parent);
+		port_interrupt_a = new("port_interrupt_a", this);
     endfunction : new
     
     // UVM build_phase
@@ -51,6 +58,7 @@ class ARPS_IP_axil_driver extends uvm_driver #(ARPS_IP_axil_transaction);
     
     // additional class methods
     extern virtual task run_phase(uvm_phase phase); 
+	extern function write_interrupt_a(ARPS_IP_interrupt_transaction tr);
 
 endclass : ARPS_IP_axil_driver
 
@@ -65,6 +73,13 @@ task ARPS_IP_axil_driver::run_phase(uvm_phase phase);
          // do actual driving here
 	      
 	      @(posedge vif.clk)begin//writing using AXIL
+		  
+		  if(interrupt_o == 1)begin
+		         interrupt_o = 0;	       
+		         req.interrupt = 1;       
+		         continue;
+			end
+		  
 	         if(req.wr_re)begin//read = 0, write = 1
 	            vif.s_axi_awaddr = req.addr;
 	            vif.s_axi_awvalid = 1;
@@ -100,5 +115,11 @@ task ARPS_IP_axil_driver::run_phase(uvm_phase phase);
       
 endtask : run_phase
 
+
+function ARPS_IP_axil_driver::write_interrupt_a (ARPS_IP_interrupt_transaction tr);
+      `uvm_info(get_type_name(), "INTERRUPT HAPPENED", UVM_FULL)
+      interrupt_o = 1;
+      
+endfunction : write_interrupt_a
 
 `endif

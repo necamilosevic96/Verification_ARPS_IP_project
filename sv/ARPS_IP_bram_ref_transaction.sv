@@ -20,11 +20,13 @@ class ARPS_IP_bram_ref_transaction extends uvm_sequence_item;
 
 	rand bit [31:0] address_ref;
 	rand bit [31:0] data_ref_frame;
+	bit             interrupt = 0;
 
     // UVM factory registration
     `uvm_object_utils_begin (ARPS_IP_bram_ref_transaction)
 		  `uvm_field_int  (address_ref,      UVM_DEFAULT)
 		  `uvm_field_int  (data_ref_frame,      UVM_DEFAULT)
+		  `uvm_field_int  (interrupt,      UVM_DEFAULT)
     `uvm_object_utils_end
  
     // new - constructor

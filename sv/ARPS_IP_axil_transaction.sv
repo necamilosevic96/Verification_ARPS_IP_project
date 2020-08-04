@@ -25,6 +25,7 @@ class ARPS_IP_axil_transaction extends uvm_sequence_item;
 	rand bit [3 : 0 ]	    addr;
 	rand bit [31 : 0 ]		rdata;
 	rand bit [31 : 0 ]		wdata;
+	bit             		interrupt = 0;
 
 
     // UVM factory registration
@@ -33,6 +34,7 @@ class ARPS_IP_axil_transaction extends uvm_sequence_item;
         `uvm_field_int  (addr,       UVM_DEFAULT)
         `uvm_field_int  (rdata, UVM_DEFAULT)
         `uvm_field_int  (wdata, UVM_DEFAULT)
+		`uvm_field_int  (interrupt, UVM_DEFAULT)
     `uvm_object_utils_end
  
     // new - constructor
