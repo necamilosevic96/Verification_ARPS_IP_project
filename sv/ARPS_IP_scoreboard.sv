@@ -32,31 +32,25 @@ typedef int queue_of_int_m[$];
 class ARPS_IP_scoreboard extends uvm_scoreboard;
    
 
-   // control fileds
-   bit checks_enable = 1;
-   bit coverage_enable = 1;
-   bit init_flag = 1'b1;
-   bit finish_flag_curr = 1'b0;
-   bit finish_flag_ref = 1'b0;
-   bit start_flag = 1'b0;
+    // control fileds
+    bit checks_enable = 1;
+    bit coverage_enable = 1;
+    bit init_flag = 1'b1;
+    bit finish_flag_curr = 1'b0;
+    bit finish_flag_ref = 1'b0;
+    bit start_flag = 1'b0;
    
+    int num_of_mv_bram =0;
+    int num_of_assertions = 0; 
    
+    queue_of_int curr_queue;//2d
+    queue_of_int ref_queue;//2d
+    queue_of_int_m mv_ref;//one dimension
+    logic [31:0] mv_bram_q [$];
    
-   queue_of_int curr_queue;//2d
-   queue_of_int ref_queue;//2d
-   queue_of_int_m mv_ref;//one dimension
-   logic [31:0] mv_bram_q [$];
+    //int cnt_c = 0;
+    //int cnt_r = 0;
    
-   int cnt_c = 0;
-   int cnt_r = 0;
-   logic[31:0] cnt_bram_addr = 32'h00000000;
-   
-   bit done_write_frames = 1'b0;
-   bit done_mv_flag = 1'b0;
-   
-   int num_of_mv = 0;
-   int num_of_mv_bram =0;
-   int           num_of_assertions = 0;   
    // This TLM port is used to connect the scoreboard to the monitor
    uvm_analysis_imp_axil#(ARPS_IP_axil_transaction, ARPS_IP_scoreboard) port_axil;
    uvm_analysis_imp_bram_curr#(ARPS_IP_bram_curr_transaction, ARPS_IP_scoreboard) port_bram_curr;
@@ -265,8 +259,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
         ARPS_IP_bram_mv_transaction tr_clone;
         $cast(tr_clone, tr.clone()); 
         if(checks_enable) begin
-            //if(cnt_bram_addr==tr_clone.address_mv && start_flag==1'b1) begin
-              //  cnt_bram_addr=cnt_bram_addr+32'h00000004;
+            
                 if(num_of_mv_bram<512) begin
                     mv_bram_q.push_back(tr_clone.data_mv_frame);
                     $display("MV: addr=%d data=%x num_of_mv_bram=%d",tr_clone.address_mv,tr_clone.data_mv_frame,num_of_mv_bram);
@@ -278,9 +271,10 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                     finish_flag_ref =1'b0;
                     mv_ref = motionARPS(curr_queue,ref_queue);
                     for(int i=0;i<512;i++) begin
-                        if(mv_bram_q[i] == mv_ref[i]) begin
-                            $display("CHECK: MV[%d] OK",i);
-                        end
+                        //if(mv_bram_q[i] == mv_ref[i]) begin
+                            //$display("CHECK: MV[%d] OK",i);
+                        //end
+                        assert(mv_bram_q[i] == mv_ref[i]) $display("ASSERT: BRAM_MV[%d]=%x REF_MV[%d]=%x , OK",i,mv_bram_q[i],i,mv_ref[i]);
                         else begin
                             `uvm_fatal(get_type_name(), $sformatf("MISMATCH MV: BRAM_MV[%d]= %h \t REF_MV[%d]= %h",
                             i, mv_bram_q[i], i,mv_ref[i] ));
@@ -322,6 +316,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
 
 //*****************INIT_QUEUES**************************************
 function void init_queues(int size_p, int size_mv, int en_mv);
+    
     for(int i=0;i<size_p;i++) begin
         curr_queue[0][i]= 0;
         ref_queue[0][i] = 0;
@@ -480,13 +475,13 @@ endfunction
             end//while
             vect_jx = x-j;
             vect_iy = y-i;
-            $display("MV_REF[%d]=%d",mbCount,vect_jx);
-            mbCount++;
-            $display("MV_REF[%d]=%d",mbCount,vect_iy);
+            //$display("MV_REF[%d]=%d",mbCount,vect_jx);
+            //$display("MV_REF[%d]=%d",mbCount+1,vect_iy);
+            mbCount=mbCount+2;
             
             mv_q.push_back(x-j);
             mv_q.push_back(y-i);
-            //mbCount=mbCount+2;
+            
         end//for j
     end//for i
    

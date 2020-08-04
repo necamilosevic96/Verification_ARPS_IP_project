@@ -39,8 +39,7 @@ class ARPS_IP_bram_curr_base_seq extends uvm_sequence #(ARPS_IP_bram_curr_transa
     
     function void read_images();
         while(i !=16385) begin
-            image_queue.push_back($urandom_range(0, 32'hFFFFFFFF));
-            i++;
+            image_queue.push_back(= $urandom_range(0, 32'hFFFFFFFF));
         end
     endfunction
 /*

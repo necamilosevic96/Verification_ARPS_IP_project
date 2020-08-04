@@ -33,10 +33,9 @@ class ARPS_IP_bram_ref_base_seq extends uvm_sequence #(ARPS_IP_bram_ref_transact
         super.new(name);
     endfunction: new
     
-    function void read_pixels();
+    function void read_images();
         while(i !=16385) begin
-            pixel_queue.push_back($urandom_range(0, 32'hFFFFFFFF));
-            i++;
+            image_queue.push_back(= $urandom_range(0, 32'hFFFFFFFF));
         end
     endfunction
     
