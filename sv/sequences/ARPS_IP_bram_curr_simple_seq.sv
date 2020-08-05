@@ -36,8 +36,13 @@ class ARPS_IP_bram_curr_simple_seq extends ARPS_IP_bram_curr_base_seq;
 			`uvm_do(req)
 			address_write = req.address_curr;
 
+//	`uvm_info(get_type_name(), $sformatf("Sequence wirh interrupt is working BRAM CURRENT jebeno %d ", req.interrupt), UVM_MEDIUM)
+
 		if(req.interrupt)begin
-			`uvm_do_with(req, {req.interrupt == 0; } )
+			`uvm_info(get_type_name(), "Sequence in interrupt is working BRAM CURRENT forever", UVM_MEDIUM)
+//			`uvm_error(get_type_name(), $sformatf("Sequence wirh interrupt is working BRAM CURRENT"))
+			//`uvm_do_with(req, {req.interrupt == 0; } )
+			req.interrupt = 0;
 		end	
 		else begin
 			`uvm_do_with(req, {req.data_curr_frame == image_queue[address_write/4]; } )

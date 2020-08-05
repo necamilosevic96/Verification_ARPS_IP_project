@@ -21,10 +21,10 @@ parameter integer IP_ADDR_WIDTH	= 4;
 
 class ARPS_IP_axil_transaction extends uvm_sequence_item;
 
-	rand bit		    	wr_re;
-	rand bit [3 : 0 ]	    addr;
-	rand bit [31 : 0 ]		rdata;
-	rand bit [31 : 0 ]		wdata;
+	bit		    	wr_re;
+	bit [3 : 0 ]	    addr;
+	bit [31 : 0 ]		rdata;
+	bit [31 : 0 ]		wdata;
 	bit             		interrupt = 0;
 
 

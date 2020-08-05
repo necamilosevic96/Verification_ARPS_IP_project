@@ -25,6 +25,7 @@ class ARPS_IP_axil_driver extends uvm_driver #(ARPS_IP_axil_transaction);
     virtual axil_if vif;
 	
 	int    interrupt_o = 0;
+	bit val=0;
     
     // configuration
     ARPS_IP_axil_config axil_cfg;
@@ -76,10 +77,13 @@ task ARPS_IP_axil_driver::run_phase(uvm_phase phase);
 		  
 		  if(interrupt_o == 1)begin
 		         interrupt_o = 0;	       
-		         req.interrupt = 1;       
+		        seq_item_port.get_next_item(req);
+				req.interrupt=1;
+				seq_item_port.item_done();       
 		         continue;
 			end
-		  
+
+		  if(val==0)begin
 	         if(req.wr_re)begin//read = 0, write = 1
 	            vif.s_axi_awaddr = req.addr;
 	            vif.s_axi_awvalid = 1;
@@ -105,7 +109,8 @@ task ARPS_IP_axil_driver::run_phase(uvm_phase phase);
 	            wait(!vif.s_axi_rvalid);
                req.rdata = vif.s_axi_rdata;               
 	            vif.s_axi_rready = 0;	       
-	         end	         
+	         end	
+		  end // if interrupt
 	      end // @ (posedge vif.s_axi_aclk)
 	      
 	      //end of driving
@@ -119,7 +124,11 @@ endtask : run_phase
 function ARPS_IP_axil_driver::write_interrupt_a (ARPS_IP_interrupt_transaction tr);
       `uvm_info(get_type_name(), "INTERRUPT HAPPENED", UVM_FULL)
       interrupt_o = 1;
-      
+
+//	if(tr.interrupt_flag)begin
+//		interrupt_o = tr.interrupt_flag;      
+//	end
+
 endfunction : write_interrupt_a
 
 `endif

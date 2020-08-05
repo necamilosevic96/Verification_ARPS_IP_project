@@ -31,12 +31,14 @@ class ARPS_IP_axil_simple_seq extends ARPS_IP_axil_base_seq;
 	
 	req = ARPS_IP_axil_transaction::type_id::create("req");
 
-//	forever begin
-
+//	forever begin 
+/*
 		if(req.interrupt)begin
-			`uvm_do_with(req, {req.interrupt == 0; } )
+			`uvm_info(get_type_name(), "Sequence in interrupt is working AXI LITE", UVM_MEDIUM)
+			//`uvm_do_with(req, {req.interrupt == 0; } )
+			req.interrupt = 0;
 		end
-
+*/
 //	end
 
         `uvm_do_with(req, {req.wr_re == 1'b0; req.addr == 4'b0100; req.wdata == 31'b1; } ) 
@@ -45,6 +47,18 @@ class ARPS_IP_axil_simple_seq extends ARPS_IP_axil_base_seq;
 			`uvm_do_with(req, {req.wr_re == 1'b1; req.addr == 4'b0000; req.wdata == 31'b1; } )
 			`uvm_do_with(req, {req.wr_re == 1'b1; req.addr == 4'b0000; req.wdata == 31'b0; } )
 		end
+		
+	forever begin
+
+		`uvm_do(req)
+
+		if(req.interrupt)begin
+			`uvm_info(get_type_name(), "Sequence in interrupt is working AXI LITE", UVM_MEDIUM)
+			//`uvm_do_with(req, {req.interrupt == 0; } )
+			req.interrupt = 0;
+		end
+
+	end
 
 		`uvm_info(get_type_name(), "Sequence is working AXI LITE", UVM_MEDIUM)
 

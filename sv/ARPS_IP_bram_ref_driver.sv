@@ -26,7 +26,7 @@ class ARPS_IP_bram_ref_driver extends uvm_driver #(ARPS_IP_bram_ref_transaction)
 	
 	logic [31:0] address_ref;
 	int			 i = 0;
-	int     		interrupt_o = 0;
+	int     	interrupt_o = 0;
     
     // configuration
     ARPS_IP_bram_ref_config bram_ref_cfg;
@@ -73,8 +73,11 @@ task ARPS_IP_bram_ref_driver::run_phase(uvm_phase phase);
 		@(posedge vif.clk)begin
 		
 			if(interrupt_o == 1)begin
+				`uvm_info(get_type_name(), "Driver with interrupt is working BRAM REFERENT", UVM_MEDIUM)
 		         interrupt_o = 0;	       
-		         req.interrupt = 1;       
+		        seq_item_port.get_next_item(req);
+				req.interrupt=1;
+				seq_item_port.item_done();       
 		         continue;
 			end
 		
@@ -100,7 +103,11 @@ endtask : run_phase
 function ARPS_IP_bram_ref_driver::write_interrupt_r (ARPS_IP_interrupt_transaction tr);
       `uvm_info(get_type_name(), "INTERRUPT HAPPENED", UVM_FULL)
       interrupt_o = 1;
-      
+/*    
+	if(tr.interrupt_flag)begin
+		interrupt_o = tr.interrupt_flag;      
+	end
+*/	
 endfunction : write_interrupt_r
 
 `endif

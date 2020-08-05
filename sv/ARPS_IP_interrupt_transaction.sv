@@ -14,7 +14,7 @@
 
 class ARPS_IP_interrupt_transaction extends uvm_sequence_item;
 
-	bit interrupt_flag;
+	bit interrupt_flag = 0;
 
     `uvm_object_utils_begin(ARPS_IP_interrupt_transaction)
 		`uvm_field_int  (interrupt_flag,      UVM_DEFAULT)
