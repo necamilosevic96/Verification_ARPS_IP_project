@@ -21,89 +21,66 @@ class ARPS_IP_bram_curr_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_curr_tran
     `uvm_object_utils(ARPS_IP_bram_curr_base_seq)
 	`uvm_declare_p_sequencer(ARPS_IP_bram_curr_sequencer)
    
-   logic [31:0] image_queue[$];
-   int 		i = 0;
-//   rand bit [31:0] val;
-/*   string   img_hex;
-
-   int 		fd;
-   string 	file_path = "C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample50.txt";
-   int 		i = 0;  
-*/
-
+    logic [31:0] curr_queue[$];
+    int unsigned	i = 0;
+    int unsigned cnt_seq = 4;
     // new - constructor
     function new(string name = "ARPS_IP_bram_curr_base_seq_2");
         super.new(name);
     endfunction: new
 
-/*	
-	function random_queue();
-	
-		for(int i=0; i<16385; i++)begin
-			val.randomize();
-			image_queue.push_back(val);
-		end
-	
-	endfunction 
-*/
 
-
-    function void read_images();
-        while(i !=16385) begin
-            image_queue.push_back($urandom_range(0, 32'hFFFFFFFF));
-            i++;
-        end
+    function void read_curr_img(int sel);
+        init_queue();
+        case(sel)
+            0:  begin 
+                    for(int p=0;p<16384;p++) begin
+                        curr_queue[p]=32'h00000000;
+                    end
+                    `uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: ALL ZEROS %d", sel), UVM_MEDIUM)
+                end
+                
+            1:  begin
+                    for(int p=0;p<16384;p++) begin
+                        curr_queue[p]=32'h00000000;
+                    end
+                    `uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: ALL ZEROS %d", sel), UVM_MEDIUM)
+                end
+                
+            2:  begin
+                    for(int p=0;p<16384;p++) begin
+                        curr_queue[p]=32'hFFFFFFFF;;
+                    end
+                    `uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: ALL ONES %d", sel), UVM_MEDIUM)
+                end
+                
+            3:  begin
+                    for(int p=0;p<16384;p++) begin
+                        curr_queue[p]=32'hFFFFFFFF;;
+                    end
+                    `uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: ALL ONES %d", sel), UVM_MEDIUM)
+                end
+                
+            4:  begin
+                    while(i !=16384) begin
+                        curr_queue[i]=($urandom_range(0, 32'hFFFFFFFF));
+                        i++;
+                    end
+                    `uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: Random %d", cnt_seq), UVM_MEDIUM)
+                    cnt_seq++;
+                end
+            default: 
+                `uvm_error(get_type_name(), "BRAM_CURR: Invalid 'sel' value!!! ")
+            endcase
     endfunction
-
-
-
-/*
-   function void read_images(); 
-		
-			`uvm_info(get_type_name(), "Opening file BRAM CURRENT", UVM_MEDIUM)
-		
-		fd = ($fopen(file_path, "r"));
-		
-			`uvm_info(get_type_name(), "File potentially opened, extracting image BRAM CURRENT", UVM_MEDIUM)
-		
-		if(fd)begin
-			`uvm_info(get_type_name(), "File OPENED, extracting image BRAM CURRENT", UVM_MEDIUM)
-		end
-		
-		if(fd)begin
-			
-			`uvm_info(get_type_name(),$sformatf("FILE WITH IMAGE OPENED "),UVM_HIGH)
-		 
-			
-			while(!$feof(fd))begin
-				if(i == 16385) begin
- 
-					$fscanf(fd ,"%s\n",img_hex);
-					image_queue.push_back(img_hex.atohex());
-					i = 0;    
-					
-				end  
-				else begin
-				
-					$fscanf(fd ,"%s\n",img_hex);	
-					image_queue.push_back(img_hex.atohex());
-					i++;
-					
-				end
-            
-			end // while (!$feof(fd_img))  
-		end
-        else
-			`uvm_info(get_type_name(),$sformatf("ERROR OPENING FILE WITH IMAGE"),UVM_HIGH)
     
-	
-		`uvm_info(get_type_name(), "Import image finished BRAM CURRENT", UVM_MEDIUM)
-		$fclose(fd);
-		`uvm_info(get_type_name(), "After file is closed BRAM CURRENT", UVM_MEDIUM)
-	
-   endfunction
-*/
-
+    function void init_queue();
+        i=0;
+        for(int k=0;k<16384;k++) begin
+            curr_queue[k]=0;
+        end
+        `uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: Init_queue"), UVM_HIGH)
+    endfunction
 endclass: ARPS_IP_bram_curr_base_seq_2
 
 `endif

@@ -22,9 +22,10 @@ class ARPS_IP_bram_ref_simple_seq_2 extends ARPS_IP_bram_ref_base_seq_2;
     // UVM factory registration
     `uvm_object_utils(ARPS_IP_bram_ref_simple_seq_2)
 
-	bit [31:0] address_write_1;
-	int i = 0;
-
+	bit [31:0] address_write_r;
+	int start_frame_r = 0;
+    int num_of_seq = 5;
+    int cnt_seq = 0;
     // new - constructor
     function new(string name = "ARPS_IP_bram_ref_simple_seq_2");
         super.new(name);
@@ -33,23 +34,46 @@ class ARPS_IP_bram_ref_simple_seq_2 extends ARPS_IP_bram_ref_base_seq_2;
     // sequence generation logic in body
     virtual task body();
 	
-	req = ARPS_IP_bram_ref_transaction::type_id::create("req");                    
-
-		read_pixels();
-
-	while( i != pixel_queue.size() )begin
+        req = ARPS_IP_bram_ref_transaction::type_id::create("req");                    
+		read_ref_img(start_frame_r);
+        
+        forever begin
+            if(cnt_seq < num_of_seq) begin
+                `uvm_do(req)
+                address_write_r = req.address_ref;
+                if(req.interrupt) begin
+                    req.interrupt = 0;
+                    if(start_frame_r<4) begin
+                        start_frame_r++;
+                    end
+                    read_ref_img(start_frame_r);
+                    cnt_seq++;
+                end
+                else begin
+                    `uvm_do_with(req, {req.data_ref_frame == ref_queue[address_write_r/4]; } )
+                end
+            end
+            else begin
+                break;
+            end
+        
+        end
+    
+    
+    /*
+	while( i != ref_queue.size() )begin
 
 		forever begin
          
 			`uvm_do(req)
-			address_write_1 = req.address_ref;
-			`uvm_do_with(req, {req.data_ref_frame == pixel_queue[address_write_1/4]; } )
+			address_write_r = req.address_ref;
+			`uvm_do_with(req, {req.data_ref_frame == ref_queue[address_write_r/4]; } )
 			i++;
 
 		end // forever begin	 
 		
 	end // while
-		
+	*/
     endtask : body
 
 endclass : ARPS_IP_bram_ref_simple_seq_2

@@ -2,11 +2,8 @@
     +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
     |F|u|n|c|t|i|o|n|a|l| |V|e|r|i|f|i|c|a|t|i|o|n| |o|f| |H|a|r|d|w|a|r|e|
     +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
-
     FILE            ARPS_IP_axil_transaction.sv
-
     DESCRIPTION     sequence item
-
  ****************************************************************************/
 
 `ifndef ARPS_IP_AXIL_TRANSACTION_SV
@@ -21,10 +18,10 @@ parameter integer IP_ADDR_WIDTH	= 4;
 
 class ARPS_IP_axil_transaction extends uvm_sequence_item;
 
-	bit		    	wr_re;
-	bit [3 : 0 ]	    addr;
-	bit [31 : 0 ]		rdata;
-	bit [31 : 0 ]		wdata;
+	rand bit		    	wr_re;
+	rand bit [3 : 0 ]	    addr;
+	rand bit [31 : 0 ]		rdata;
+	rand bit [31 : 0 ]		wdata;
 	bit             		interrupt = 0;
 
 
@@ -45,4 +42,3 @@ class ARPS_IP_axil_transaction extends uvm_sequence_item;
 endclass : ARPS_IP_axil_transaction
 
 `endif
-

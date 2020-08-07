@@ -12,15 +12,15 @@
 `ifndef ARPS_IP_BRAM_CURR_SIMPLE_SEQ_2_SV
 `define ARPS_IP_BRAM_CURR_SIMPLE_SEQ_2_SV
 
-class ARPS_IP_bram_curr_simple_seq_2 extends ARPS_IP_bram_curr_base_seq;
+class ARPS_IP_bram_curr_simple_seq_2 extends ARPS_IP_bram_curr_base_seq_2;
 
     // UVM factory registration
     `uvm_object_utils(ARPS_IP_bram_curr_simple_seq_2)
 	
-	bit [31:0] address_write;
-	int i = 0;
-//	logic [31:0] image_queue[$];
-
+	bit [31:0] address_write_c;
+    int start_frame_c = 0;
+    int num_of_seq = 5;
+    int cnt_seq = 0;
     // new - constructor
     function new(string name = "ARPS_IP_bram_curr_simple_seq_2");
         super.new(name);
@@ -28,50 +28,30 @@ class ARPS_IP_bram_curr_simple_seq_2 extends ARPS_IP_bram_curr_base_seq;
 
     // sequence generation logic in body   
     virtual task body();
-
-
-		read_images();
-      
+		read_curr_img(start_frame_c); 
 		req = ARPS_IP_bram_curr_transaction::type_id::create("req");
-
-/*		for(int i=0; i<16385; i++)begin
-			req.randomize();
-			image_queue.push_back(req.img_32);
-		end		
-*/
-
-	while( i != image_queue.size() )begin
-
-		forever begin
-
-		/*	`uvm_do(req)
-			address_write = req.address_curr;
-
-		if(req.interrupt)begin
-			`uvm_do_with(req, {req.interrupt == 0; } )
-		end	
-		else begin
-			`uvm_do_with(req, {req.data_curr_frame == image_queue[address_write/4]; } )
-		end
-		*/
+        forever begin
+            if(cnt_seq < num_of_seq) begin
+                `uvm_do(req)
+                address_write_c = req.address_curr;
+                if(req.interrupt) begin
+                    req.interrupt = 0;
+                    if(start_frame_c<4) begin
+                        start_frame_c++;
+                    end
+                    read_curr_img(start_frame_c);
+                    cnt_seq++;
+                end
+                else begin
+                    `uvm_do_with(req, {req.data_curr_frame == curr_queue[address_write_c/4]; } )
+                end
+            end
+            else begin
+                break;
+            end
+        end
 		
-//		assert(req.randomize());
-//		image_queue.push_back(req.img_32); 
-		//random_queue();
-	
-		`uvm_do(req)
-		address_write = req.address_curr;
-		//foreach (image_queue[i])begin
-			`uvm_do_with(req, {req.data_curr_frame == image_queue[address_write/4]; } )
-		i++;
-		//end
-		
-	//	`uvm_info(get_type_name(), "Sequence is working BRAM CURRENT forever", UVM_MEDIUM)		
-		
-		end // forever begin	
-		
-	end // while
-		
+//	`uvm_info(get_type_name(), "Sequence is working BRAM CURRENT forever", UVM_MEDIUM)		
 //		`uvm_info(get_type_name(), "Sequence after forever begin is working BRAM CURRENT forever", UVM_MEDIUM)
 
     endtask : body

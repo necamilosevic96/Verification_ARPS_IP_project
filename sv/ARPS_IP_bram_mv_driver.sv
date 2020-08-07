@@ -57,9 +57,7 @@ endclass : ARPS_IP_bram_mv_driver
 // UVM run_phase
 task ARPS_IP_bram_mv_driver::run_phase(uvm_phase phase);
 
-	
         seq_item_port.get_next_item(req);
-
         seq_item_port.item_done();
       
 endtask : run_phase

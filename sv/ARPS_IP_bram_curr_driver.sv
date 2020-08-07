@@ -18,16 +18,15 @@
 `uvm_analysis_imp_decl(_interrupt_o)
 class ARPS_IP_bram_curr_driver extends uvm_driver #(ARPS_IP_bram_curr_transaction);
 
-	//`uvm_component_utils(ARPS_IP_bram_curr_driver)
+    //`uvm_component_utils(ARPS_IP_bram_curr_driver)
 	uvm_analysis_imp_interrupt_o#(ARPS_IP_interrupt_transaction, ARPS_IP_bram_curr_driver) port_interrupt_o;
     
     // ARPS_IP virtual interface
     virtual bram_curr_if vif;
     
-   logic [31:0] address;	
-   int     		interrupt_o = 0;
-   int			i = 0;
-	
+    logic [31:0] address;	
+    int     interrupt_o = 0;
+
     // configuration
     ARPS_IP_bram_curr_config bram_curr_cfg;
     
@@ -69,24 +68,19 @@ endclass : ARPS_IP_bram_curr_driver
 task ARPS_IP_bram_curr_driver::run_phase(uvm_phase phase);
 //    reset(); // init
 
-	req = ARPS_IP_bram_curr_transaction::type_id::create("req", this);
-
-   forever begin
-
+    forever begin
+        
+        //START
 		@(posedge vif.clk)begin
-		
-		
-//		seq_item_port.get_next_item(req);
-//		req.interrupt=1;
-//		seq_item_port.item_done();
-		
+            
 			if(interrupt_o == 1)begin
-				`uvm_info(get_type_name(), "Driver with interrupt is working BRAM CURRENT", UVM_MEDIUM)
-		         interrupt_o = 0;	       
+                `uvm_info(get_type_name(), "Driver with interrupt is working BRAM CURRENT", UVM_MEDIUM)
+		        interrupt_o = 0;	       
 		        seq_item_port.get_next_item(req);
 				req.interrupt=1;
-				seq_item_port.item_done();       
-		         continue;
+				seq_item_port.item_done();
+
+		        continue;
 			end
 		
 			address = vif.addr_curr;
@@ -98,22 +92,17 @@ task ARPS_IP_bram_curr_driver::run_phase(uvm_phase phase);
 			seq_item_port.get_next_item(req);
 			vif.data_curr = req.data_curr_frame;
             seq_item_port.item_done();
-			
-			i++;
 
 		end// posedge clk
 
-	end
+    end
       
 endtask : run_phase
 
 function ARPS_IP_bram_curr_driver::write_interrupt_o (ARPS_IP_interrupt_transaction tr);
-      `uvm_info(get_type_name(), "INTERRUPT HAPPENED", UVM_FULL)
-	  
-	if(tr.interrupt_flag)begin
-		interrupt_o = tr.interrupt_flag;      
-	end
-	
+    `uvm_info(get_type_name(),$sformatf("INTERRUPT HAPPENED"),UVM_MEDIUM)
+    interrupt_o = 1;
+      
 endfunction : write_interrupt_o
 
 

@@ -2,11 +2,8 @@
     +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
     |F|u|n|c|t|i|o|n|a|l| |V|e|r|i|f|i|c|a|t|i|o|n| |o|f| |H|a|r|d|w|a|r|e|
     +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
-
     FILE            ARPS_IP_bram_ref_transaction.sv
-
     DESCRIPTION     sequence item
-
  ****************************************************************************/
 
 `ifndef ARPS_IP_BRAM_REF_TRANSACTION_SV
@@ -37,4 +34,3 @@ class ARPS_IP_bram_ref_transaction extends uvm_sequence_item;
 endclass : ARPS_IP_bram_ref_transaction
 
 `endif
-

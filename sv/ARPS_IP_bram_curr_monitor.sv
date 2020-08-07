@@ -22,10 +22,7 @@ class ARPS_IP_bram_curr_monitor extends uvm_monitor;
 	
 	
 	logic [31:0]  address_r;
-	//logic [31:0]  address_r2 = 32'h00000000;
 	logic [31:0]  data_r;
-	//int fd;
-	//bit   [31:0]  addr_cnt = 32'h00000000;
     
     // configuration
     ARPS_IP_config cfg;
@@ -45,38 +42,21 @@ class ARPS_IP_bram_curr_monitor extends uvm_monitor;
         `uvm_field_object(cfg, UVM_DEFAULT | UVM_REFERENCE)
     `uvm_component_utils_end    
  
-
-//START
-/*       
-    // coverage
-    covergroup cg_ARPS_IP_monitor;
-        // cover direction - read or write
-        cp_direction : coverpoint tr_collected.dir {
-            bins write = {ARPS_IP_WRITE};
-            bins read  = {ARPS_IP_READ};
-        }
-        // cover address ack
-        cp_addr_ack : coverpoint tr_collected.addr_ack {
-            bins ack  = {ARPS_IP_ACK};
-            bins nack = {ARPS_IP_NACK};            
-        }
-        // cover data ack
-        cp_data_ack : coverpoint tr_collected.data_ack {
-            bins ack  = {ARPS_IP_ACK};
-            bins nack = {ARPS_IP_NACK};            
-        }        
-        // TODO : add others
-    endgroup : cg_ARPS_IP_monitor;
-
-
-*/
-//FINISH
+    covergroup cg_curr_monitor;
+        // cover address
+        cp_address_curr : coverpoint tr_collected.address_curr {
+            bins low = {0,16384};
+            bins med  = {16385,32768};
+			bins high  = {32769,49152};
+			bins extr  = {49153,65535};
+        }     
+    endgroup : cg_curr_monitor;
 
     // new - constructor
     function new(string name = "ARPS_IP_bram_curr_monitor", uvm_component parent = null);
         super.new(name, parent);
         item_collected_port = new("item_collected_port", this);
-       // cg_ARPS_IP_monitor = new(); ------------------------------------------------komentttt
+        cg_curr_monitor = new();
     endfunction : new
     
     // UVM build_phase
@@ -104,33 +84,27 @@ endclass : ARPS_IP_bram_curr_monitor
 task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);    
     
 	tr_collected = ARPS_IP_bram_curr_transaction::type_id::create("tr_collected", this);
-	
-	//fd = ($fopen("C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/sv/proba.txt"));
-
+    
 	forever begin
 
 		@(posedge vif.clk)begin
-        address_r = vif.addr_curr;
-        @(posedge vif.clk)begin   
-            if(vif.en_curr==1'b1) begin
-
+            address_r = vif.addr_curr;
+            @(posedge vif.clk)begin   
+                if(vif.en_curr==1'b1) begin
                 
-				data_r = vif.data_curr;
-
-
-				tr_collected.address_curr = address_r;
-				tr_collected.data_curr_frame = data_r;
-		
-				item_collected_port.write(tr_collected);
+                    data_r = vif.data_curr;
+                    tr_collected.address_curr = address_r;
+                    tr_collected.data_curr_frame = data_r;
+                    item_collected_port.write(tr_collected);
+					
+					if(cfg.has_coverage == 1) begin
+						cg_curr_monitor.sample();
+					end
 				
-				//`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor BRAM CURRENT:\n%s", tr_collected.sprint()), UVM_MEDIUM)
-				
-
-			end 
-        end
+                    `uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor BRAM CURRENT:\n%s", tr_collected.sprint()), UVM_FULL)
+                 end 
+            end
 		end
-
-        
     end  // forever begin
 	
 endtask : run_phase

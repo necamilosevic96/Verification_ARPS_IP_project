@@ -20,88 +20,67 @@ class ARPS_IP_bram_curr_base_seq extends uvm_sequence #(ARPS_IP_bram_curr_transa
     // UVM factory registration
     `uvm_object_utils(ARPS_IP_bram_curr_base_seq)
 	`uvm_declare_p_sequencer(ARPS_IP_bram_curr_sequencer)
-   
-   logic [31:0] image_queue[$];
-   string   img_hex;
-
-   int 		fd;
-   //string 	file_path = "C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample51.txt";
-   string   file_path = "..//images_for_arps/sample69.txt";
-   int 		i = 0;  
-   
-   //int fd2; // NM new file descriptor
-
-
+    
+    logic [31:0] curr_queue[$];
+    string  img_hex;
+    int     fd;
+    
+    //string   file_path = "..//images_for_arps/sample69"; 
+    string  file_path = "..//images_for_arps/sample";
+    string  full_path;
+    string  ext = ".txt";
+    string  fr_num;
+    int unsigned    i = 0;  
+    
     // new - constructor
     function new(string name = "ARPS_IP_bram_curr_base_seq");
         super.new(name);
     endfunction: new
     
-/*    function void read_images();
-        while(i !=16385) begin
-            image_queue.push_back($urandom_range(0, 32'hFFFFFFFF));
-            i++;
-        end
-    endfunction
-*/
-   function void read_images();
+   function void read_curr_img(int frame_num);
+		i = 0;
+        init_queue_c();
+        fr_num.itoa(frame_num);
+		`uvm_info(get_type_name(), "Opening file BRAM CURRENT", UVM_MEDIUM)
 		
-			`uvm_info(get_type_name(), "Opening file BRAM CURRENT", UVM_MEDIUM)
-		
-		fd = ($fopen(file_path, "r"));
-		
-			`uvm_info(get_type_name(), "File potentially opened, extracting image BRAM CURRENT", UVM_MEDIUM)
+		fd = ($fopen({file_path,fr_num,ext}, "r"));
 		
 		if(fd)begin
-			`uvm_info(get_type_name(), "File OPENED, extracting image BRAM CURRENT", UVM_MEDIUM)
-		end
-		
-		if(fd)begin
-			
-			`uvm_info(get_type_name(),$sformatf("FILE WITH IMAGE OPENED "),UVM_HIGH)
-		 
-			
+			`uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: File OPENED, SAMPLE%d",frame_num), UVM_MEDIUM)	
 			while(!$feof(fd))begin
-				if(i == 16385) begin
+				if(i >= 16384) begin
  
 					$fscanf(fd ,"%s\n",img_hex);
-					image_queue.push_back(img_hex.atohex());
+					//curr_queue.push_back(img_hex.atohex());
+                    //$display("CURR_qu[0]=%x",curr_queue[0]);
 					i = 0;    
 					
 				end  
 				else begin
 				
 					$fscanf(fd ,"%s\n",img_hex);	
-					image_queue.push_back(img_hex.atohex());
+					curr_queue[i] = (img_hex.atohex());
 					i++;
 					
 				end
             
 			end // while (!$feof(fd_img))  
 		end
-        else
-			`uvm_info(get_type_name(),$sformatf("ERROR OPENING FILE WITH IMAGE"),UVM_HIGH)
-    
+        else begin
+			`uvm_fatal(get_type_name(), $sformatf("BRAM_CURR: Didn't open file SAMPLE%d",frame_num))
+        end
 	
 		`uvm_info(get_type_name(), "Import image finished BRAM CURRENT", UVM_MEDIUM)
 		$fclose(fd);
 		`uvm_info(get_type_name(), "After file is closed BRAM CURRENT", UVM_MEDIUM)
 
-// NM ispis u novi fajl -------START		
-		
-		//fd2 = ($fopen("..//images_for_arps/probanje.txt", "w"));
-		
-		//if(fd2)begin
-			//for(int i=0; i<image_queue.size(); i++)begin
-				//$fdisplay(fd2 ,"0x%h" ,image_queue[i]);
-			//end
-		//end
-		
-		//$fclose(fd2);
-		
-// NM ------------------------ END
-	
    endfunction
+    
+    function void init_queue_c();
+        for(int k=0;k<16384;k++) begin
+            curr_queue[k]=0;
+        end
+    endfunction
 
 endclass: ARPS_IP_bram_curr_base_seq
 

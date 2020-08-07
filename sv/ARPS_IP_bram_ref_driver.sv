@@ -2,11 +2,8 @@
     +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
     |F|u|n|c|t|i|o|n|a|l| |V|e|r|i|f|i|c|a|t|i|o|n| |o|f| |H|a|r|d|w|a|r|e|
     +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
-
     FILE            ARPS_IP_master_driver.sv
-
     DESCRIPTION     
-
  ****************************************************************************/
 
 `ifndef ARPS_IP_BRAM_REF_DRIVER_SV
@@ -26,8 +23,9 @@ class ARPS_IP_bram_ref_driver extends uvm_driver #(ARPS_IP_bram_ref_transaction)
 	
 	logic [31:0] address_ref;
 	int			 i = 0;
-	int     	interrupt_o = 0;
-    
+	int     		interrupt_o = 0;
+    int num_of_seq = 5;
+    int cnt_seq = 0;
     // configuration
     ARPS_IP_bram_ref_config bram_ref_cfg;
     
@@ -69,15 +67,16 @@ task ARPS_IP_bram_ref_driver::run_phase(uvm_phase phase);
 
 
 	forever begin
-
+        
 		@(posedge vif.clk)begin
 		
 			if(interrupt_o == 1)begin
-				`uvm_info(get_type_name(), "Driver with interrupt is working BRAM REFERENT", UVM_MEDIUM)
-		         interrupt_o = 0;	       
-		        seq_item_port.get_next_item(req);
-				req.interrupt=1;
-				seq_item_port.item_done();       
+                `uvm_info(get_type_name(), "Driver with interrupt is working BRAM REFERENT", UVM_MEDIUM)
+                seq_item_port.get_next_item(req);
+                interrupt_o = 0;	       
+		         req.interrupt = 1;       
+                 seq_item_port.item_done();
+                 
 		         continue;
 			end
 		
@@ -91,7 +90,6 @@ task ARPS_IP_bram_ref_driver::run_phase(uvm_phase phase);
 			vif.data_ref = req.data_ref_frame;
             seq_item_port.item_done();
 			
-			i++;
 
 		end// posedge clk
 
@@ -103,12 +101,7 @@ endtask : run_phase
 function ARPS_IP_bram_ref_driver::write_interrupt_r (ARPS_IP_interrupt_transaction tr);
       `uvm_info(get_type_name(), "INTERRUPT HAPPENED", UVM_FULL)
       interrupt_o = 1;
-/*    
-	if(tr.interrupt_flag)begin
-		interrupt_o = tr.interrupt_flag;      
-	end
-*/	
+      
 endfunction : write_interrupt_r
 
 `endif
-

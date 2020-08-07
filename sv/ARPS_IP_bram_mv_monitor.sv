@@ -39,39 +39,26 @@ class ARPS_IP_bram_mv_monitor extends uvm_monitor;
     `uvm_component_utils_begin(ARPS_IP_bram_mv_monitor)
         `uvm_field_object(cfg, UVM_DEFAULT | UVM_REFERENCE)
     `uvm_component_utils_end    
- 
-
-//START
-/*       
+  
     // coverage
-    covergroup cg_ARPS_IP_monitor;
-        // cover direction - read or write
-        cp_direction : coverpoint tr_collected.dir {
-            bins write = {ARPS_IP_WRITE};
-            bins read  = {ARPS_IP_READ};
+    covergroup cg_mv_monitor;
+        // cover address
+        cp_address_mv : coverpoint tr_collected_mv.address_mv {
+            bins low = {0,255};
+            bins high  = {256,511};
         }
-        // cover address ack
-        cp_addr_ack : coverpoint tr_collected.addr_ack {
-            bins ack  = {ARPS_IP_ACK};
-            bins nack = {ARPS_IP_NACK};            
+        // cover data
+        cp_data_mv : coverpoint tr_collected_mv.data_mv_frame {
+            bins ack  = {32'hfffffff9,32'hffffffff};
+            bins nack = {0,7};            
         }
-        // cover data ack
-        cp_data_ack : coverpoint tr_collected.data_ack {
-            bins ack  = {ARPS_IP_ACK};
-            bins nack = {ARPS_IP_NACK};            
-        }        
-        // TODO : add others
-    endgroup : cg_ARPS_IP_monitor;
-
-
-*/
-//FINISH
+    endgroup : cg_mv_monitor;
 
     // new - constructor
     function new(string name = "ARPS_IP_bram_mv_monitor", uvm_component parent = null);
         super.new(name, parent);
         item_collected_port = new("item_collected_port", this);
-       // cg_ARPS_IP_monitor = new(); ------------------------------------------------komentttt
+        cg_mv_monitor = new();
     endfunction : new
     
     // UVM build_phase
@@ -107,11 +94,14 @@ task ARPS_IP_bram_mv_monitor::run_phase(uvm_phase phase);
                 data_r = vif.data_mv;
 
                 tr_collected_mv.address_mv = address_r;
-                tr_collected_mv.data_mv_frame = data_r;
-				
+                tr_collected_mv.data_mv_frame = data_r;				
                 item_collected_port.write(tr_collected_mv);
 				
-                //`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor MOTION VECTOR:\n%s", tr_collected_mv.sprint()), UVM_MEDIUM)
+				if(cfg.has_coverage == 1) begin
+					cg_mv_monitor.sample();
+				end
+				
+                `uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor MOTION VECTOR:\n%s", tr_collected_mv.sprint()), UVM_FULL)
             end 
 		end 
 		        

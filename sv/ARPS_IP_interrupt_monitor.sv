@@ -31,19 +31,17 @@ class ARPS_IP_interrupt_monitor extends uvm_monitor;
    // current transaction
    ARPS_IP_interrupt_transaction current_frame;
 
-/*   // coverage can go here
    covergroup interrupt_cg;
-      option.per_instance = 1;
-      interrupt_cpt: coverpoint vif.done_interrupt{
-         bins interrupt_happened = {1};
-      }      
+      cp_interrupt : coverpoint current_frame.interrupt_flag {
+            bins one  = {1};
+            bins zero = {0};            
+        }    
    endgroup
-   // ...
-*/
+
    function new(string name = "ARPS_IP_interrupt_monitor", uvm_component parent = null);
       super.new(name,parent);
       item_collected_port = new("item_collected_port", this);
-      //interrupt_cg = new();      
+      interrupt_cg = new();      
    endfunction
 
    function void connect_phase(uvm_phase phase);
@@ -63,12 +61,13 @@ class ARPS_IP_interrupt_monitor extends uvm_monitor;
 		current_frame.interrupt_flag=vif.interrupt_o;
 	 
 	    if(vif.interrupt_o)begin
-	       `uvm_info(get_type_name(),
-			 $sformatf("INTERRUPT HAPPENED"),
-			 UVM_FULL)
+	       `uvm_info(get_type_name(),$sformatf("INTERRUPT HAPPENED"),UVM_MEDIUM)
 	       //interrupt_cg.sample();          
 	       item_collected_port.write(current_frame);
 	    end
+		
+		interrupt_cg.sample();
+		
 	 end
       end
    endtask : run_phase

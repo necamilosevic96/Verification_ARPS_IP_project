@@ -2,11 +2,8 @@
     +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
     |F|u|n|c|t|i|o|n|a|l| |V|e|r|i|f|i|c|a|t|i|o|n| |o|f| |H|a|r|d|w|a|r|e|
     +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+-+ +-+-+ +-+-+-+-+-+-+-+-+
-
     FILE            ARPS_IP_env.sv
-
     DESCRIPTION     environment containing the master and slave agents
-
  ****************************************************************************/
 
 `ifndef ARPS_IP_ENV_SV
@@ -99,4 +96,3 @@ class ARPS_IP_env extends uvm_env;
 endclass : ARPS_IP_env
 
 `endif
-

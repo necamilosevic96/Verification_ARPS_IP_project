@@ -34,49 +34,25 @@ class ARPS_IP_axil_monitor extends uvm_monitor;
     // current transaction
     ARPS_IP_axil_transaction tr_current;
 
-    // start and stop helper events   KOMENTARI
-//    event start_e;
-//    event stop_e;
-    
     // UVM factory registration
     `uvm_component_utils_begin(ARPS_IP_axil_monitor)
         `uvm_field_object(cfg, UVM_DEFAULT | UVM_REFERENCE)
     `uvm_component_utils_end    
- 
-
-//START
-/*       
+     
     // coverage
-    covergroup cg_ARPS_IP_monitor;
+    covergroup cg_axil_monitor;
         // cover direction - read or write
-        cp_direction : coverpoint tr_collected.dir {
-            bins write = {ARPS_IP_WRITE};
-            bins read  = {ARPS_IP_READ};
+        cp_direction : coverpoint address {
+            bins write = {0};
+            bins read  = {4};
         }
-        // cover address ack
-        cp_addr_ack : coverpoint tr_collected.addr_ack {
-            bins ack  = {ARPS_IP_ACK};
-            bins nack = {ARPS_IP_NACK};            
-        }
-        // cover data ack
-        cp_data_ack : coverpoint tr_collected.data_ack {
-            bins ack  = {ARPS_IP_ACK};
-            bins nack = {ARPS_IP_NACK};            
-        }        
-        // TODO : add others
-    endgroup : cg_ARPS_IP_monitor;
-
-
-*/
-//FINISH
+    endgroup : cg_axil_monitor;
 
     // new - constructor
     function new(string name = "ARPS_IP_axil_monitor", uvm_component parent = null);
         super.new(name, parent);
         item_collected_port = new("item_collected_port", this);
-       // cg_ARPS_IP_monitor = new(); ------------------------------------------------komentttt
-		//write_address = new();
-		//read_address = new();
+        cg_axil_monitor = new();
     endfunction : new
     
     // UVM build_phase
@@ -95,44 +71,32 @@ class ARPS_IP_axil_monitor extends uvm_monitor;
             `uvm_fatal("NOVIF",{"virtual interface must be set for: ",get_full_name(),".vif"})    
     endfunction : connect_phase
 
-
-    extern virtual task run_phase(uvm_phase phase); // dodato nakaknadno, vec dole postoji
-
-//START
-/*
-
-    // additional class methods
-    extern virtual task start_condition(ref event start_e);
-    extern virtual task stop_condition(ref event stop_e);
-//    extern virtual task run_phase(uvm_phase phase);
-    extern virtual task collect_transactions();
-    extern virtual function void report_phase(uvm_phase phase);
-
-*/
-//FINISH
+    extern virtual task run_phase(uvm_phase phase);
 
 endclass : ARPS_IP_axil_monitor
 
 // UVM run_phase
 task ARPS_IP_axil_monitor::run_phase(uvm_phase phase);    
     forever begin
-//START
+
 		tr_current = ARPS_IP_axil_transaction::type_id::create("tr_current", this);
 		@(posedge vif.clk)begin
+		
 			if(vif.s_axi_awready )begin
                `uvm_info(get_name(), $sformatf("write address: %d", vif.s_axi_awaddr), UVM_LOW)
 				address = vif.s_axi_awaddr;               
-//				write_address.sample();
 			end
 			if(vif.s_axi_arready)
 				address = vif.s_axi_araddr;
 			if(vif.s_axi_rvalid)begin
-//				read_address.sample();
+
 				tr_current.rdata = vif.s_axi_rdata;
 				tr_current.addr = address;
 				item_collected_port.write(tr_current);
+				
+				cg_axil_monitor.sample();
 
-               `uvm_info(get_name(), $sformatf("read address: %d \t read_data: %d", address, vif.s_axi_rdata), UVM_LOW)               
+               //`uvm_info(get_name(), $sformatf("read address: %d \t read_data: %d", address, vif.s_axi_rdata), UVM_LOW)               
 			end
 		end
   

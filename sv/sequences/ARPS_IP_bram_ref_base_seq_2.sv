@@ -20,71 +20,67 @@ class ARPS_IP_bram_ref_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_ref_transa
     // UVM factory registration
     `uvm_object_utils(ARPS_IP_bram_ref_base_seq_2)
 	
-	logic [31:0] pixel_queue[$];
-	int 		i = 0;
-/*    string   img_hex_1;
+	logic [31:0] ref_queue[$];
+	int unsigned i = 0;
+    int unsigned cnt_seq = 4;
 
-	int 		fd_1;
-	string 	file_path = "C:/Users/Nemanja/Desktop/Working/Verification_ARPS_IP_project/images_for_arps/sample50.txt";
-	int 		i = 0;  
-*/
     // new - constructor
     function new(string name = "ARPS_IP_bram_ref_base_seq_2");
         super.new(name);
     endfunction: new
 
-    function void read_pixels();
-        while(i !=16385) begin
-            pixel_queue.push_back($urandom_range(0, 32'hFFFFFFFF));
-            i++;
-        end
+    function void read_ref_img(int sel);
+        init_queue();
+        case(sel)
+            0:  begin
+                    for(int p=0;p<16384;p++) begin
+                        ref_queue[p]=32'h00000000;
+                    end
+                    `uvm_info(get_type_name(), $sformatf("BRAM_REF_SEQ: ALL ZEROS %d", sel), UVM_MEDIUM)
+                end
+                
+            1:  begin
+                    for(int p=0;p<16384;p++) begin
+                        ref_queue[p]=32'hFFFFFFFF;
+                    end
+                    `uvm_info(get_type_name(), $sformatf("BRAM_REF_SEQ: ALL ONES %d", sel), UVM_MEDIUM)
+                end
+                
+            2:  begin
+                    for(int p=0;p<16384;p++) begin
+                        ref_queue[p]=32'h00000000;
+                    end
+                    `uvm_info(get_type_name(), $sformatf("BRAM_REF_SEQ: ALL ZEROS %d", sel), UVM_MEDIUM)
+                end
+                
+            3:  begin
+                    for(int p=0;p<16384;p++) begin
+                        ref_queue[p]=32'hFFFFFFFF;
+                    end
+                    `uvm_info(get_type_name(), $sformatf("BRAM_REF_SEQ: ALL ONES %d", sel), UVM_MEDIUM)
+                end
+                
+            4:  begin
+                    while(i !=16384) begin
+                        ref_queue[i]=($urandom_range(0, 32'hFFFFFFFF));
+                        i++;
+                    end
+                    `uvm_info(get_type_name(), $sformatf("BRAM_REF_SEQ: Random %d", cnt_seq), UVM_MEDIUM)
+                    cnt_seq++;
+                end
+            default:
+                `uvm_error(get_type_name(), "BRAM_REF_SEQ: Invalid 'sel' value!!! ")
+            endcase
+        
     endfunction
   
-
-/*   function void read_pixels();
-		
-			`uvm_info(get_type_name(), "Opening file BRAM REFERENT", UVM_MEDIUM)
-		
-		fd_1 = ($fopen(file_path, "r"));
-
-		
-		if(fd_1)begin
-			`uvm_info(get_type_name(), "File OPENED, extracting pixels BRAM REFERENT", UVM_MEDIUM)
-		end
-		
-		if(fd_1)begin
-			
-			`uvm_info(get_type_name(),$sformatf("FILE WITH IMAGE OPENED "),UVM_HIGH)
-		 
-			
-			while(!$feof(fd_1))begin
-				if(i == 16385) begin
-
-					$fscanf(fd_1 ,"%s\n",img_hex_1);
-					pixel_queue.push_back(img_hex_1.atohex());
-					i = 0;    
-
-				end  
-				else begin
-				
-					$fscanf(fd_1 ,"%s\n",img_hex_1);
-					pixel_queue.push_back(img_hex_1.atohex());
-					i++;
-
-				end
-            
-			end // while (!$feof(fd_img))  
-		end
-        else
-			`uvm_info(get_type_name(),$sformatf("ERROR OPENING FILE WITH IMAGE"),UVM_HIGH)
-    
-	
-		`uvm_info(get_type_name(), "Import image finished BRAM REFERENT", UVM_MEDIUM)
-		$fclose(fd_1);
-		`uvm_info(get_type_name(), "After file is closed BRAM REFERENT", UVM_MEDIUM)
-	
-   endfunction
-*/
+    function void init_queue();
+        i=0;
+        for(int k=0;k<16384;k++) begin
+            ref_queue[k]=0;
+        end
+        `uvm_info(get_type_name(), $sformatf("BRAM_REF_SEQ: Init_queue"), UVM_HIGH)
+    endfunction
 endclass: ARPS_IP_bram_ref_base_seq_2
 
 `endif

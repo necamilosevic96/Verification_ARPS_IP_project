@@ -40,38 +40,20 @@ class ARPS_IP_bram_ref_monitor extends uvm_monitor;
         `uvm_field_object(cfg, UVM_DEFAULT | UVM_REFERENCE)
     `uvm_component_utils_end    
  
-
-//START
-/*       
-    // coverage
-    covergroup cg_ARPS_IP_monitor;
-        // cover direction - read or write
-        cp_direction : coverpoint tr_collected.dir {
-            bins write = {ARPS_IP_WRITE};
-            bins read  = {ARPS_IP_READ};
-        }
-        // cover address ack
-        cp_addr_ack : coverpoint tr_collected.addr_ack {
-            bins ack  = {ARPS_IP_ACK};
-            bins nack = {ARPS_IP_NACK};            
-        }
-        // cover data ack
-        cp_data_ack : coverpoint tr_collected.data_ack {
-            bins ack  = {ARPS_IP_ACK};
-            bins nack = {ARPS_IP_NACK};            
-        }        
-        // TODO : add others
-    endgroup : cg_ARPS_IP_monitor;
-
-
-*/
-//FINISH
+    covergroup cg_ref_monitor;
+        cp_address_ref : coverpoint tr_collected_ref.address_ref {
+            bins low = {0,16384};
+            bins med  = {16385,32768};
+			bins high  = {32769,49152};
+			bins extr  = {49153,65535};
+        } 
+    endgroup : cg_ref_monitor;
 
     // new - constructor
     function new(string name = "ARPS_IP_bram_ref_monitor", uvm_component parent = null);
         super.new(name, parent);
         item_collected_port = new("item_collected_port", this);
-       // cg_ARPS_IP_monitor = new(); ------------------------------------------------komentttt
+        cg_ref_monitor = new();
     endfunction : new
     
     // UVM build_phase
@@ -103,21 +85,22 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
 	forever begin
         
 		@(posedge vif.clk)begin
-        address_r = vif.addr_ref;
-        @(posedge vif.clk)begin
-            if(vif.en_ref == 1'b1) begin
-                
-                data_r = vif.data_ref;
+            address_r = vif.addr_ref;
+            @(posedge vif.clk)begin
+                if(vif.en_ref == 1'b1) begin
+                    
+                    data_r = vif.data_ref;
+                    tr_collected_ref.address_ref = address_r;
+                    tr_collected_ref.data_ref_frame = data_r;
+                    item_collected_port.write(tr_collected_ref);
+					
+					if(cfg.has_coverage == 1) begin
+						cg_ref_monitor.sample();
+					end
 
-
-                tr_collected_ref.address_ref = address_r;
-                tr_collected_ref.data_ref_frame = data_r;
-				
-                item_collected_port.write(tr_collected_ref);
-
-			//`uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor BRAM REFERENT:\n%s", tr_collected_ref.sprint()), UVM_MEDIUM)
-            end
-		end 
+                    `uvm_info(get_type_name(), $sformatf("Transaction collected data in monitor BRAM REFERENT:\n%s", tr_collected_ref.sprint()), UVM_FULL)
+                end
+            end 
         end
         
     end  // forever begin
