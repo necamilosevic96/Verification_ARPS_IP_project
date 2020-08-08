@@ -46,6 +46,7 @@ class ARPS_IP_axil_monitor extends uvm_monitor;
             bins write = {0};
             bins read  = {4};
         }
+
     endgroup : cg_axil_monitor;
 
     // new - constructor
@@ -88,6 +89,7 @@ task ARPS_IP_axil_monitor::run_phase(uvm_phase phase);
 			end
 			if(vif.s_axi_arready)
 				address = vif.s_axi_araddr;
+
 			if(vif.s_axi_rvalid)begin
 
 				tr_current.rdata = vif.s_axi_rdata;
@@ -95,8 +97,7 @@ task ARPS_IP_axil_monitor::run_phase(uvm_phase phase);
 				item_collected_port.write(tr_current);
 				
 				cg_axil_monitor.sample();
-
-               //`uvm_info(get_name(), $sformatf("read address: %d \t read_data: %d", address, vif.s_axi_rdata), UVM_LOW)               
+              
 			end
 		end
   

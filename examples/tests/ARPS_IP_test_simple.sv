@@ -77,7 +77,7 @@ class ARPS_IP_test_simple extends ARPS_IP_test_base;
 
         join
 
-        `uvm_info(get_type_name(), "After fork in simple testr is working", UVM_MEDIUM)        
+        `uvm_info(get_type_name(), "Simple test is done", UVM_MEDIUM)        
         phase.drop_objection(this); // test can end
     endtask : run_phase
 

@@ -85,7 +85,7 @@ class ARPS_IP_env extends uvm_env;
 	      bram_curr_agent.mon.item_collected_port.connect(scbd.port_bram_curr);
 		  bram_ref_agent.mon.item_collected_port.connect(scbd.port_bram_ref);
 		  bram_mv_agent.mon.item_collected_port.connect(scbd.port_bram_mv);
-	      interrupt_agent.interrupt_mon.item_collected_port.connect(bram_curr_agent.drv.port_interrupt_o);//this here is needed so that the driver knows when interrupt happened      
+	      interrupt_agent.interrupt_mon.item_collected_port.connect(bram_curr_agent.drv.port_interrupt_o);// forward interrupt to driver 
           interrupt_agent.interrupt_mon.item_collected_port.connect(bram_ref_agent.drv.port_interrupt_r);
 		  interrupt_agent.interrupt_mon.item_collected_port.connect(axil_agent.drv.port_interrupt_a);
 		  interrupt_agent.interrupt_mon.item_collected_port.connect(scbd.port_interrupt);

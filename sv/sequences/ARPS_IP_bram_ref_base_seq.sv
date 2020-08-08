@@ -47,19 +47,13 @@ class ARPS_IP_bram_ref_base_seq extends uvm_sequence #(ARPS_IP_bram_ref_transact
 			`uvm_info(get_type_name(), $sformatf("BRAM_REF_SEQ: File OPENED, SAMPLE%d",frame_num), UVM_MEDIUM)
 			while(!$feof(fd_r))begin
 				if(i >= 16384) begin
-
 					$fscanf(fd_r ,"%s\n",data_hex_ref);
-					//ref_queue.push_back(data_hex_ref.atohex());
-                    //$display("REF_qu[0]=%x",ref_queue[0]);
 					i = 0;    
-
 				end  
-				else begin
-				
+				else begin			
 					$fscanf(fd_r ,"%s\n",data_hex_ref);
 					ref_queue[i]=(data_hex_ref.atohex());
 					i++;
-
 				end
             
 			end // while (!$feof(fd_img))  

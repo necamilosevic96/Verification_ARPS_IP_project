@@ -24,8 +24,7 @@ class ARPS_IP_bram_curr_base_seq extends uvm_sequence #(ARPS_IP_bram_curr_transa
     logic [31:0] curr_queue[$];
     string  img_hex;
     int     fd;
-    
-    //string   file_path = "..//images_for_arps/sample69"; 
+     
     string  file_path = "..//images_for_arps/sample";
     string  full_path;
     string  ext = ".txt";
@@ -47,21 +46,16 @@ class ARPS_IP_bram_curr_base_seq extends uvm_sequence #(ARPS_IP_bram_curr_transa
 		
 		if(fd)begin
 			`uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: File OPENED, SAMPLE%d",frame_num), UVM_MEDIUM)	
+			
 			while(!$feof(fd))begin
-				if(i >= 16384) begin
- 
+				if(i >= 16384) begin 
 					$fscanf(fd ,"%s\n",img_hex);
-					//curr_queue.push_back(img_hex.atohex());
-                    //$display("CURR_qu[0]=%x",curr_queue[0]);
-					i = 0;    
-					
+					i = 0;   			
 				end  
-				else begin
-				
+				else begin		
 					$fscanf(fd ,"%s\n",img_hex);	
 					curr_queue[i] = (img_hex.atohex());
-					i++;
-					
+					i++;	
 				end
             
 			end // while (!$feof(fd_img))  
@@ -72,7 +66,7 @@ class ARPS_IP_bram_curr_base_seq extends uvm_sequence #(ARPS_IP_bram_curr_transa
 	
 		`uvm_info(get_type_name(), "Import image finished BRAM CURRENT", UVM_MEDIUM)
 		$fclose(fd);
-		`uvm_info(get_type_name(), "After file is closed BRAM CURRENT", UVM_MEDIUM)
+		`uvm_info(get_type_name(), "File is closed BRAM CURRENT", UVM_MEDIUM)
 
    endfunction
     

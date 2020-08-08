@@ -40,21 +40,17 @@ class ARPS_IP_axil_simple_seq extends ARPS_IP_axil_base_seq;
 	
     `uvm_do_with(req, {req.wr_re == 1'b1; req.addr == 4'b0000; req.wdata == 31'b1; } )
 	`uvm_do_with(req, {req.wr_re == 1'b1; req.addr == 4'b0000; req.wdata == 31'b0; } )
-    //`uvm_do_with(req, {req.wr_re == 1'b1; req.addr == 4'b0000; req.wdata == 31'b1; } )//start =1;
-    //`uvm_do_with(req, {req.wr_re == 1'b1; req.addr == 4'b0000; req.wdata == 31'b0; } )//start =0;
     
     forever begin
+	
         if(cnt_seq < num_of_seq) begin
 
             if(req.interrupt)begin
-                //`uvm_do_with(req, {req.interrupt == 0; } )
-                 req.interrupt =0;
+                req.interrupt =0;
                 $display("AXI_LITE: Interrupt=1");
                 start_flag = 1'b1;
                 cnt_seq++;
             end
-
-            //if(start_flag == 1'b1) begin
                
                 `uvm_do_with(req, {req.wr_re == 1'b0; req.addr == 4'b0100; req.wdata == 31'b1; } ) //ready
 
@@ -68,8 +64,6 @@ class ARPS_IP_axil_simple_seq extends ARPS_IP_axil_base_seq;
                     start_flag = 1'b0;
                 end
 
-                //`uvm_info(get_type_name(), "Sequence is working AXI LITE", UVM_MEDIUM)
-            //end
         end
         else begin
             break;

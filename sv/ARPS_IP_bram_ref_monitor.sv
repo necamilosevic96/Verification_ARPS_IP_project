@@ -41,11 +41,8 @@ class ARPS_IP_bram_ref_monitor extends uvm_monitor;
     `uvm_component_utils_end    
  
     covergroup cg_ref_monitor;
-        cp_address_ref : coverpoint tr_collected_ref.address_ref {
-            bins low = {0,16384};
-            bins med  = {16385,32768};
-			bins high  = {32769,49152};
-			bins extr  = {49153,65535};
+        cp_address_ref : coverpoint (tr_collected_ref.address_ref/4) {
+            bins range[] = {[0:16383]};
         } 
     endgroup : cg_ref_monitor;
 

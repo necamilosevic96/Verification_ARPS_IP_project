@@ -54,8 +54,6 @@ class ARPS_IP_bram_curr_simple_seq extends ARPS_IP_bram_curr_base_seq;
             end
 
 		end // forever begin	
-		
-		`uvm_info(get_type_name(), "Sequence after forever begin is working BRAM CURRENT forever", UVM_MEDIUM)
 
     endtask : body
 

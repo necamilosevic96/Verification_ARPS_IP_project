@@ -26,6 +26,7 @@ class ARPS_IP_bram_ref_simple_seq_2 extends ARPS_IP_bram_ref_base_seq_2;
 	int start_frame_r = 0;
     int num_of_seq = 5;
     int cnt_seq = 0;
+	
     // new - constructor
     function new(string name = "ARPS_IP_bram_ref_simple_seq_2");
         super.new(name);
@@ -58,22 +59,7 @@ class ARPS_IP_bram_ref_simple_seq_2 extends ARPS_IP_bram_ref_base_seq_2;
             end
         
         end
-    
-    
-    /*
-	while( i != ref_queue.size() )begin
 
-		forever begin
-         
-			`uvm_do(req)
-			address_write_r = req.address_ref;
-			`uvm_do_with(req, {req.data_ref_frame == ref_queue[address_write_r/4]; } )
-			i++;
-
-		end // forever begin	 
-		
-	end // while
-	*/
     endtask : body
 
 endclass : ARPS_IP_bram_ref_simple_seq_2

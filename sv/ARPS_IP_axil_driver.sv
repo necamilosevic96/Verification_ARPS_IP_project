@@ -74,7 +74,6 @@ task ARPS_IP_axil_driver::run_phase(uvm_phase phase);
 		  
                 if(interrupt_o == 1)begin
                     interrupt_o = 0;	       
-                    //seq_item_port.get_next_item(req);
                     req.interrupt=1;
                     seq_item_port.item_done();
 

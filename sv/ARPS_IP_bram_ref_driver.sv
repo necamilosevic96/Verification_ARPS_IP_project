@@ -23,9 +23,10 @@ class ARPS_IP_bram_ref_driver extends uvm_driver #(ARPS_IP_bram_ref_transaction)
 	
 	logic [31:0] address_ref;
 	int			 i = 0;
-	int     		interrupt_o = 0;
-    int num_of_seq = 5;
-    int cnt_seq = 0;
+	int     	 interrupt_o = 0;
+    int 		 num_of_seq = 5;
+    int 		 cnt_seq = 0;
+	
     // configuration
     ARPS_IP_bram_ref_config bram_ref_cfg;
     
@@ -75,8 +76,7 @@ task ARPS_IP_bram_ref_driver::run_phase(uvm_phase phase);
                 seq_item_port.get_next_item(req);
                 interrupt_o = 0;	       
 		         req.interrupt = 1;       
-                 seq_item_port.item_done();
-                 
+                 seq_item_port.item_done();            
 		         continue;
 			end
 		
@@ -90,7 +90,6 @@ task ARPS_IP_bram_ref_driver::run_phase(uvm_phase phase);
 			vif.data_ref = req.data_ref_frame;
             seq_item_port.item_done();
 			
-
 		end// posedge clk
 
 	end

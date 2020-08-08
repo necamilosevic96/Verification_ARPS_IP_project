@@ -46,7 +46,6 @@ class ARPS_IP_bram_ref_simple_seq extends ARPS_IP_bram_ref_base_seq;
                     `uvm_info(get_type_name(),"BRAM_REF_SEQ: Interrupt = 1",UVM_MEDIUM)
                 end	
                 else begin
-                    //$display("Address_REF: %x",address_write_r);
                     `uvm_do_with(req, {req.data_ref_frame == ref_queue[address_write_r/4]; } )
                 end
             end 

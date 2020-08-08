@@ -43,14 +43,14 @@ class ARPS_IP_bram_mv_monitor extends uvm_monitor;
     // coverage
     covergroup cg_mv_monitor;
         // cover address
-        cp_address_mv : coverpoint tr_collected_mv.address_mv {
-            bins low = {0,255};
-            bins high  = {256,511};
+        cp_address_mv : coverpoint (tr_collected_mv.address_mv/4) {
+            bins low [] = {[0:255]};
+            bins high [] = {[256:511]};
         }
         // cover data
         cp_data_mv : coverpoint tr_collected_mv.data_mv_frame {
-            bins ack  = {32'hfffffff9,32'hffffffff};
-            bins nack = {0,7};            
+            bins neg[]  = {[32'hfffffff9:32'hffffffff]};
+            bins pos[] = {[0:7]};
         }
     endgroup : cg_mv_monitor;
 
