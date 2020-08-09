@@ -41,15 +41,20 @@ class ARPS_IP_bram_curr_simple_seq_2 extends ARPS_IP_bram_curr_base_seq_2;
                     end
                     read_curr_img(start_frame_c);
                     cnt_seq++;
+                    `uvm_info(get_type_name(),"\nBRAM_CURR_SEQ: Interrupt = 1\n",UVM_MEDIUM)
                 end
                 else begin
                     `uvm_do_with(req, {req.data_curr_frame == curr_queue[address_write_c/4]; } )
                 end
             end
             else begin
+                `uvm_info(get_type_name(),"\nBRAM_CURR_SEQ: Finish\n",UVM_MEDIUM)
                 break;
             end
         end
+		
+//	`uvm_info(get_type_name(), "Sequence is working BRAM CURRENT forever", UVM_MEDIUM)		
+//		`uvm_info(get_type_name(), "Sequence after forever begin is working BRAM CURRENT forever", UVM_MEDIUM)
 
     endtask : body
 

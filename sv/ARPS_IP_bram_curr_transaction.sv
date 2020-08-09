@@ -26,10 +26,10 @@ class ARPS_IP_bram_curr_transaction extends uvm_sequence_item;
 
     // UVM factory registration
     `uvm_object_utils_begin (ARPS_IP_bram_curr_transaction)
-		  `uvm_field_int  (interrupt,      UVM_DEFAULT)
-		  `uvm_field_int  (address_curr,      UVM_DEFAULT)
-		  `uvm_field_int  (data_curr_frame,      UVM_DEFAULT)
-		  `uvm_field_int  (img_32,      UVM_DEFAULT)
+		  `uvm_field_int  (interrupt,       UVM_DEFAULT)
+		  `uvm_field_int  (address_curr,    UVM_DEFAULT)
+		  `uvm_field_int  (data_curr_frame, UVM_DEFAULT)
+		  `uvm_field_int  (img_32,          UVM_DEFAULT)
     `uvm_object_utils_end
  
     // new - constructor

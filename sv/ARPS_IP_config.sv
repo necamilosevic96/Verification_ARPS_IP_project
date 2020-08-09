@@ -33,15 +33,15 @@ class ARPS_IP_config extends uvm_object;
 
     // UVM factory registration
     `uvm_object_utils_begin(ARPS_IP_config)
-        `uvm_field_int(has_master, UVM_DEFAULT)
-        `uvm_field_int(has_slave, UVM_DEFAULT)
-        `uvm_field_object(interrupt_cfg, UVM_DEFAULT)
-        `uvm_field_object(axil_cfg, UVM_DEFAULT)
-        `uvm_field_object(bram_curr_cfg, UVM_DEFAULT)
-        `uvm_field_object(bram_ref_cfg, UVM_DEFAULT)
-        `uvm_field_object(bram_mv_cfg, UVM_DEFAULT)
-        `uvm_field_int(has_checks, UVM_DEFAULT)
-        `uvm_field_int(has_coverage, UVM_DEFAULT)
+        `uvm_field_int      (has_master,    UVM_DEFAULT)
+        `uvm_field_int      (has_slave,     UVM_DEFAULT)
+        `uvm_field_object   (interrupt_cfg, UVM_DEFAULT)
+        `uvm_field_object   (axil_cfg,      UVM_DEFAULT)
+        `uvm_field_object   (bram_curr_cfg, UVM_DEFAULT)
+        `uvm_field_object   (bram_ref_cfg,  UVM_DEFAULT)
+        `uvm_field_object   (bram_mv_cfg,   UVM_DEFAULT)
+        `uvm_field_int      (has_checks,    UVM_DEFAULT)
+        `uvm_field_int      (has_coverage,  UVM_DEFAULT)
     `uvm_object_utils_end
 
     // new - constructor
@@ -63,45 +63,45 @@ endclass : ARPS_IP_config
 function void ARPS_IP_config::add_axil(uvm_active_passive_enum is_active = UVM_ACTIVE);
     axil_cfg = ARPS_IP_axil_config::type_id::create("axil_cfg");
     has_master = 1;
-    axil_cfg.is_active = is_active;
-    axil_cfg.has_checks = has_checks;
-    axil_cfg.has_coverage = has_coverage;
+    axil_cfg.is_active      = is_active;
+    axil_cfg.has_checks     = has_checks;
+    axil_cfg.has_coverage   = has_coverage;
 endfunction : add_axil
 
 
 function void ARPS_IP_config::add_bram_curr(uvm_active_passive_enum is_active = UVM_ACTIVE);
     bram_curr_cfg = ARPS_IP_bram_curr_config::type_id::create("bram_curr_cfg");
     has_master = 1;
-    bram_curr_cfg.is_active = is_active;
-    bram_curr_cfg.has_checks = has_checks;
-    bram_curr_cfg.has_coverage = has_coverage;
+    bram_curr_cfg.is_active     = is_active;
+    bram_curr_cfg.has_checks    = has_checks;
+    bram_curr_cfg.has_coverage  = has_coverage;
 endfunction : add_bram_curr
 
 
 function void ARPS_IP_config::add_bram_ref(uvm_active_passive_enum is_active = UVM_ACTIVE);
     bram_ref_cfg = ARPS_IP_bram_ref_config::type_id::create("bram_ref_cfg");
     has_master = 1;
-    bram_ref_cfg.is_active = is_active;
-    bram_ref_cfg.has_checks = has_checks;
-    bram_ref_cfg.has_coverage = has_coverage;
+    bram_ref_cfg.is_active      = is_active;
+    bram_ref_cfg.has_checks     = has_checks;
+    bram_ref_cfg.has_coverage   = has_coverage;
 endfunction : add_bram_ref
 
 
 function void ARPS_IP_config::add_bram_mv(uvm_active_passive_enum is_active = UVM_ACTIVE);
     bram_mv_cfg = ARPS_IP_bram_mv_config::type_id::create("bram_mv_cfg");
     has_master = 1;
-    bram_mv_cfg.is_active = is_active;
-    bram_mv_cfg.has_checks = has_checks;
-    bram_mv_cfg.has_coverage = has_coverage;
+    bram_mv_cfg.is_active       = is_active;
+    bram_mv_cfg.has_checks      = has_checks;
+    bram_mv_cfg.has_coverage    = has_coverage;
 endfunction : add_bram_mv
 
 
 function void ARPS_IP_config::add_interrupt(uvm_active_passive_enum is_active = UVM_ACTIVE);
     interrupt_cfg = ARPS_IP_interrupt_config::type_id::create("interrupt_cfg");
     has_slave = 1;
-    interrupt_cfg.is_active = is_active;
-    interrupt_cfg.has_checks = has_checks;
-    interrupt_cfg.has_coverage = has_coverage;
+    interrupt_cfg.is_active     = is_active;
+    interrupt_cfg.has_checks    = has_checks;
+    interrupt_cfg.has_coverage  = has_coverage;
 endfunction : add_interrupt
 
 /**
@@ -115,11 +115,11 @@ class default_ARPS_IP_config extends ARPS_IP_config;
 
     function new(string name = "default_ARPS_IP_config");
         super.new(name);
-        add_axil(UVM_ACTIVE);
-        add_bram_curr(UVM_ACTIVE);
-        add_bram_ref(UVM_ACTIVE);
-        add_bram_mv(UVM_ACTIVE);
-        add_interrupt(UVM_ACTIVE); 
+        add_axil        (UVM_ACTIVE);
+        add_bram_curr   (UVM_ACTIVE);
+        add_bram_ref    (UVM_ACTIVE);
+        add_bram_mv     (UVM_ACTIVE);
+        add_interrupt   (UVM_ACTIVE); 
     endfunction : new
 
 endclass : default_ARPS_IP_config

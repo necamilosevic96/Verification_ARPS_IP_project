@@ -44,13 +44,15 @@ class ARPS_IP_bram_mv_monitor extends uvm_monitor;
     covergroup cg_mv_monitor;
         // cover address
         cp_address_mv : coverpoint (tr_collected_mv.address_mv/4) {
-            bins low [] = {[0:255]};
-            bins high [] = {[256:511]};
+            
+            bins addr_low  [] = {[0:255]};
+            bins addr_high [] = {[256:511]};
         }
         // cover data
         cp_data_mv : coverpoint tr_collected_mv.data_mv_frame {
-            bins neg[]  = {[32'hfffffff9:32'hffffffff]};
-            bins pos[] = {[0:7]};
+            
+            bins neg_data[]  = {[32'hfffffff9:32'hffffffff]};
+            bins pos_data[]  = {[0:7]};
         }
     endgroup : cg_mv_monitor;
 
@@ -91,6 +93,7 @@ task ARPS_IP_bram_mv_monitor::run_phase(uvm_phase phase);
 		@(posedge vif.clk)begin	
             if(vif.we_mv == 4'b1111) begin
                 address_r = vif.addr_mv;
+                assert(address_r <= 2044)
                 data_r = vif.data_mv;
 
                 tr_collected_mv.address_mv = address_r;

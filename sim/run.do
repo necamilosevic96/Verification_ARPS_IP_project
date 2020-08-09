@@ -40,10 +40,12 @@ vsim ARPS_IP_test_top -novopt +UVM_TESTNAME=ARPS_IP_test_simple -sv_seed random
 # disable warnings for dut
 set NumericStdNoWarnings 1
 
-add wave sim:/ARPS_IP_test_top/axil_vif/*
-add wave sim:/ARPS_IP_test_top/bram_curr_vif/*
-add wave sim:/ARPS_IP_test_top/bram_ref_vif/*
-add wave sim:/ARPS_IP_test_top/bram_mv_vif/*
-add wave sim:/ARPS_IP_test_top/interrupt_vif/*
-    
+#add wave sim:/ARPS_IP_test_top/axil_vif/*
+#add wave sim:/ARPS_IP_test_top/bram_curr_vif/*
+#add wave sim:/ARPS_IP_test_top/bram_ref_vif/*
+#add wave sim:/ARPS_IP_test_top/bram_mv_vif/*
+#add wave sim:/ARPS_IP_test_top/interrupt_vif/*
+ 
+do wave.do
+ 
 #run -all

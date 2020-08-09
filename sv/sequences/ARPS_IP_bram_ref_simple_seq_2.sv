@@ -26,7 +26,6 @@ class ARPS_IP_bram_ref_simple_seq_2 extends ARPS_IP_bram_ref_base_seq_2;
 	int start_frame_r = 0;
     int num_of_seq = 5;
     int cnt_seq = 0;
-	
     // new - constructor
     function new(string name = "ARPS_IP_bram_ref_simple_seq_2");
         super.new(name);
@@ -49,17 +48,18 @@ class ARPS_IP_bram_ref_simple_seq_2 extends ARPS_IP_bram_ref_base_seq_2;
                     end
                     read_ref_img(start_frame_r);
                     cnt_seq++;
+                    `uvm_info(get_type_name(),"BRAM_REF_SEQ: Interrupt = 1",UVM_MEDIUM)
                 end
                 else begin
                     `uvm_do_with(req, {req.data_ref_frame == ref_queue[address_write_r/4]; } )
                 end
             end
             else begin
+                `uvm_info(get_type_name(),"BRAM_REF_SEQ: Finish",UVM_MEDIUM)
                 break;
             end
         
         end
-
     endtask : body
 
 endclass : ARPS_IP_bram_ref_simple_seq_2

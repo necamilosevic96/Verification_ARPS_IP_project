@@ -20,8 +20,8 @@ class ARPS_IP_axil_config extends uvm_object;
     // is agent active or passive
     uvm_active_passive_enum is_active = UVM_ACTIVE;
     // checks and coverage control
-    bit has_checks                    = 1;
-    bit has_coverage                  = 1;
+    bit has_checks     = 1;
+    bit has_coverage   = 1;
 
     // UVM factory registration
     `uvm_object_utils_begin(ARPS_IP_axil_config)

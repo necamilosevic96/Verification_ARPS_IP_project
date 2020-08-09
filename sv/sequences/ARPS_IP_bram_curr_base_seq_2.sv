@@ -37,28 +37,28 @@ class ARPS_IP_bram_curr_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_curr_tran
                     for(int p=0;p<16384;p++) begin
                         curr_queue[p]=32'h00000000;
                     end
-                    `uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: ALL ZEROS %d", sel), UVM_MEDIUM)
+                    `uvm_info(get_type_name(), $sformatf("\nBRAM_CURR_SEQ: ALL ZEROS %d\n", sel), UVM_MEDIUM)
                 end
                 
             1:  begin
                     for(int p=0;p<16384;p++) begin
                         curr_queue[p]=32'h00000000;
                     end
-                    `uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: ALL ZEROS %d", sel), UVM_MEDIUM)
+                    `uvm_info(get_type_name(), $sformatf("\nBRAM_CURR_SEQ: ALL ZEROS %d\n", sel), UVM_MEDIUM)
                 end
                 
             2:  begin
                     for(int p=0;p<16384;p++) begin
                         curr_queue[p]=32'hFFFFFFFF;;
                     end
-                    `uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: ALL ONES %d", sel), UVM_MEDIUM)
+                    `uvm_info(get_type_name(), $sformatf("\nBRAM_CURR_SEQ: ALL ONES %d\n", sel), UVM_MEDIUM)
                 end
                 
             3:  begin
                     for(int p=0;p<16384;p++) begin
                         curr_queue[p]=32'hFFFFFFFF;;
                     end
-                    `uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: ALL ONES %d", sel), UVM_MEDIUM)
+                    `uvm_info(get_type_name(), $sformatf("\nBRAM_CURR_SEQ: ALL ONES %d\n", sel), UVM_MEDIUM)
                 end
                 
             4:  begin
@@ -66,11 +66,11 @@ class ARPS_IP_bram_curr_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_curr_tran
                         curr_queue[i]=($urandom_range(0, 32'hFFFFFFFF));
                         i++;
                     end
-                    `uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: Random %d", cnt_seq), UVM_MEDIUM)
+                    `uvm_info(get_type_name(), $sformatf("\nBRAM_CURR_SEQ: Random %d\n", cnt_seq), UVM_MEDIUM)
                     cnt_seq++;
                 end
             default: 
-                `uvm_error(get_type_name(), "BRAM_CURR: Invalid 'sel' value!!! ")
+                `uvm_error(get_type_name(), "\nBRAM_CURR: Invalid 'sel' value!!! \n")
             endcase
     endfunction
     
@@ -79,7 +79,7 @@ class ARPS_IP_bram_curr_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_curr_tran
         for(int k=0;k<16384;k++) begin
             curr_queue[k]=0;
         end
-        `uvm_info(get_type_name(), $sformatf("BRAM_CURR_SEQ: Init_queue"), UVM_HIGH)
+        `uvm_info(get_type_name(), $sformatf("\nBRAM_CURR_SEQ: Init_queue\n"), UVM_HIGH)
     endfunction
 endclass: ARPS_IP_bram_curr_base_seq_2
 

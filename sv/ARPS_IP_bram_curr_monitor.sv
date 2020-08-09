@@ -45,6 +45,12 @@ class ARPS_IP_bram_curr_monitor extends uvm_monitor;
     covergroup cg_curr_monitor;
         // cover address
         cp_address_curr : coverpoint (tr_collected.address_curr/4) {
+            /*
+            bins low = {0,16384};
+            bins med  = {16385,32768};
+			bins high  = {32769,49152};
+			bins extr  = {49153,65535};
+            */
             bins range[] = {[0:16383]};
         }     
     endgroup : cg_curr_monitor;
@@ -86,6 +92,7 @@ task ARPS_IP_bram_curr_monitor::run_phase(uvm_phase phase);
 
 		@(posedge vif.clk)begin
             address_r = vif.addr_curr;
+            assert(address_r <= 65532)
             @(posedge vif.clk)begin   
                 if(vif.en_curr==1'b1) begin
                 

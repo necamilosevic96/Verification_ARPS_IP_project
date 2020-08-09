@@ -54,7 +54,7 @@ package ARPS_IP_pkg;
     import uvm_pkg::*;
     `include "uvm_macros.svh"
     
-//    `include "ARPS_IP_types.sv"
+    `include "ARPS_IP_types.sv"
     
     `include "ARPS_IP_axil_config.sv"
     `include "ARPS_IP_axil_driver.sv"

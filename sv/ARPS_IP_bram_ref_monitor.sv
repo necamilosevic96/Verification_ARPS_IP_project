@@ -42,6 +42,12 @@ class ARPS_IP_bram_ref_monitor extends uvm_monitor;
  
     covergroup cg_ref_monitor;
         cp_address_ref : coverpoint (tr_collected_ref.address_ref/4) {
+            /*
+            bins low = {0,16384};
+            bins med  = {16385,32768};
+			bins high  = {32769,49152};
+			bins extr  = {49153,65535};
+            */
             bins range[] = {[0:16383]};
         } 
     endgroup : cg_ref_monitor;
@@ -83,6 +89,7 @@ task ARPS_IP_bram_ref_monitor::run_phase(uvm_phase phase);
         
 		@(posedge vif.clk)begin
             address_r = vif.addr_ref;
+            assert(address_r <= 65532)
             @(posedge vif.clk)begin
                 if(vif.en_ref == 1'b1) begin
                     

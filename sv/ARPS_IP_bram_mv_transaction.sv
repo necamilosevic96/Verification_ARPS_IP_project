@@ -18,13 +18,13 @@
 
 class ARPS_IP_bram_mv_transaction extends uvm_sequence_item;
 
-	rand bit [31:0]		    address_mv;
-	rand bit [31 : 0 ]	    data_mv_frame;
+	rand bit [31:0]     address_mv;
+	rand bit [31 : 0 ]  data_mv_frame;
 
     // UVM factory registration
     `uvm_object_utils_begin (ARPS_IP_bram_mv_transaction)
-        `uvm_field_int  (address_mv,       UVM_DEFAULT) 
-        `uvm_field_int  (data_mv_frame,       UVM_DEFAULT)
+        `uvm_field_int  (address_mv   , UVM_DEFAULT) 
+        `uvm_field_int  (data_mv_frame, UVM_DEFAULT)
     `uvm_object_utils_end
  
     // new - constructor

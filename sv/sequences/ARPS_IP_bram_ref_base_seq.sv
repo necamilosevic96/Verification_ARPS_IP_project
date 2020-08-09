@@ -39,32 +39,35 @@ class ARPS_IP_bram_ref_base_seq extends uvm_sequence #(ARPS_IP_bram_ref_transact
         i = 0;
 		init_queue_r();
         fr_num.itoa(frame_num);
-		`uvm_info(get_type_name(), "Opening file BRAM REFERENT", UVM_MEDIUM)
+		`uvm_info(get_type_name(), "\nOpening file BRAM REFERENT\n", UVM_MEDIUM)
 		
 		fd_r = ($fopen({file_path,fr_num,ext}, "r"));
 
 		if(fd_r)begin
-			`uvm_info(get_type_name(), $sformatf("BRAM_REF_SEQ: File OPENED, SAMPLE%d",frame_num), UVM_MEDIUM)
+			`uvm_info(get_type_name(), $sformatf("\nBRAM_REF_SEQ: File OPENED, SAMPLE%d\n",frame_num), UVM_MEDIUM)
 			while(!$feof(fd_r))begin
 				if(i >= 16384) begin
 					$fscanf(fd_r ,"%s\n",data_hex_ref);
 					i = 0;    
+
 				end  
-				else begin			
+				else begin
+				
 					$fscanf(fd_r ,"%s\n",data_hex_ref);
 					ref_queue[i]=(data_hex_ref.atohex());
 					i++;
+
 				end
             
 			end // while (!$feof(fd_img))  
 		end
         else begin
-			`uvm_error(get_type_name(), $sformatf("BRAM_REF_SEQ: Fail to open SAMPLE%d",frame_num))
+			`uvm_error(get_type_name(), $sformatf("\nBRAM_REF_SEQ: Fail to open SAMPLE%d\n",frame_num))
         end
 	
-		`uvm_info(get_type_name(), "BRAM_REF_SEQ: Import image finished", UVM_HIGH)
+		`uvm_info(get_type_name(), "\nBRAM_REF_SEQ: Import image finished\n", UVM_HIGH)
 		$fclose(fd_r);
-		`uvm_info(get_type_name(), "BRAM_REF_SEQ: File closed", UVM_MEDIUM)
+		`uvm_info(get_type_name(), "\nBRAM_REF_SEQ: File closed\n", UVM_MEDIUM)
 	
    endfunction
     
@@ -72,7 +75,7 @@ class ARPS_IP_bram_ref_base_seq extends uvm_sequence #(ARPS_IP_bram_ref_transact
         for(int k=0;k<16384;k++) begin
             ref_queue[k]=0;
         end
-        `uvm_info(get_type_name(), "BRAM_REF_SEQ: Initialising ref_queue", UVM_MEDIUM)
+        `uvm_info(get_type_name(), "\nBRAM_REF_SEQ: Initialising ref_queue\n", UVM_MEDIUM)
     endfunction
 endclass: ARPS_IP_bram_ref_base_seq
 

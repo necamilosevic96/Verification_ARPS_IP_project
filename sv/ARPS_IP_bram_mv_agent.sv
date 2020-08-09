@@ -23,9 +23,9 @@ class ARPS_IP_bram_mv_agent extends uvm_agent;
     ARPS_IP_bram_mv_config bram_mv_cfg;
 
     // components
-    ARPS_IP_bram_mv_monitor          mon;
-    ARPS_IP_bram_mv_driver    drv;
-    ARPS_IP_bram_mv_sequencer seqr;
+    ARPS_IP_bram_mv_monitor     mon;
+    ARPS_IP_bram_mv_driver      drv;
+    ARPS_IP_bram_mv_sequencer   seqr;
     
     // UVM factory registration
     `uvm_component_utils_begin(ARPS_IP_bram_mv_agent)

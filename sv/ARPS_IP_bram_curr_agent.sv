@@ -23,7 +23,7 @@ class ARPS_IP_bram_curr_agent extends uvm_agent;
     ARPS_IP_bram_curr_config bram_curr_cfg;
 
     // components
-    ARPS_IP_bram_curr_monitor          mon;
+    ARPS_IP_bram_curr_monitor   mon;
     ARPS_IP_bram_curr_driver    drv;
     ARPS_IP_bram_curr_sequencer seqr;
     

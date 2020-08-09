@@ -74,7 +74,7 @@ task ARPS_IP_bram_curr_driver::run_phase(uvm_phase phase);
 		@(posedge vif.clk)begin
             
 			if(interrupt_o == 1)begin
-                `uvm_info(get_type_name(), "Driver with interrupt is working BRAM CURRENT", UVM_MEDIUM)
+                `uvm_info(get_type_name(), "BRAM_CURR_DRV: Interrupt = 1", UVM_HIGH)
 		        interrupt_o = 0;	       
 		        seq_item_port.get_next_item(req);
 				req.interrupt=1;
@@ -100,7 +100,7 @@ task ARPS_IP_bram_curr_driver::run_phase(uvm_phase phase);
 endtask : run_phase
 
 function ARPS_IP_bram_curr_driver::write_interrupt_o (ARPS_IP_interrupt_transaction tr);
-    `uvm_info(get_type_name(),$sformatf("INTERRUPT HAPPENED"),UVM_MEDIUM)
+    `uvm_info(get_type_name(),$sformatf("INTERRUPT HAPPENED"),UVM_FULL)
     interrupt_o = 1;
       
 endfunction : write_interrupt_o

@@ -16,7 +16,7 @@ class ARPS_IP_bram_curr_simple_seq extends ARPS_IP_bram_curr_base_seq;
 	
 	bit [31:0] address_write_c;
     int num_of_seq = 5; //NUMBER_OF_SEQ
-    int start_frame_c = 53; //STARTING FRAME
+    int start_frame_c = 51; //STARTING FRAME
     int cnt_seq = 0;
     
      // UVM factory registration
@@ -41,7 +41,7 @@ class ARPS_IP_bram_curr_simple_seq extends ARPS_IP_bram_curr_base_seq;
                     req.interrupt = 0;
                     start_frame_c++;
                     read_curr_img(start_frame_c);
-                    `uvm_info(get_type_name(),"BRAM_CURR_SEQ: Interrupt = 1",UVM_MEDIUM)
+                    `uvm_info(get_type_name(),"\nBRAM_CURR_SEQ: Interrupt = 1\n",UVM_MEDIUM)
                     cnt_seq++;
                 end	
                 else begin
@@ -49,11 +49,13 @@ class ARPS_IP_bram_curr_simple_seq extends ARPS_IP_bram_curr_base_seq;
                 end
             end
             else begin
-                `uvm_info(get_type_name(),"BRAM_CURR_SEQ: Finish",UVM_MEDIUM)
+                `uvm_info(get_type_name(),"\nBRAM_CURR_SEQ: Finish\n",UVM_MEDIUM)
                 break;
             end
 
 		end // forever begin	
+		
+		`uvm_info(get_type_name(), "Sequence after forever begin is working BRAM CURRENT forever", UVM_MEDIUM)
 
     endtask : body
 

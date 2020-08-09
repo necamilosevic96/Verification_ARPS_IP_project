@@ -51,24 +51,25 @@ class ARPS_IP_interrupt_monitor extends uvm_monitor;
    endfunction : connect_phase
 
    task run_phase(uvm_phase phase);
-    forever begin
-		
-		current_frame = ARPS_IP_interrupt_transaction::type_id::create("current_frame", this);
-
-		@(posedge vif.clk)begin
+      forever begin
+	 current_frame = ARPS_IP_interrupt_transaction::type_id::create("current_frame", this);
+	 // ...
+	 // collect transactions
+	 // ...
+	 @(posedge vif.clk)begin
 		
 		current_frame.interrupt_flag=vif.interrupt_o;
 	 
 	    if(vif.interrupt_o)begin
-	       `uvm_info(get_type_name(),$sformatf("INTERRUPT HAPPENED"),UVM_MEDIUM)          
+	       `uvm_info(get_type_name(),$sformatf("INTERRUPT HAPPENED"),UVM_MEDIUM)
+	       //interrupt_cg.sample();          
 	       item_collected_port.write(current_frame);
 	    end
 		
 		interrupt_cg.sample();
 		
-		end // posedge clk
-    end
-	
+	 end
+      end
    endtask : run_phase
 
 endclass : ARPS_IP_interrupt_monitor

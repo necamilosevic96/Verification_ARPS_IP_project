@@ -74,42 +74,42 @@ task ARPS_IP_axil_driver::run_phase(uvm_phase phase);
 		  
                 if(interrupt_o == 1)begin
                     interrupt_o = 0;	       
+                    //seq_item_port.get_next_item(req);
                     req.interrupt=1;
                     seq_item_port.item_done();
 
                     continue;
                 end
                 
-                //else begin
-                    if(req.wr_re)begin//read = 0, write = 1
-                        vif.s_axi_awaddr = req.addr;
-                        vif.s_axi_awvalid = 1;
-                        vif.s_axi_wdata = req.wdata;
-                        vif.s_axi_wvalid = 1;
-                        vif.s_axi_bready = 1'b1;	       
-                        wait(vif.s_axi_awready && vif.s_axi_wready);	       
-                        wait(vif.s_axi_bvalid);
-                        vif.s_axi_wdata = 0;
-                        vif.s_axi_awvalid = 0; 
-                        vif.s_axi_wvalid = 0;
-                        wait(!vif.s_axi_bvalid);	   
-                        vif.s_axi_bready = 0;
-                    end // if (req.read_write)
-                    else begin
-                        vif.s_axi_araddr = req.addr;
-                        vif.s_axi_arvalid = 1;
-                        vif.s_axi_rready = 1;
-                        wait(vif.s_axi_arready);
-                        wait(vif.s_axi_rvalid);	           
-                        vif.s_axi_arvalid = 0;
-                        vif.s_axi_araddr = 0;
-                        wait(!vif.s_axi_rvalid);
-                        req.rdata = vif.s_axi_rdata;               
-                        vif.s_axi_rready = 0;	       
-                    end
-                //end
-            end // @ (posedge vif.s_axi_aclk)
-	      
+                if(req.wr_re)begin//read = 0, write = 1
+                    vif.s_axi_awaddr = req.addr;
+                    vif.s_axi_awvalid = 1;
+                    vif.s_axi_wdata = req.wdata;
+                    vif.s_axi_wvalid = 1;
+                    vif.s_axi_bready = 1'b1;	       
+                    wait(vif.s_axi_awready && vif.s_axi_wready);	       
+                    wait(vif.s_axi_bvalid);
+                    vif.s_axi_wdata = 0;
+                    vif.s_axi_awvalid = 0; 
+                    vif.s_axi_wvalid = 0;
+                    wait(!vif.s_axi_bvalid);	   
+                    vif.s_axi_bready = 0;
+                end // if (req.read_write)
+                
+                else begin
+                    vif.s_axi_araddr = req.addr;
+                    vif.s_axi_arvalid = 1;
+                    vif.s_axi_rready = 1;
+                    wait(vif.s_axi_arready);
+                    wait(vif.s_axi_rvalid);	           
+                    vif.s_axi_arvalid = 0;
+                    vif.s_axi_araddr = 0;
+                    wait(!vif.s_axi_rvalid);
+                    req.rdata = vif.s_axi_rdata;               
+                    vif.s_axi_rready = 0;	       
+                end
+               
+            end // @ (posedge vif.s_axi_aclk)	      
             //end of driving
             seq_item_port.item_done();
         end

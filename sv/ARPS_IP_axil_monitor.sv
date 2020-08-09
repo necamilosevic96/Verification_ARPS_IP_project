@@ -29,7 +29,8 @@ class ARPS_IP_axil_monitor extends uvm_monitor;
     // keep track of number of transactions
     int unsigned num_transactions = 0;
 	
-	bit [3:0]	address;
+	bit [3:0] address;
+
     
     // current transaction
     ARPS_IP_axil_transaction tr_current;
@@ -42,11 +43,10 @@ class ARPS_IP_axil_monitor extends uvm_monitor;
     // coverage
     covergroup cg_axil_monitor;
         // cover direction - read or write
-        cp_direction : coverpoint address {
+        cp_address : coverpoint address {
             bins write = {0};
             bins read  = {4};
         }
-
     endgroup : cg_axil_monitor;
 
     // new - constructor
@@ -84,12 +84,12 @@ task ARPS_IP_axil_monitor::run_phase(uvm_phase phase);
 		@(posedge vif.clk)begin
 		
 			if(vif.s_axi_awready )begin
-               `uvm_info(get_name(), $sformatf("write address: %d", vif.s_axi_awaddr), UVM_LOW)
-				address = vif.s_axi_awaddr;               
+				address = vif.s_axi_awaddr;
+                `uvm_info(get_name(), $sformatf("\nAXI_LITE: Write address: 0x%x data: 0x%x\n", vif.s_axi_awaddr,vif.s_axi_wdata), UVM_LOW)                
 			end
-			if(vif.s_axi_arready)
+			if(vif.s_axi_arready) begin
 				address = vif.s_axi_araddr;
-
+            end    
 			if(vif.s_axi_rvalid)begin
 
 				tr_current.rdata = vif.s_axi_rdata;
@@ -97,7 +97,8 @@ task ARPS_IP_axil_monitor::run_phase(uvm_phase phase);
 				item_collected_port.write(tr_current);
 				
 				cg_axil_monitor.sample();
-              
+
+               `uvm_info(get_name(), $sformatf("\nAXI_LITE: Read address: 0x%x data: 0x%x", address, vif.s_axi_rdata), UVM_FULL)               
 			end
 		end
   

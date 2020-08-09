@@ -25,7 +25,7 @@
 `define COL 256
 `define P_SIZE 7
 `define MAX2(x, y) (((x) > (y)) ? (x) : (y))
-
+//`define DISPLAY_DATA 1
 
 typedef int queue_of_int[2][$]; //0 position is data, 1 position is flag(write)
 typedef int queue_of_int_m[$];
@@ -49,12 +49,16 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
     queue_of_int_m mv_ref;//one dimension
     logic [31:0] mv_bram_q [$];
    
+
+   
     // This TLM port is used to connect the scoreboard to the monitor
     uvm_analysis_imp_axil#(ARPS_IP_axil_transaction, ARPS_IP_scoreboard) port_axil;
     uvm_analysis_imp_bram_curr#(ARPS_IP_bram_curr_transaction, ARPS_IP_scoreboard) port_bram_curr;
     uvm_analysis_imp_bram_ref#(ARPS_IP_bram_ref_transaction, ARPS_IP_scoreboard) port_bram_ref;
     uvm_analysis_imp_bram_mv#(ARPS_IP_bram_mv_transaction, ARPS_IP_scoreboard) port_bram_mv;
     uvm_analysis_imp_interrupt#(ARPS_IP_interrupt_transaction, ARPS_IP_scoreboard) port_interrupt;
+
+    int num_of_tr;
 
     `uvm_component_utils_begin(ARPS_IP_scoreboard)
         `uvm_field_int(checks_enable, UVM_DEFAULT)
@@ -72,7 +76,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
    
     function void report_phase(uvm_phase phase);
       `uvm_info(get_type_name(), $sformatf("ARPS_IP scoreboard examined: %0d transactions", num_of_tr), UVM_LOW);
-      `uvm_info(get_type_name(), $sformatf("Number of mismatch assertions for DUT is: %0d ", num_of_assertions), UVM_NONE);
+      //`uvm_info(get_type_name(), $sformatf("Number of mismatch assertions for DUT is: %0d ", num_of_assertions), UVM_NONE);
       
     endfunction : report_phase
     
@@ -83,8 +87,11 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
         $cast(tr_clone, tr.clone()); 
         if(checks_enable) begin
             if(tr_clone.addr==0 && tr_clone.wdata==1) begin
-                start_flag=1'b1; //start ref model
+                 
             end
+            // do actual checking here
+            // ...
+            //++num_of_tr;
         end
     endfunction : write_axil
    
@@ -112,14 +119,28 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                 curr_queue[1][tr_clone.address_curr + 1] = 1;
                 curr_queue[1][tr_clone.address_curr + 2] = 1;
                 curr_queue[1][tr_clone.address_curr + 3] = 1;
-
+                
+               `ifdef DISPLAY_DATA
+                    $display("curr_address=%x  curr_data=%x",tr_clone.address_curr,tr_clone.data_curr_frame);
+                    $display("currp[%d]=%x", tr_clone.address_curr + 0, curr_queue[0][tr_clone.address_curr + 0]);
+                    $display("currp[%d]=%x", tr_clone.address_curr + 1, curr_queue[0][tr_clone.address_curr + 1]);
+                    $display("currp[%d]=%x", tr_clone.address_curr + 2, curr_queue[0][tr_clone.address_curr + 2]);
+                    $display("currp[%d]=%x", tr_clone.address_curr + 3, curr_queue[0][tr_clone.address_curr + 3]);
+                    $display("*******************************");
+                `endif
                 if(tr_clone.address_curr == 32'h0000FFFC) begin
+                    //$display("FLAG_CURR=1");
                     `uvm_info(get_type_name(),"WRITE_BRAM_CURR: Data for REF model stored in queue for current frame.",UVM_LOW);
                     finish_flag_curr = 1'b1;
+                    
                 end
             end
+            //`uvm_info(get_type_name(), $sformatf("SCOREBOARD QUEUE 3    %p\n", curr_queue),UVM_HIGH)
+            //`uvm_info(get_type_name(),$sformatf("SCOREBOARD QUEUE \n"),UVM_HIGH)
+            // do actual checking here
+            // ...
+             ++num_of_tr;
         end
-		
     endfunction : write_bram_curr 
 
 
@@ -148,15 +169,25 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                 ref_queue[1][tr_clone.address_ref + 2] = 1;
                 ref_queue[1][tr_clone.address_ref + 3] = 1;
                 
+               `ifdef DISPLAY_DATA
+                    $display("ref_address=%x  ref_data=%x",tr_clone.address_ref,tr_clone.data_ref_frame);
+                    $display("refp[%d]=%x", tr_clone.address_ref + 0, ref_queue[0][tr_clone.address_ref + 0]);
+                    $display("refp[%d]=%x", tr_clone.address_ref + 1, ref_queue[0][tr_clone.address_ref + 1]);
+                    $display("refp[%d]=%x", tr_clone.address_ref + 2, ref_queue[0][tr_clone.address_ref + 2]);
+                    $display("refp[%d]=%x", tr_clone.address_ref + 3, ref_queue[0][tr_clone.address_ref + 3]);
+                    $display("*******************************");
+                `endif
                 if(tr_clone.address_ref == 32'h0000FFFC) begin
                     finish_flag_ref = 1'b1;
                     `uvm_info(get_type_name(),"WRITE_BRAM_REF: Data for REF model stored in queue for reference frame.",UVM_LOW);
+                    
                 end
             end
+            // do actual checking here
+            // ...
+             ++num_of_tr;
         end
-		
     endfunction : write_bram_ref 
-	
 //******************************************************************************   
     function write_bram_mv (ARPS_IP_bram_mv_transaction tr);
         ARPS_IP_bram_mv_transaction tr_clone;
@@ -169,6 +200,11 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
             end
             
             if(finish_flag_curr == 1'b1 && finish_flag_ref == 1'b1 && num_of_mv_bram ==512) begin
+                for( int a=0; a<65536 ;a++) begin
+                    if(ref_queue[1][a] == 0 || curr_queue[1][a] == 0) begin
+                        `uvm_fatal(get_type_name(), $sformatf("SCOREBOARD: Data is not written to ref_queue or curr_queue. Position: %d",a ))
+                    end
+                end
                 `uvm_info(get_type_name(),"WRITE_BRAM_MV: Data is ready for checking.",UVM_LOW)
                 finish_flag_curr =1'b0;
                 finish_flag_ref =1'b0;
@@ -177,14 +213,17 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                 for(int i=0;i<512;i++) begin
                     assert(mv_bram_q[i] == mv_ref[i])
                         `uvm_info(get_type_name(),$sformatf("ASSERT:  BRAM_MV[%d]=%x REF_MV[%d]=%x , OK",i,mv_bram_q[i],i,mv_ref[i]),UVM_LOW)
+                        //$display("ASSERT: BRAM_MV[%d]=%x REF_MV[%d]=%x , OK",i,mv_bram_q[i],i,mv_ref[i]);
                     else begin
                         `uvm_fatal(get_type_name(), $sformatf("MISMATCH MV: BRAM_MV[%d]= %h \t REF_MV[%d]= %h",i, mv_bram_q[i], i,mv_ref[i] ))
                     end
                 end
                 init_queues(65536,512,1);
             end
+            // do actual checking here
+            // ...
+            // ++num_of_tr;
         end
-		
     endfunction : write_bram_mv 
 
 //*******************************************************************************
@@ -199,8 +238,10 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                 finish_flag_ref = 1'b0;
                 `uvm_info(get_type_name(), "SCOREBOARD - Interrupt = 1", UVM_MEDIUM)
             end
+            // do actual checking here
+            // ...
+            // ++num_of_tr;
         end
-		
     endfunction : write_interrupt
 
 //*****************INIT_QUEUES**************************************
@@ -242,12 +283,12 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
         int x_abs;
         if(x<0) begin
             x_abs=-(x);
+            //$display ("x=%d x_abs=%d",x,x_abs);
         end
         else begin
             x_abs=x;
         end
         return x_abs;
-		
     endfunction
 //*******************************************************************************
     function automatic queue_of_int_m motionARPS (const ref int curr_img[2][$], 
@@ -365,7 +406,8 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                 end//while
                 vect_jx = x-j;
                 vect_iy = y-i;
-
+                //$display("MV_REF[%d]=%d",mbCount,vect_jx);
+                //$display("MV_REF[%d]=%d",mbCount+1,vect_iy);
                 mbCount=mbCount+2;
                 
                 mv_q.push_back(x-j);
@@ -378,5 +420,6 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
     endfunction
 
 endclass : ARPS_IP_scoreboard
+
 
 `endif

@@ -41,7 +41,8 @@ interface axil_if(input clk, input rst);
     // control
     bit has_checks = 1;
     bit has_coverage = 1;
-       
+    
+    // TODO : coverage and assertions go here...    
 
 endinterface : axil_if
 
