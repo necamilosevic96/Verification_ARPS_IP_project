@@ -218,6 +218,7 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                         `uvm_fatal(get_type_name(), $sformatf("MISMATCH MV: BRAM_MV[%d]= %h \t REF_MV[%d]= %h",i, mv_bram_q[i], i,mv_ref[i] ))
                     end
                 end
+                mv_ref.delete;
                 init_queues(65536,512,1);
             end
             // do actual checking here
@@ -415,7 +416,8 @@ class ARPS_IP_scoreboard extends uvm_scoreboard;
                 
             end//for j
         end//for i
-       
+        LDSP_jx.delete;
+        LDSP_iy.delete;
         return mv_q;
     endfunction
 

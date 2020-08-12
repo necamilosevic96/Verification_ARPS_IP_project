@@ -24,8 +24,8 @@ class ARPS_IP_bram_mv_agent extends uvm_agent;
 
     // components
     ARPS_IP_bram_mv_monitor     mon;
-    ARPS_IP_bram_mv_driver      drv;
-    ARPS_IP_bram_mv_sequencer   seqr;
+   // ARPS_IP_bram_mv_driver      drv;
+   // ARPS_IP_bram_mv_sequencer   seqr;
     
     // UVM factory registration
     `uvm_component_utils_begin(ARPS_IP_bram_mv_agent)
@@ -44,12 +44,13 @@ class ARPS_IP_bram_mv_agent extends uvm_agent;
         // get configuration object from db
         if(!uvm_config_db#(ARPS_IP_bram_mv_config)::get(this, "", "ARPS_IP_bram_mv_config", bram_mv_cfg))
             `uvm_fatal("NOCONFIG",{"Config object must be set for: ",get_full_name(),".bram_mv_cfg"})
-
+/*
         // create driver and sequencer if agent is active
         if(bram_mv_cfg.is_active == UVM_ACTIVE) begin
             seqr = ARPS_IP_bram_mv_sequencer::type_id::create("seqr", this);
             drv = ARPS_IP_bram_mv_driver::type_id::create("drv", this);
         end
+        */
         // always create monitor
         mon = ARPS_IP_bram_mv_monitor::type_id::create("mon", this);
     endfunction : build_phase
@@ -58,9 +59,11 @@ class ARPS_IP_bram_mv_agent extends uvm_agent;
     function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
         // connect driver and sequencer if agent is active
+        /*
         if(bram_mv_cfg.is_active == UVM_ACTIVE) begin
             drv.seq_item_port.connect(seqr.seq_item_export);
         end
+        */
     endfunction : connect_phase
 
 endclass : ARPS_IP_bram_mv_agent

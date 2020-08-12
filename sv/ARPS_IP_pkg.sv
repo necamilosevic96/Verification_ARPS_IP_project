@@ -41,7 +41,7 @@ package ARPS_IP_pkg;
 	
 	typedef class ARPS_IP_bram_mv_transaction;
     typedef class ARPS_IP_bram_mv_config;
-    typedef class ARPS_IP_bram_mv_driver;
+//    typedef class ARPS_IP_bram_mv_driver;
     typedef class ARPS_IP_bram_mv_agent;
     typedef class ARPS_IP_bram_mv_monitor;
 	
@@ -54,7 +54,7 @@ package ARPS_IP_pkg;
     import uvm_pkg::*;
     `include "uvm_macros.svh"
     
-    `include "ARPS_IP_types.sv"
+    //`include "ARPS_IP_types.sv"
     
     `include "ARPS_IP_axil_config.sv"
     `include "ARPS_IP_axil_driver.sv"
@@ -69,9 +69,9 @@ package ARPS_IP_pkg;
     `include "ARPS_IP_bram_ref_agent.sv"
     `include "sequences/ARPS_IP_bram_ref_seq_lib.sv"
     `include "ARPS_IP_bram_mv_config.sv"
-    `include "ARPS_IP_bram_mv_driver.sv"
+//    `include "ARPS_IP_bram_mv_driver.sv"
     `include "ARPS_IP_bram_mv_agent.sv"
-    `include "sequences/ARPS_IP_bram_mv_seq_lib.sv"
+//    `include "sequences/ARPS_IP_bram_mv_seq_lib.sv"
 	`include "ARPS_IP_interrupt_config.sv"
 	`include "ARPS_IP_interrupt_agent.sv"
 	`include "ARPS_IP_scoreboard.sv"

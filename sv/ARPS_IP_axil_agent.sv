@@ -23,7 +23,7 @@ class ARPS_IP_axil_agent extends uvm_agent;
     ARPS_IP_axil_config axil_cfg;
 
     // components
-    ARPS_IP_axil_monitor          mon;
+    ARPS_IP_axil_monitor   mon;
     ARPS_IP_axil_driver    drv;
     ARPS_IP_axil_sequencer seqr;
     

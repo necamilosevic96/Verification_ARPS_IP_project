@@ -61,7 +61,7 @@ class ARPS_IP_bram_ref_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_ref_transa
                 end
                 
             4:  begin
-                    while(i !=16384) begin
+                    while(i < 16384) begin
                         ref_queue[i]=($urandom_range(0, 32'hFFFFFFFF));
                         i++;
                     end
@@ -76,6 +76,7 @@ class ARPS_IP_bram_ref_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_ref_transa
   
     function void init_queue();
         i=0;
+        ref_queue.delete;
         for(int k=0;k<16384;k++) begin
             ref_queue[k]=0;
         end

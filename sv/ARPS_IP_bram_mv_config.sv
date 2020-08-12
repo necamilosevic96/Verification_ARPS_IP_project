@@ -18,7 +18,7 @@
 class ARPS_IP_bram_mv_config extends uvm_object;
     
     // is agent active or passive
-    uvm_active_passive_enum is_active = UVM_ACTIVE;
+    uvm_active_passive_enum is_active = UVM_PASSIVE; // passive umjesto active
     // checks and coverage control
     bit has_checks     = 1;
     bit has_coverage   = 1;

@@ -53,8 +53,8 @@ class ARPS_IP_config extends uvm_object;
     extern function void add_axil(uvm_active_passive_enum is_active = UVM_ACTIVE);
     extern function void add_bram_curr(uvm_active_passive_enum is_active = UVM_ACTIVE);
     extern function void add_bram_ref(uvm_active_passive_enum is_active = UVM_ACTIVE);
-    extern function void add_bram_mv(uvm_active_passive_enum is_active = UVM_ACTIVE);
-    extern function void add_interrupt(uvm_active_passive_enum is_active = UVM_ACTIVE);
+    extern function void add_bram_mv(uvm_active_passive_enum is_active = UVM_PASSIVE);
+    extern function void add_interrupt(uvm_active_passive_enum is_active = UVM_PASSIVE);	
 
 endclass : ARPS_IP_config
 
@@ -87,7 +87,7 @@ function void ARPS_IP_config::add_bram_ref(uvm_active_passive_enum is_active = U
 endfunction : add_bram_ref
 
 
-function void ARPS_IP_config::add_bram_mv(uvm_active_passive_enum is_active = UVM_ACTIVE);
+function void ARPS_IP_config::add_bram_mv(uvm_active_passive_enum is_active = UVM_PASSIVE); // passive umjesto active
     bram_mv_cfg = ARPS_IP_bram_mv_config::type_id::create("bram_mv_cfg");
     has_master = 1;
     bram_mv_cfg.is_active       = is_active;
@@ -96,7 +96,7 @@ function void ARPS_IP_config::add_bram_mv(uvm_active_passive_enum is_active = UV
 endfunction : add_bram_mv
 
 
-function void ARPS_IP_config::add_interrupt(uvm_active_passive_enum is_active = UVM_ACTIVE);
+function void ARPS_IP_config::add_interrupt(uvm_active_passive_enum is_active = UVM_PASSIVE); // passive umjesto active
     interrupt_cfg = ARPS_IP_interrupt_config::type_id::create("interrupt_cfg");
     has_slave = 1;
     interrupt_cfg.is_active     = is_active;
@@ -118,8 +118,8 @@ class default_ARPS_IP_config extends ARPS_IP_config;
         add_axil        (UVM_ACTIVE);
         add_bram_curr   (UVM_ACTIVE);
         add_bram_ref    (UVM_ACTIVE);
-        add_bram_mv     (UVM_ACTIVE);
-        add_interrupt   (UVM_ACTIVE); 
+        add_bram_mv     (UVM_PASSIVE);
+        add_interrupt   (UVM_PASSIVE); 
     endfunction : new
 
 endclass : default_ARPS_IP_config

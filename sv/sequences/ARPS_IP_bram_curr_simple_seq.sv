@@ -12,11 +12,13 @@
 `ifndef ARPS_IP_BRAM_CURR_SIMPLE_SEQ_SV
 `define ARPS_IP_BRAM_CURR_SIMPLE_SEQ_SV
 
+`include "..//sv/sequences/ARPS_IP_def.sv"
+
 class ARPS_IP_bram_curr_simple_seq extends ARPS_IP_bram_curr_base_seq;
 	
 	bit [31:0] address_write_c;
-    int num_of_seq = 5; //NUMBER_OF_SEQ
-    int start_frame_c = 51; //STARTING FRAME
+    int num_of_seq = 1; //NUMBER_OF_SEQ DEFAULT (changed in ARPS_IP_def.sv)
+    int start_frame_c = 51; //STARTING FRAME DEFAULT (changed in ARPS_IP_def.sv)
     int cnt_seq = 0;
     
      // UVM factory registration
@@ -29,7 +31,13 @@ class ARPS_IP_bram_curr_simple_seq extends ARPS_IP_bram_curr_base_seq;
 
     // sequence generation logic in body   
     virtual task body();
-
+        
+        //Define num of sequences
+        ARPS_IP_def def = new();
+        num_of_seq = def.get_num_of_seq();
+        //Define ref frame start
+        start_frame_c = def.get_curr_frame_num();
+        
 		read_curr_img(start_frame_c);
 		req = ARPS_IP_bram_curr_transaction::type_id::create("req");                    
 

@@ -9,12 +9,13 @@
 `ifndef ARPS_IP_AXIL_SIMPLE_SEQ_SV
 `define ARPS_IP_AXIL_SIMPLE_SEQ_SV
 
+`include "..//sv/sequences/ARPS_IP_def.sv"
 /**
  * Class: ARPS_IP_axil_simple_seq
  */
 class ARPS_IP_axil_simple_seq extends ARPS_IP_axil_base_seq;
 
-    int num_of_seq = 5;
+    int num_of_seq = 1;//NUMBER_OF_SEQ DEFAULT (changed in ARPS_IP_def)
     int cnt_seq = 0;
     // UVM factory registration
     `uvm_object_utils(ARPS_IP_axil_simple_seq)
@@ -27,7 +28,12 @@ class ARPS_IP_axil_simple_seq extends ARPS_IP_axil_base_seq;
     // sequence generation logic in body
     virtual task body();
 	
+    //Define num of sequences
+    ARPS_IP_def def = new();
+    num_of_seq = def.get_num_of_seq();
+    
 	req = ARPS_IP_axil_transaction::type_id::create("req");
+    
 
     `uvm_do_with(req, {req.wr_re == 1'b0; req.addr == 4'b0100; req.wdata == 31'b1; } )
 	`uvm_do_with(req, {req.wr_re == 1'b0; req.addr == 4'b0000; req.wdata == 31'b1; } )

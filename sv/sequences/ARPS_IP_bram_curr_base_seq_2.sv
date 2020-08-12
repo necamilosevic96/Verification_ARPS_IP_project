@@ -62,7 +62,7 @@ class ARPS_IP_bram_curr_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_curr_tran
                 end
                 
             4:  begin
-                    while(i !=16384) begin
+                    while(i < 16384) begin
                         curr_queue[i]=($urandom_range(0, 32'hFFFFFFFF));
                         i++;
                     end
@@ -76,6 +76,7 @@ class ARPS_IP_bram_curr_base_seq_2 extends uvm_sequence #(ARPS_IP_bram_curr_tran
     
     function void init_queue();
         i=0;
+        curr_queue.delete;
         for(int k=0;k<16384;k++) begin
             curr_queue[k]=0;
         end

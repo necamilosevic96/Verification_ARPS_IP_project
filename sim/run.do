@@ -34,8 +34,8 @@ vlog -sv \
     ../examples/ARPS_IP_test_top.sv
     
 # run simulation
-vsim ARPS_IP_test_top -novopt +UVM_TESTNAME=ARPS_IP_test_simple -sv_seed random
-#vsim ARPS_IP_test_top -novopt +UVM_TESTNAME=ARPS_IP_test_simple_2 -sv_seed 100
+#vsim ARPS_IP_test_top -novopt +UVM_TESTNAME=ARPS_IP_test_simple -sv_seed random
+vsim ARPS_IP_test_top -novopt +UVM_TESTNAME=ARPS_IP_test_simple_2 -sv_seed 100
 
 # disable warnings for dut
 set NumericStdNoWarnings 1
